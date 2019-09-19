@@ -1,0 +1,5 @@
+name: eodc-openeo-bindings
+channels:
+- defaults
+dependencies:
+- python=3.6
