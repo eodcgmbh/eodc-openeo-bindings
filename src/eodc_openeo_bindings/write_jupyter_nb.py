@@ -7,10 +7,13 @@ except:
     from .openeo_to_eodatareaders import openeo_to_eodatareaders
 
 
-def write_jupyter_nb(process_graph_json, job_data):
+def write_jupyter_nb(process_graph_json, job_data, nb_filepath=None):
     """
     
     """
+    
+    if not nb_filepath:
+        nb_filepath = 'test.ipynb'
 
     # Convert from openEO to eoDataReaders syntax
     nodes, graph = openeo_to_eodatareaders(process_graph_json, job_data)
@@ -83,7 +86,7 @@ params = {params}
     # Write to jupyter notebook in correct order
     for node_id in translated_nodes_keys:
         nb['cells'].append(nbf.v4.new_code_cell(translated_nodes[node_id]))
-    nbf.write(nb, 'test.ipynb')
+    nbf.write(nb, nb_filepath)
         
         
 def get_file_list(filepaths):
