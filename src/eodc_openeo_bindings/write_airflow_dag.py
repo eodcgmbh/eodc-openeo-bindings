@@ -1,13 +1,13 @@
+"""
+
+"""
+
 import os
 from shutil import copyfile
-
-try:
-    from openeo_to_eodatareaders import openeo_to_eodatareaders
-except:
-    from .openeo_to_eodatareaders import openeo_to_eodatareaders
+from eodc_openeo_bindings.openeo_to_eodatareaders import openeo_to_eodatareaders
 
 
-def WriteAirflowDag(job_id, user_name, process_graph_json, job_data, user_email=None, job_description=None):
+def write_airflow_dag(job_id, user_name, process_graph_json, job_data, user_email=None, job_description=None):
     """
     Creates an Apache Airflow DAG with eoDataReaders syntax from a parsed openEO process graph.
     """

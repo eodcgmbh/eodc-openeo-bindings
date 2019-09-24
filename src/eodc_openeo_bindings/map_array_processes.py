@@ -2,11 +2,7 @@
 
 """
 
-
-try:
-    from map_utils import __map_default
-except:
-    from .map_utils import __map_default
+from eodc_openeo_bindings.map_utils import __map_default
 
 
 def map_array_element(process):

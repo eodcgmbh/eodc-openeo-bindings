@@ -1,10 +1,10 @@
+"""
+
+"""
+
 import os
 import nbformat as nbf
-
-try:
-    from openeo_to_eodatareaders import openeo_to_eodatareaders
-except:
-    from .openeo_to_eodatareaders import openeo_to_eodatareaders
+from eodc_openeo_bindings.openeo_to_eodatareaders import openeo_to_eodatareaders
 
 
 def write_jupyter_nb(process_graph_json, job_data, nb_filepath=None):

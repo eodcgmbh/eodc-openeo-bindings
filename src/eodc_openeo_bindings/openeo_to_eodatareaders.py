@@ -1,9 +1,9 @@
-from openeo_pg_parser_python.translate_process_graph import translate_graph
+"""
 
-try:
-    from map_processes import map_process
-except:
-    from .map_processes import map_process
+"""
+
+from openeo_pg_parser_python.translate_process_graph import translate_graph
+from eodc_openeo_bindings.map_processes import map_process
 
 
 def openeo_to_eodatareaders(process_graph_json, job_data):

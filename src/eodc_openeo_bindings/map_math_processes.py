@@ -2,11 +2,7 @@
 
 """
 
-
-try:
-    from map_utils import __map_default, __simple_process, __set_extra_values
-except:
-    from .map_utils import __map_default, __simple_process, __set_extra_values
+from eodc_openeo_bindings.map_utils import __map_default, __simple_process, __set_extra_values
 
 
 def map_absolute(process):

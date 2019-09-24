@@ -2,18 +2,11 @@
 A module dostring.
 """
 
-try:
-    from map_cubes_processes import *
-    from map_math_processes import *
-    from map_veg_indices_processes import *
-    from map_array_processes import *
-    from map_utils import set_output_folder
-except:
-    from .map_cubes_processes import *
-    from .map_math_processes import *
-    from .map_veg_indices_processes import *
-    from .map_array_processes import *
-    from .map_utils import set_output_folder
+from eodc_openeo_bindings.map_cubes_processes import *
+from eodc_openeo_bindings.map_math_processes import *
+from eodc_openeo_bindings.map_veg_indices_processes import *
+from eodc_openeo_bindings.map_array_processes import *
+from eodc_openeo_bindings.map_utils import set_output_folder
 
 
 def map_process(process, process_name, process_id, root_folder, 

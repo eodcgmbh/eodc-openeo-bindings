@@ -2,19 +2,13 @@
 
 """
 
-
 from os import path
 import inspect
 import importlib
 from numbers import Number
-
-try:
-    from map_cubes_processes import map_apply, map_reduce
-except:
-    from .map_cubes_processes import map_apply, map_reduce
+from eodc_openeo_bindings.map_cubes_processes import map_apply, map_reduce
 
 
-#def __map_default(process, process_name, mapping, add_ignore_nodata=True):
 def __map_default(process, process_name, mapping, **kwargs):
     """
     Maps all processes which have only data input and ignore_nodata option.
