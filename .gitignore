@@ -49,3 +49,4 @@ MANIFEST
 .venv*/
 
 tests/*.ipynb
+tests/dag_jb*.py
