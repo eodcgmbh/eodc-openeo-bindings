@@ -21,7 +21,7 @@ def write_airflow_dag(job_id, user_name, process_graph_json, job_data, user_emai
     if not job_description:
         job_description = "No description provided."
 
-    dag_filename = 'dag_' + job_id + '.py'
+    dag_filename = 'dag_' + job_id
     if parallelize_tasks:
         dag_filename += '_parallelize'
     dag_filename += '.py'
@@ -69,6 +69,7 @@ dag = DAG(dag_id="{dag_id}",
     )
     
     # Add nodes
+    node_parallel = {}
     dep_subnodes = {}
     for node in nodes:
         node_id = node[0]
@@ -77,9 +78,10 @@ dag = DAG(dag_id="{dag_id}",
         node_dependencies = node[3]
         
         parallelizable, _, _ = check_params_key(params, 'per_file')
+        node_parallel[node_id] = parallelizable
 
-        if (parallelize_tasks and not node_dependencies) or \
-            (parallelize_tasks and filepaths):
+        if (parallelize_tasks and parallelizable and not node_dependencies) or \
+            (parallelize_tasks and parallelizable and filepaths):
             # Nodes without depedencies do not need parallelization
             # Nodes with filepaths are only coming from load_collection
             # NB raise proper error
@@ -93,7 +95,7 @@ dag = DAG(dag_id="{dag_id}",
         if key_exists and value_matches and vrt_only:
             params[key_index]['format_type'] = 'vrt'
         
-        if parallelize_tasks and len(filepaths) > 1:  
+        if parallelize_tasks and len(filepaths) > 1 and parallelizable:
             sub_nodes = []
             for k, filepath in enumerate(filepaths):
                 node_sub_id = node_id + '_' + str(k)
@@ -110,8 +112,13 @@ dag = DAG(dag_id="{dag_id}",
         filepaths = node[2]
         node_dependencies = node[3]
         if node_dependencies:
-            node_dependencies = expand_node_dependencies(node_dependencies, dep_subnodes)
-            dagfile_write_dependencies(dagfile, node_id, node_dependencies)
+            node_dependencies2 = expand_node_dependencies(node_dependencies, dep_subnodes, node_parallel[node_id])
+            for k, dep_list in enumerate(node_dependencies2):
+                if not node_parallel[node_id]:
+                    dagfile_write_dependencies(dagfile, node_id, dep_list)
+                else:
+                    dagfile_write_dependencies(dagfile, dep_subnodes[node_id][k], dep_list)
+
 
     # Close file
     dagfile.close()
@@ -210,16 +217,41 @@ def get_input_paths(node_id, node_dependencies, job_data, parallelize):
     return filepaths
     
     
-def expand_node_dependencies(node_dependencies, dep_subnodes):
+def expand_node_dependencies(node_dependencies, dep_subnodes, split_dependencies=False):
     """
-    Expand dependensice, in case a node had been split because of parallelize.
+    Expand dependencies, in case a node had been split because of parallelize.
     """
-    
+        
     node_dependencies2 = []
+    max_n = 0
     for dep in node_dependencies:
         if dep in dep_subnodes.keys():
-            node_dependencies2.extend(dep_subnodes[dep])
+            if split_dependencies:
+                node_dependencies2.append(dep_subnodes[dep])
+                max_n = max(max_n, len(dep_subnodes[dep]))
+            else:
+                node_dependencies2.extend(dep_subnodes[dep])
         else:
-            node_dependencies2.append(dep)
+            if split_dependencies:
+                node_dependencies2.append([dep])
+            else:
+                node_dependencies2.append(dep)
+                        
+    if split_dependencies:
+        for k, dep in enumerate(node_dependencies2):
+            if len(dep) < max_n and len(max_n) > 1:
+                print('somethign wrokńg here.')
+            if len(dep) < max_n:
+                node_dependencies2[k] = node_dependencies2[k] * max_n
+        
+        node_dependencies3 = []
+        for k in range(max_n):
+            tmp_deps = []
+            for item in node_dependencies2:
+                tmp_deps.append(item[k])
+            node_dependencies3.append(tmp_deps)
     
-    return node_dependencies2
+    else:
+        node_dependencies3 = [node_dependencies2]
+            
+    return node_dependencies3
