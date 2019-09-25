@@ -9,7 +9,8 @@ from shutil import copyfile
 from eodc_openeo_bindings.openeo_to_eodatareaders import openeo_to_eodatareaders
 
 
-def write_airflow_dag(job_id, user_name, process_graph_json, job_data, user_email=None, job_description=None, vrt_only=False):
+def write_airflow_dag(job_id, user_name, process_graph_json, job_data, user_email=None, job_description=None,
+                      parallelize_tasks=False, vrt_only=False):
     """
     Creates an Apache Airflow DAG with eoDataReaders syntax from a parsed openEO process graph.
     """
@@ -21,6 +22,10 @@ def write_airflow_dag(job_id, user_name, process_graph_json, job_data, user_emai
         job_description = "No description provided."
 
     dag_filename = 'dag_' + job_id + '.py'
+    if parallelize_tasks:
+        dag_filename += '_parallelize'
+    dag_filename += '.py'
+    
     dagfile = open(dag_filename, 'w+')
 
     # Add imports
@@ -71,24 +76,24 @@ dag = DAG(dag_id="{dag_id}",
         filepaths = node[2]
         node_dependencies = node[3]
         
-        parallelize, _, _ = check_params_key(params, 'per_file')
+        parallelizable, _, _ = check_params_key(params, 'per_file')
 
-        if (parallelize and not node_dependencies) or \
-            (parallelize and filepaths):
+        if (parallelize_tasks and not node_dependencies) or \
+            (parallelize_tasks and filepaths):
             # Nodes without depedencies do not need parallelization
             # Nodes with filepaths are only coming from load_collection
             # NB raise proper error
             print("The following node has no dependency and was set to be parallelized: ", node_id)
             pass
         
-        if node_dependencies:            
-            filepaths = get_input_paths(node_dependencies, job_data, parallelize)
+        if node_dependencies:
+            filepaths = get_input_paths(node_id, node_dependencies, job_data, parallelize=parallelize_tasks and parallelizable)
         
         key_exists, value_matches, key_index = check_params_key(params, 'format_type', 'Gtiff')
         if key_exists and value_matches and vrt_only:
             params[key_index]['format_type'] = 'vrt'
-            
-        if parallelize:            
+        
+        if parallelize_tasks and len(filepaths) > 1:  
             sub_nodes = []
             for k, filepath in enumerate(filepaths):
                 node_sub_id = node_id + '_' + str(k)
@@ -180,9 +185,9 @@ def dagfile_write_dependencies(dagfile, node_id, dependencies):
         )
                     
 
-def get_input_paths(node_dependencies, job_data, parallelize):
+def get_input_paths(node_id, node_dependencies, job_data, parallelize):
     """
-    Create filepaths as a list of foldersor list of files
+    Create filepaths as a list of folders or list of files
     """
     
     filepaths = []
