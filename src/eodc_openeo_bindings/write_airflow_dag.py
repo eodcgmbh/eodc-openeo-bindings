@@ -239,7 +239,7 @@ def expand_node_dependencies(node_dependencies, dep_subnodes, split_dependencies
                         
     if split_dependencies:
         for k, dep in enumerate(node_dependencies2):
-            if len(dep) < max_n and len(max_n) > 1:
+            if len(dep) < max_n and len(dep) > 1:
                 print('somethign wrokńg here.')
             if len(dep) < max_n:
                 node_dependencies2[k] = node_dependencies2[k] * max_n
