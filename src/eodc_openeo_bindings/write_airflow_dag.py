@@ -110,7 +110,7 @@ dag = DAG(dag_id="{dag_id}",
                 else:
                     quotes = "'"
                 dagfile_write_task(dagfile, node_sub_id, filepath, params, quotes=quotes)
-                sub_nodes.append(node_id + '_' + str(k))
+                sub_nodes.append(node_id + '_' + str(k+1))
             dep_subnodes[node_id] = sub_nodes
         else:
             dagfile_write_task(dagfile, node_id, filepaths, params, quotes="")
@@ -124,13 +124,10 @@ dag = DAG(dag_id="{dag_id}",
         if node_dependencies:
             node_dependencies2 = expand_node_dependencies(node_dependencies, dep_subnodes, node_parallel[node_id])
             for k, dep_list in enumerate(node_dependencies2):
-                try:
-                    if node_parallel[node_id]:
-                        dagfile_write_dependencies(dagfile, dep_subnodes[node_id][k], dep_list)
-                    else:
-                        dagfile_write_dependencies(dagfile, node_id, dep_list)
-                except:
-                    import pdb; pdb.set_trace()
+                if node_parallel[node_id]:
+                    dagfile_write_dependencies(dagfile, dep_subnodes[node_id][k], dep_list)
+                else:
+                    dagfile_write_dependencies(dagfile, node_id, dep_list)
 
 
     # Close file
