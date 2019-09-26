@@ -104,8 +104,12 @@ dag = DAG(dag_id="{dag_id}",
         if parallelize_tasks and len(filepaths) > 1 and parallelizable:
             sub_nodes = []
             for k, filepath in enumerate(filepaths):
-                node_sub_id = node_id + '_' + str(k)
-                dagfile_write_task(dagfile, node_sub_id, filepath, params, quotes="'")
+                node_sub_id = node_id + '_' + str(k+1)
+                if isinstance(filepath, list):
+                    quotes = ""
+                else:
+                    quotes = "'"
+                dagfile_write_task(dagfile, node_sub_id, filepath, params, quotes=quotes)
                 sub_nodes.append(node_id + '_' + str(k))
             dep_subnodes[node_id] = sub_nodes
         else:
@@ -120,10 +124,13 @@ dag = DAG(dag_id="{dag_id}",
         if node_dependencies:
             node_dependencies2 = expand_node_dependencies(node_dependencies, dep_subnodes, node_parallel[node_id])
             for k, dep_list in enumerate(node_dependencies2):
-                if node_parallel[node_id]:
-                    dagfile_write_dependencies(dagfile, dep_subnodes[node_id][k], dep_list)
-                else:
-                    dagfile_write_dependencies(dagfile, node_id, dep_list)
+                try:
+                    if node_parallel[node_id]:
+                        dagfile_write_dependencies(dagfile, dep_subnodes[node_id][k], dep_list)
+                    else:
+                        dagfile_write_dependencies(dagfile, node_id, dep_list)
+                except:
+                    import pdb; pdb.set_trace()
 
 
     # Close file
@@ -150,7 +157,7 @@ def get_existing_node(job_folder, node_id):
     if os.path.isdir(job_folder):
         subfolders = glob.glob(job_folder + '/*')
         for folder in subfolders:
-            if node_id.split('_')[0] in folder:
+            if node_id.split('_')[0] in folder.split('/')[-1]:
                 target_id = folder
                 
     return target_id
@@ -167,8 +174,31 @@ def check_params_key(params, key_name, key_value=None):
             if key_value and item[key_name] == key_value:
                 value_name_matches = True
         index = k
+        
+    # double check that process is indeed parallelizable
+    if key_name_exists:
+        key_name_exists = check_f_input(params)
             
     return key_name_exists, value_name_matches, index
+    
+    
+def check_f_input(params):
+    
+    not_parallelizable = (
+        'filter_bands', 
+        'filter_bbox', 
+        'filter_temporal',
+        'eo_array_element'
+    )
+    
+    parallelizable = False
+    for item in params:
+        if 'f_input' in item.keys():
+            if item['f_input']['f_name'] not in not_parallelizable:
+                parallelizable = True
+                
+    return parallelizable
+    
 
 
 def dagfile_write_task(dagfile, id, filepaths, process_graph, quotes):
@@ -203,23 +233,29 @@ def get_input_paths(node_id, node_dependencies, job_data, parallelize):
     Create filepaths as a list of folders or list of files
     """
     
-    filepaths = []
-    folder_list = True # if False, it is a file list
+    node_dependencies_path = []
     for dep in node_dependencies:
-        if parallelize:
-            dep_path = get_existing_node(job_data, dep)
-            if not dep_path:
-                dep_path = job_data + os.path.sep + node_id + os.path.sep                    
-            if os.path.isdir(dep_path):
-                folder_list = False
-                dep_path = glob.glob(dep_path + '/*') # this is a list of filenames
-        else:
-            dep_path = job_data + os.path.sep + dep + os.path.sep
-    if folder_list:
-        filepaths.append(dep_path)
+        dep_path = get_existing_node(job_data, dep)
+        if not dep_path:
+            dep_path = job_data + os.path.sep + node_id + os.path.sep   
+        node_dependencies_path.append(dep_path)
+    
+    filepaths = []
+    if parallelize:
+        counter = 0
+        while counter >= 0:
+            counter += 1
+            paths_tmp = []
+            for k, _ in enumerate(node_dependencies_path):
+                paths_tmp.extend(glob.glob(node_dependencies_path[k] + '/*_*_*_{value}_*'.format(value=str(counter))))
+            if paths_tmp:
+                filepaths.append(paths_tmp)
+            else:
+                counter = -1
     else:
-        filepaths.extend(dep_path)
-        
+        for item in node_dependencies_path:
+            filepaths.extend(glob.glob(item + '/*'))
+            
     return filepaths
     
     
