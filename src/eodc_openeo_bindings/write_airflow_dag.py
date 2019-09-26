@@ -123,10 +123,15 @@ dag = DAG(dag_id="{dag_id}",
         node_dependencies = node[3]
         if node_dependencies:
             node_dependencies2 = expand_node_dependencies(node_dependencies, dep_subnodes, node_parallel[node_id])
-            for k, dep_list in enumerate(node_dependencies2):
-                if node_parallel[node_id]:
-                    dagfile_write_dependencies(dagfile, dep_subnodes[node_id][k], dep_list)
-                else:
+            if node_parallel[node_id]:
+                for k, sub_node in enumerate(dep_subnodes[node_id]):
+                    if len(node_dependencies2) > k:
+                        index = k
+                    else:
+                        index = 0
+                    dagfile_write_dependencies(dagfile, sub_node, node_dependencies2[index])
+            else:
+                for dep_list in node_dependencies2:
                     dagfile_write_dependencies(dagfile, node_id, dep_list)
 
 
