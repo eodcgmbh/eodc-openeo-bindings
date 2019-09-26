@@ -118,7 +118,7 @@ dag = DAG(dag_id="{dag_id}",
         if node_dependencies:
             node_dependencies2 = expand_node_dependencies(node_dependencies, dep_subnodes, parallelize_tasks) # node_parallel[node_id])
             for k, dep_list in enumerate(node_dependencies2):
-                if not node_parallel[node_id]:
+                if (not node_parallel[node_id]) or (not filepaths):
                     dagfile_write_dependencies(dagfile, node_id, dep_list)
                 else:
                     dagfile_write_dependencies(dagfile, dep_subnodes[node_id][k], dep_list)
@@ -227,7 +227,7 @@ def expand_node_dependencies(node_dependencies, dep_subnodes, split_dependencies
     """
         
     node_dependencies2 = []
-    max_n = 0
+    max_n = 1
     for dep in node_dependencies:
         if dep in dep_subnodes.keys():
             if split_dependencies:
