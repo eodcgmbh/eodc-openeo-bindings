@@ -77,8 +77,12 @@ dag = DAG(dag_id="{dag_id}",
         filepaths = node[2]
         node_dependencies = node[3]
         
-        parallelizable, _, _ = check_params_key(params, 'per_file')
-        node_parallel[node_id] = parallelizable
+        if parallelize_tasks:
+            parallelizable, _, _ = check_params_key(params, 'per_file')
+            node_parallel[node_id] = parallelizable
+        else:
+            parallelizable = False
+            node_parallel[node_id] = False
 
         if (parallelize_tasks and parallelizable and not node_dependencies) or \
             (parallelize_tasks and parallelizable and filepaths):
@@ -112,7 +116,7 @@ dag = DAG(dag_id="{dag_id}",
         filepaths = node[2]
         node_dependencies = node[3]
         if node_dependencies:
-            node_dependencies2 = expand_node_dependencies(node_dependencies, dep_subnodes, node_parallel[node_id])
+            node_dependencies2 = expand_node_dependencies(node_dependencies, dep_subnodes, parallelize_tasks) # node_parallel[node_id])
             for k, dep_list in enumerate(node_dependencies2):
                 if not node_parallel[node_id]:
                     dagfile_write_dependencies(dagfile, node_id, dep_list)
