@@ -94,6 +94,8 @@ dag = DAG(dag_id="{dag_id}",
         
         if node_dependencies:
             filepaths = get_input_paths(node_id, node_dependencies, job_data, parallelize=parallelize_tasks and parallelizable)
+            if not filepaths:
+                node_parallel[node_id] = False
         
         key_exists, value_matches, key_index = check_params_key(params, 'format_type', 'Gtiff')
         if key_exists and value_matches and vrt_only:
@@ -116,12 +118,12 @@ dag = DAG(dag_id="{dag_id}",
         filepaths = node[2]
         node_dependencies = node[3]
         if node_dependencies:
-            node_dependencies2 = expand_node_dependencies(node_dependencies, dep_subnodes, parallelize_tasks) # node_parallel[node_id])
+            node_dependencies2 = expand_node_dependencies(node_dependencies, dep_subnodes, node_parallel[node_id])
             for k, dep_list in enumerate(node_dependencies2):
-                if (not node_parallel[node_id]) or (not filepaths):
-                    dagfile_write_dependencies(dagfile, node_id, dep_list)
-                else:
+                if node_parallel[node_id]:
                     dagfile_write_dependencies(dagfile, dep_subnodes[node_id][k], dep_list)
+                else:
+                    dagfile_write_dependencies(dagfile, node_id, dep_list)
 
 
     # Close file
