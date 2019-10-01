@@ -101,7 +101,7 @@ def map_reduce(process):
             dict_item['per_file'] = per_file
     else:
         # Add saving to vrt, else no vrt file is generated
-        dict_item = {'name': 'save_raster', 'format_type':'vrt'}
+        dict_item = map_save_result(process, delete_vrt=False, format_type='vrt')[0]
 
     return [dict_item]
     
@@ -120,16 +120,27 @@ def map_apply(process):
     return dict_item_list
     
     
-def map_save_result(process):
+def map_save_result(process, delete_vrt=False, format_type = None, band_label=None):
     """
 
     """
+    
+    dict_item = {
+        'name': 'save_raster',
+        }
+    #
+    if delete_vrt:
+        dict_item['delete_vrt'] = 'True;bool'
+    # Add format type
+    if 'format_type' in process.keys():
+        dict_item['format_type'] = process['parameters']['format']
+    elif format_type:
+        dict_item['format_type'] = format_type
+    # Add band_label of band(s) to save
+    if band_label:
+        dict_item['band_label'] = band_label
 
-    dict_item_list = [
-                {'name': 'save_raster', 'format_type':  process['parameters']['format']}
-                ]
-
-    return dict_item_list
+    return [dict_item]
 
 
 def csw_query(collection, spatial_extent, temporal_extent):

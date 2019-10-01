@@ -41,6 +41,11 @@ def map_process(process, process_name, process_id, root_folder,
 
     if not isinstance(dict_items, list):
         dict_items = [dict_items]
+        
+    if 'result' in process.keys() and process['process_id'] != 'save_result':
+        if process['result']:
+            dict_items.extend(map_save_result(process, band_label=process['process_id'].replace('product', 'multiply'), format_type='Gtiff', delete_vrt=True))
+    
     for dict_item in dict_items:
         options.append(dict_item)
 
