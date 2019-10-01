@@ -239,7 +239,7 @@ def get_input_paths(node_id, node_dependencies, job_data, parallelize):
     for dep in node_dependencies:
         dep_path = get_existing_node(job_data, dep)
         if not dep_path:
-            dep_path = job_data + os.path.sep + node_id + os.path.sep   
+            dep_path = job_data + os.path.sep + dep + os.path.sep   
         node_dependencies_path.append(dep_path)
     
     filepaths = []
@@ -256,7 +256,10 @@ def get_input_paths(node_id, node_dependencies, job_data, parallelize):
                 counter = -1
     else:
         for item in node_dependencies_path:
-            filepaths.extend(glob.glob(item + '/*'))
+            if os.path.isdir(item):
+                filepaths.extend(glob.glob(item + '/*'))
+            else:
+                filepaths.append(item)
             
     return filepaths
     
