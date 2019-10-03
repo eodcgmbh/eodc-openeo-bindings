@@ -6,7 +6,7 @@ from openeo_pg_parser_python.translate_process_graph import translate_graph
 from eodc_openeo_bindings.map_processes import map_process
 
 
-def openeo_to_eodatareaders(process_graph_json, job_data):
+def openeo_to_eodatareaders(process_graph_json, job_data, vrt_only=False):
     """
     
     """
@@ -54,7 +54,8 @@ def openeo_to_eodatareaders(process_graph_json, job_data):
                                         graph.nodes[node_id].id,
                                         job_data,
                                         reducer_name=reducer_name,
-                                        reducer_dimension=reducer_dimension
+                                        reducer_dimension=reducer_dimension,
+                                        vrt_only=vrt_only
                                         )
         # Get node dependencies
         if not node_dependencies and graph.nodes[node_id].dependencies:

@@ -11,7 +11,7 @@ from eodc_openeo_bindings.map_utils import set_output_folder
 
 def map_process(process, process_name, process_id, root_folder, 
                 reducer_name=None, reducer_dimension=None,
-                options=None):
+                options=None, vrt_only=False):
     """
     Entry point.
     """
@@ -41,10 +41,17 @@ def map_process(process, process_name, process_id, root_folder,
 
     if not isinstance(dict_items, list):
         dict_items = [dict_items]
-        
+    
     if 'result' in process.keys() and process['process_id'] != 'save_result':
-        if process['result']:
-            dict_items.extend(map_save_result(process, band_label=process['process_id'].replace('product', 'multiply'), format_type='Gtiff', delete_vrt=True))
+        # Add save_result node
+        if vrt_only:
+            dict_item = map_save_result(process, band_label=process['process_id'].replace('product', 'multiply'), format_type='vrt')
+        else:
+            dict_item =map_save_result(process, band_label=process['process_id'].replace('product', 'multiply'), format_type='Gtiff', delete_vrt=True)    
+        dict_items.extend(dict_item)
+    elif process['process_id'] == 'save_result':
+        if vrt_only:
+            dict_items[0]['format_type'] = 'vrt'
     
     for dict_item in dict_items:
         options.append(dict_item)
