@@ -16,7 +16,7 @@ def write_airflow_dag(job_id, user_name, process_graph_json, job_data, user_emai
     """
     
     # Convert from openEO to eoDataReaders syntax
-    nodes, graph = openeo_to_eodatareaders(process_graph_json, job_data)
+    nodes, graph = openeo_to_eodatareaders(process_graph_json, job_data, vrt_only=vrt_only)
 
     if not job_description:
         job_description = "No description provided."
@@ -77,6 +77,11 @@ dag = DAG(dag_id="{dag_id}",
         filepaths = node[2]
         node_dependencies = node[3]
         
+        # Retrieve node_ids of original DAG ( useful only if re-running to parallelize, else it does nothing)
+        node_id = get_existing_node(job_data, node_id)[0]
+        if node_dependencies:
+            node_dependencies = get_existing_node(job_data, node_dependencies)
+        
         if parallelize_tasks:
             parallelizable, _, _ = check_params_key(params, 'per_file')
             node_parallel[node_id] = parallelizable
@@ -93,14 +98,10 @@ dag = DAG(dag_id="{dag_id}",
             pass
         
         if node_dependencies:
-            filepaths = get_input_paths(node_id, node_dependencies, job_data, parallelize=parallelize_tasks and parallelizable)
+            filepaths = get_input_paths(node_dependencies, job_data, parallelize=parallelize_tasks and parallelizable)
             if not filepaths:
                 node_parallel[node_id] = False
-        
-        key_exists, value_matches, key_index = check_params_key(params, 'format_type', 'Gtiff')
-        if key_exists and value_matches and vrt_only:
-            params[key_index]['format_type'] = 'vrt'
-        
+    
         if parallelize_tasks and len(filepaths) > 1 and parallelizable:
             sub_nodes = []
             for k, filepath in enumerate(filepaths):
@@ -121,6 +122,11 @@ dag = DAG(dag_id="{dag_id}",
         params = node[1]
         filepaths = node[2]
         node_dependencies = node[3]
+        # Retrieve node_ids of original DAG ( useful only if re-running to parallelize, else it does nothing)
+        node_id = get_existing_node(job_data, node_id)[0]
+        if node_dependencies:
+            node_dependencies = get_existing_node(job_data, node_dependencies)
+        
         if node_dependencies:
             node_dependencies2 = expand_node_dependencies(node_dependencies, dep_subnodes, node_parallel[node_id])
             if node_parallel[node_id]:
@@ -150,19 +156,22 @@ dag = DAG(dag_id="{dag_id}",
 ## Auxiliary functions ##
 #########################
     
-def get_existing_node(job_folder, node_id):
+def get_existing_node(job_folder, node_ids):
     """
     Get matching node discarding the hash.
     """
     
-    target_id = None
-    if os.path.isdir(job_folder):
+    target_ids = node_ids
+    if not isinstance(target_ids, list):
+        target_ids = [target_ids]
+    if os.path.isdir(job_folder) and node_ids:
         subfolders = glob.glob(job_folder + '/*')
         for folder in subfolders:
-            if node_id.split('_')[0] in folder.split('/')[-1]:
-                target_id = folder
-                
-    return target_id
+            for k, node_id in enumerate(target_ids):
+                if (node_id.split('_')[0] + '_') in folder.split('/')[-1]:
+                    target_ids[k] = folder.split('/')[-1]
+
+    return target_ids
 
 
 def check_params_key(params, key_name, key_value=None):
@@ -230,15 +239,15 @@ def dagfile_write_dependencies(dagfile, node_id, dependencies):
         )
                     
 
-def get_input_paths(node_id, node_dependencies, job_data, parallelize):
+def get_input_paths(node_dependencies, job_data, parallelize):
     """
     Create filepaths as a list of folders or list of files
     """
     
     node_dependencies_path = []
     for dep in node_dependencies:
-        dep_path = get_existing_node(job_data, dep)
-        if not dep_path:
+        dep_path = os.path.join(job_data, dep)
+        if not os.path.isdir(dep_path):
             dep_path = job_data + os.path.sep + dep + os.path.sep   
         node_dependencies_path.append(dep_path)
     
