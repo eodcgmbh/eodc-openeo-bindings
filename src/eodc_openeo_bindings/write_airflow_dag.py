@@ -78,7 +78,10 @@ dag = DAG(dag_id="{dag_id}",
         node_dependencies = node[3]
         
         # Retrieve node_ids of original DAG ( useful only if re-running to parallelize, else it does nothing)
-        node_id = get_existing_node(job_data, node_id)[0]
+        node_id_orig = get_existing_node(job_data, node_id)[0]
+        if node_id != node_id_orig:
+            params[0]['folder_name'] = params[0]['folder_name'].replace(node_id, node_id_orig)
+            node_id = node_id_orig
         if node_dependencies:
             node_dependencies = get_existing_node(job_data, node_dependencies)
         
@@ -122,8 +125,12 @@ dag = DAG(dag_id="{dag_id}",
         params = node[1]
         filepaths = node[2]
         node_dependencies = node[3]
+        
         # Retrieve node_ids of original DAG ( useful only if re-running to parallelize, else it does nothing)
-        node_id = get_existing_node(job_data, node_id)[0]
+        node_id_orig = get_existing_node(job_data, node_id)[0]
+        if node_id != node_id_orig:
+            params[0]['folder_name'] = params[0]['folder_name'].replace(node_id, node_id_orig)
+            node_id = node_id_orig
         if node_dependencies:
             node_dependencies = get_existing_node(job_data, node_dependencies)
         
