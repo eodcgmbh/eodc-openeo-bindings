@@ -81,12 +81,23 @@ params = {params}
         this_node = translated_nodes_keys.pop(current_index)
         translated_nodes_keys.insert(max(dep_indices) + 1, this_node)
     
-    # Write to jupyter notebook in correct order
+    # Write to python file in correct order
     for node_id in translated_nodes_keys:
         basic_job.write(translated_nodes[node_id])
     
+    # Get output file format from last node (should be save_raster)
+    output_format = None
+    for item in params:
+        if item['name'] == 'save_raster':
+            if 'format' in item.keys():
+                output_format = item['name']['format']
+            else:
+                output_format = 'Gtiff'
+    
     # Close file
     basic_job.close()
+    
+    return output_format
         
         
 def get_file_list(filepaths):
