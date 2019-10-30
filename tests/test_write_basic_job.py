@@ -14,6 +14,7 @@ evi_file = os.path.join(FOLDER, 'process_graphs/evi.json')
 job_data = os.path.join(FOLDER, 'basic_job')
 out_filepath = os.path.join(FOLDER, "basic_job.py")
 
-output_format = write_basic_job(evi_file, job_data, python_filepath=out_filepath)
+output_format, output_folder = write_basic_job(evi_file, job_data, python_filepath=out_filepath)
 
 assert output_format == 'Gtiff'
+assert 'save' in output_folder

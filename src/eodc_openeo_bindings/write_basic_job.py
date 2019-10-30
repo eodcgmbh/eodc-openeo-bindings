@@ -88,6 +88,8 @@ params = {params}
     # Get output file format from last node (should be save_raster)
     output_format = None
     for item in params:
+        if item['name'] == 'set_output_folder':
+            output_folder = item['folder_name']
         if item['name'] == 'save_raster':
             if 'format' in item.keys():
                 output_format = item['name']['format']
@@ -97,7 +99,7 @@ params = {params}
     # Close file
     basic_job.close()
     
-    return output_format
+    return output_format, output_folder
         
         
 def get_file_list(filepaths):
