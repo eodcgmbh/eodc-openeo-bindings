@@ -13,25 +13,25 @@ def map_load_collection(process):
     """
 
     # Get list of filepaths fro csw server
-    filepaths = csw_query(collection=process['parameters']["id"],
+    filepaths = csw_query(collection=process['arguments']["id"],
                           spatial_extent=(
-                              process['parameters']['spatial_extent']['south'],
-                              process['parameters']['spatial_extent']['west'],
-                              process['parameters']['spatial_extent']['north'],
-                              process['parameters']['spatial_extent']['east']
+                              process['arguments']['spatial_extent']['south'],
+                              process['arguments']['spatial_extent']['west'],
+                              process['arguments']['spatial_extent']['north'],
+                              process['arguments']['spatial_extent']['east']
                               ),
-                          temporal_extent=process['parameters']["temporal_extent"]
+                          temporal_extent=process['arguments']["temporal_extent"]
                          )
 
     dict_item_list = []
 
     # Map band filter
-    if 'bands' in process['parameters'].keys():
+    if 'bands' in process['arguments'].keys():
         dict_item = map_filter_bands(process)[0]
         dict_item_list.append(dict_item)
 
     # Map bbox filter
-    if 'spatial_extent' in process['parameters'].keys():
+    if 'spatial_extent' in process['arguments'].keys():
         dict_item = map_filter_bbox(process)[0]
         dict_item_list.append(dict_item)
 
@@ -45,10 +45,10 @@ def map_filter_bands(process):
 
     dict_item_list = []
 
-    if 'bands' in process['parameters'].keys():
-        load_bands = process['parameters']['bands']
-    elif 'names' in process['parameters'].keys():
-        load_bands = process['parameters']['names']
+    if 'bands' in process['arguments'].keys():
+        load_bands = process['arguments']['bands']
+    elif 'names' in process['arguments'].keys():
+        load_bands = process['arguments']['names']
     # elif 'wavelenghts' in process['args'].keys():
     #     # add this option
     else:
@@ -69,11 +69,11 @@ def map_filter_bbox(process):
 
     dict_item_list = []
 
-    if 'spatial_extent' in process['parameters'].keys():
-        bbox = (process['parameters']['spatial_extent']['west'], process['parameters']['spatial_extent']['south'],\
-                process['parameters']['spatial_extent']['east'], process['parameters']['spatial_extent']['north'])
-        if 'crs' in process['parameters']['spatial_extent'].keys():
-            crs_value = process['parameters']['spatial_extent']['crs']
+    if 'spatial_extent' in process['arguments'].keys():
+        bbox = (process['arguments']['spatial_extent']['west'], process['arguments']['spatial_extent']['south'],\
+                process['arguments']['spatial_extent']['east'], process['arguments']['spatial_extent']['north'])
+        if 'crs' in process['arguments']['spatial_extent'].keys():
+            crs_value = process['arguments']['spatial_extent']['crs']
         else:
             crs_value = 'EPSG:4326'
         dict_item = {'name': 'crop', 'bbox': bbox, 'crs': crs_value}
@@ -133,7 +133,7 @@ def map_save_result(process, delete_vrt=False, format_type = None, band_label=No
         dict_item['delete_vrt'] = 'True;bool'
     # Add format type
     if 'format_type' in process.keys():
-        dict_item['format_type'] = process['parameters']['format']
+        dict_item['format_type'] = process['arguments']['format']
     elif format_type:
         dict_item['format_type'] = format_type
     # Add band_label of band(s) to save

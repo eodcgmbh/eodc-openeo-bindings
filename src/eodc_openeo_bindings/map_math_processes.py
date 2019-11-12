@@ -89,7 +89,7 @@ def map_mod(process):
     """
     
     process_params = {}
-    process_params['y'] = process['parameters']['y'] + ';float'
+    process_params['y'] = process['arguments']['y'] + ';float'
     
     return __map_default(process, 'eo_mod', 'apply', **process_params)
 
@@ -110,7 +110,7 @@ def map_power(process):
     """
     
     process_params = {}
-    process_params['p'] = process['parameters']['p'] + ';float'
+    process_params['p'] = process['arguments']['p'] + ';float'
     
     return __map_default(process, 'eo_power', 'apply', **process_params)
     
@@ -131,12 +131,12 @@ def map_quantiles(process):
     
     """
     
-    if 'probabilities' in process['parameters'].keys():
-        probabilities = process['parameters']['probabilities']
+    if 'probabilities' in process['arguments'].keys():
+        probabilities = process['arguments']['probabilities']
     else:
         probabilities = None
-    if 'q' in process['parameters'].keys():
-        q = process['parameters']['q']
+    if 'q' in process['arguments'].keys():
+        q = process['arguments']['q']
     else:
         q = None
         
@@ -246,8 +246,8 @@ def map_exp(process):
     
     """
     
-    if 'p' in process['parameters'].keys():
-        p = str(process['parameters']['p'])
+    if 'p' in process['arguments'].keys():
+        p = str(process['arguments']['p'])
     else:
         p = None
     
@@ -270,8 +270,8 @@ def map_log(process):
     
     """
     
-    if 'base' in process['parameters'].keys():
-        base = str(process['parameters']['ignore_nodata'])
+    if 'base' in process['arguments'].keys():
+        base = str(process['arguments']['ignore_nodata'])
     else:
         base = None
     
@@ -310,8 +310,8 @@ def map_round(process):
     
     """
     
-    if 'p' in process['parameters'].keys():
-        p = str(process['parameters']['p'])
+    if 'p' in process['arguments'].keys():
+        p = str(process['arguments']['p'])
     else:
         p = None
     

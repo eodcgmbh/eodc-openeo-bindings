@@ -44,8 +44,8 @@ def __get_process_params(process, param_dict):
     
     process_params = {}
     for param in param_dict:
-        if param in process['parameters'].keys():
-            process_params[param] = str(process['parameters'][param]) + ';' + param_dict[param]
+        if param in process['arguments'].keys():
+            process_params[param] = str(process['arguments'][param]) + ';' + param_dict[param]
     
     return process_params
     
@@ -54,7 +54,7 @@ def __set_extra_values(process, add_extra_idxs=False):
     
     extra_values = []
     extra_idxs = []
-    for k, item in enumerate(process['parameters']['data']):
+    for k, item in enumerate(process['arguments']['data']):
         if isinstance(item, Number):
             extra_values.append(item)
             if add_extra_idxs:
