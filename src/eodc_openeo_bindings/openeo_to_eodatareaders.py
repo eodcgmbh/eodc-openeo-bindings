@@ -46,8 +46,10 @@ def openeo_to_eodatareaders(process_graph_json, job_data, vrt_only=False):
         
         # TODO: dimension names should be available to users via dube metadata
         if reducer_dimension:
-            reducer_dimension = reducer_dimension.replace('spectral', 'band')
-            reducer_dimension = reducer_dimension.replace('temporal', 'time')
+            if reducer_dimension in ('spectral', 'spectral_bands', 'bands'):
+                reducer_dimension = 'band'
+            if reducer_dimension in ('temporal', 'time'):
+                reducer_dimension = 'time'
         params, filepaths = map_process(
                                         graph.nodes[node_id].graph,
                                         graph.nodes[node_id].name,
