@@ -2,10 +2,10 @@ import json
 from typing import List, Dict
 from uuid import uuid4
 
+import numpy as np
+import osr
 import requests
 from eodatareaders.eo_data_reader import eoDataReader
-import osr
-import numpy as np
 
 
 class UdfExec:
@@ -33,7 +33,8 @@ class UdfExec:
 
     def create_json_param(self):
         self.json_params = {
-            "data_id": uuid4(),
+            "general_id": uuid4(),
+            "hypercube_id": uuid4(),  # potentially multiple ones
             "source": self.input_params["udf"],
             "language": self.input_params["runtime"]
         }
@@ -74,13 +75,13 @@ class UdfExec:
         #         eo_deck.eo_mdc.iloc[k].raster.load_raster()
         #     )
         #array = xarray.DataArray(numpy.zeros(shape=(2, 3)), coords={'x': [1, 2], 'y': [1, 2, 3]}, dims=('x', 'y'))
-        
 
     def create_json(self):
         # TODO distinction between different types
         self.input_json = self.create_hypercube()
 
     def create_hypercube(self):
+        # TODO multiple hypercubes
         return {
             "code": {
                 "source": self.json_params["source"],
@@ -91,22 +92,25 @@ class UdfExec:
                 "proj": self.json_params["proj"],
                 "hypercubes": [
                     {
+                        "id": self.json_params["hypercube_id"],
+                        # order of dimensions have to match data structure
                         "dimensions": [
+                            {
+                                "name": "band",
+                                "coordinates": self.json_params["bands"]
+                            },
                             {
                                 "name": "time",
                                 "coordinates": self.json_params["time"],
                             }, {
-                                "name": "band",
-                                "coordinates": self.json_params["bands"]
+                                "name": "y",
+                                "coordinates": self.json_params["y"],
                             }, {
                                 "name": "x",
                                 "coordinates": self.json_params["x"],
-                            }, {
-                                "name": "y",
-                                "coordinates": self.json_params["y"],
                             }
                         ],
-                        "array": [1],
+                        "data": self.json_params["data"],
                     },
                 ],
             },
