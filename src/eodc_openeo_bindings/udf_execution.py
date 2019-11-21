@@ -39,25 +39,28 @@ class UdfExec:
             "language": self.input_params["runtime"]
         }
         eo_deck = eoDataReader(self.input_paths)
-        # TODO save information from eoDataReaders: proj, time, band, x- y-coord
         
         # NB assumes the projection is already the same for all rasters
         proj = osr.SpatialReference(wkt=eo_deck.eo_mdc.iloc[0].raster.projection)
         self.json_params["proj"] = "EPSG:" + proj.GetAttrValue('AUTHORITY', 1)
         
-        self.json_params["bands"] = list(eo_deck.eo_mdc.band)
-        self.json_params["time"] = list(eo_deck.eo_mdc.time.astype(str))
+        self.json_params["bands"] = list(set(eo_deck.eo_mdc.band))
+        self.json_params["time"] = list(set(eo_deck.eo_mdc.time.astype(str)))
         
-        x = np.arange(0, eo_deck.eo_mdc.iloc[0].raster.size_raster[0])
-        y = np.arange(0, eo_deck.eo_mdc.iloc[0].raster.size_raster[1])
+        x_size = eo_deck.eo_mdc.iloc[0].raster.size_raster[0]
+        y_size = eo_deck.eo_mdc.iloc[0].raster.size_raster[1]
+        x = np.arange(0, x_size)
+        y = np.arange(0, y_size)
         data = np.meshgrid(x, y)
         x = list(data[0].flatten())
         y = list(data[1].flatten())
-        (self.json_params["x"], self.json_params["y"]) = eo_deck.eo_mdc.iloc[0].raster.pix2coords((x, y))
+        x2, y2 = eo_deck.eo_mdc.iloc[0].raster.pix2coords((x, y))
+        self.json_params["x"] = x2[0:x_size]
+        self.json_params["y"] = y2[0::x_size]
         
         # Get data
         data = []
-        eo_mdc_groups = eo_deck.eo_mdc.groupby(['band', 'time'])
+        eo_mdc_groups = eo_deck.eo_mdc.groupby(['band'])
         for idx, eo_mdc_group in eo_mdc_groups:
             band_data = []
             for counter in np.arange(0, len(eo_mdc_group)):
@@ -68,13 +71,6 @@ class UdfExec:
             del band_data
         self.json_params["data"] = data
         del data
-        
-        # self.json_params["data"] = []
-        # for k in len(eo_deck.eo_mdc.bands):
-        #     self.json_params["data"].append(
-        #         eo_deck.eo_mdc.iloc[k].raster.load_raster()
-        #     )
-        #array = xarray.DataArray(numpy.zeros(shape=(2, 3)), coords={'x': [1, 2], 'y': [1, 2, 3]}, dims=('x', 'y'))
 
     def create_json(self):
         # TODO distinction between different types
@@ -102,10 +98,12 @@ class UdfExec:
                             {
                                 "name": "time",
                                 "coordinates": self.json_params["time"],
-                            }, {
+                            },
+                            {
                                 "name": "y",
                                 "coordinates": self.json_params["y"],
-                            }, {
+                            }, 
+                            {
                                 "name": "x",
                                 "coordinates": self.json_params["x"],
                             }
