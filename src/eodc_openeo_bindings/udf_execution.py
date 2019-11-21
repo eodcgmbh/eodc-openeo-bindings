@@ -4,11 +4,13 @@ from uuid import uuid4
 
 import requests
 from eodatareaders.eo_data_reader import eoDataReader
+import osr
+import numpy as np
 
 
 class UdfExec:
 
-    def __init__(self, input_paths: List[str], params: Dict[str]):
+    def __init__(self, input_paths: List[str], params: Dict[str, str]):
         self.url = "http://localhost:5000/udf"  # TODO should come from environment variable
         self.input_paths = input_paths
         self.input_params = params
@@ -35,8 +37,44 @@ class UdfExec:
             "source": self.input_params["udf"],
             "language": self.input_params["runtime"]
         }
-        reader = eoDataReader(self.input_paths)
+        eo_deck = eoDataReader(self.input_paths)
         # TODO save information from eoDataReaders: proj, time, band, x- y-coord
+        
+        # NB assumes the projection is already the same for all rasters
+        proj = osr.SpatialReference(wkt=eo_deck.eo_mdc.iloc[0].raster.projection)
+        self.json_params["proj"] = "EPSG:" + proj.GetAttrValue('AUTHORITY', 1)
+        
+        self.json_params["bands"] = list(eo_deck.eo_mdc.band)
+        self.json_params["time"] = list(eo_deck.eo_mdc.time.astype(str))
+        
+        x = np.arange(0, eo_deck.eo_mdc.iloc[0].raster.size_raster[0])
+        y = np.arange(0, eo_deck.eo_mdc.iloc[0].raster.size_raster[1])
+        data = np.meshgrid(x, y)
+        x = list(data[0].flatten())
+        y = list(data[1].flatten())
+        (self.json_params["x"], self.json_params["y"]) = eo_deck.eo_mdc.iloc[0].raster.pix2coords((x, y))
+        
+        # Get data
+        data = []
+        eo_mdc_groups = eo_deck.eo_mdc.groupby(['band', 'time'])
+        for idx, eo_mdc_group in eo_mdc_groups:
+            band_data = []
+            for counter in np.arange(0, len(eo_mdc_group)):
+                current_data = eo_mdc_group.iloc[counter].raster.load_raster()
+                band_data.append(current_data.tolist())
+                del current_data
+            data.append(band_data)
+            del band_data
+        self.json_params["data"] = data
+        del data
+        
+        # self.json_params["data"] = []
+        # for k in len(eo_deck.eo_mdc.bands):
+        #     self.json_params["data"].append(
+        #         eo_deck.eo_mdc.iloc[k].raster.load_raster()
+        #     )
+        #array = xarray.DataArray(numpy.zeros(shape=(2, 3)), coords={'x': [1, 2], 'y': [1, 2, 3]}, dims=('x', 'y'))
+        
 
     def create_json(self):
         # TODO distinction between different types
