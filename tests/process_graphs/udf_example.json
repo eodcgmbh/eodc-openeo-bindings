@@ -26,7 +26,7 @@
             "process_id": "run_udf",
             "arguments": {
               "data": {"from_argument": "data"},
-              "udf": "import os; print('Correctly imported module'); os.system('touch output.txt')",
+              "udf": "data2 = data.hypercube_list[0].get_array(); data2=data2*(-1); data.hypercube_list[0].set_array(data2)",
               "runtime": "python"
             },
             "result": true
