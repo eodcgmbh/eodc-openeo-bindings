@@ -18,6 +18,8 @@ class UdfExec:
         self.input_json: dict = None
         self.return_json: dict = None
 
+        self.execute()
+
     def execute(self):
         self.create_json_param()
         self.create_json()
@@ -31,7 +33,7 @@ class UdfExec:
         self.json_params = {
             "data_id": uuid4(),
             "source": self.input_params["udf"],
-            "language": self.input_params["language"]
+            "language": self.input_params["runtime"]
         }
         reader = eoDataReader(self.input_paths)
         # TODO save information from eoDataReaders: proj, time, band, x- y-coord
