@@ -14,7 +14,7 @@ class UdfExec:
         self.url = "http://localhost:5000/udf"  # TODO should come from environment variable
         self.input_paths = input_paths
         self.input_params = params
-        self.output_folder = self.input_params["output_folder"]
+        #self.output_folder = self.input_params["output_folder"]
 
         self.json_params: dict = None
         self.input_json: dict = None
@@ -33,8 +33,8 @@ class UdfExec:
 
     def create_json_param(self):
         self.json_params = {
-            "general_id": uuid4(),
-            "hypercube_id": uuid4(),  # potentially multiple ones
+            "general_id": str(uuid4()),
+            "hypercube_id": str(uuid4()),  # potentially multiple ones
             "source": self.input_params["udf"],
             "language": self.input_params["runtime"]
         }
@@ -88,7 +88,7 @@ class UdfExec:
                 "language": self.json_params["language"]
             },
             "data": {
-                "id": self.json_params["data_id"],
+                "id": self.json_params["general_id"],
                 "proj": self.json_params["proj"],
                 "hypercubes": [
                     {

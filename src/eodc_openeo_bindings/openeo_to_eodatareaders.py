@@ -52,7 +52,7 @@ def openeo_to_eodatareaders(process_graph_json, job_data, vrt_only=False):
             if reducer_dimension in ('temporal', 'time'):
                 reducer_dimension = 'time'
         
-        operator = "eodatareaders"
+        operator = "eoDataReader"
         udf_exists = False
         if graph.nodes[node_id].graph['process_id'] == 'run_udf':
             udf_exists = True
