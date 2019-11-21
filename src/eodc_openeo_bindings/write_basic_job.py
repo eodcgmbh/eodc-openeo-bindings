@@ -24,6 +24,7 @@ def write_basic_job(process_graph_json, job_data, python_filepath=None):
 '''\
 import glob
 from eodatareaders.eo_data_reader import eoDataReader
+from eodc_openeo_bindings.udf_execution import UdfExec
 '''
     )
     basic_job.write('\n')
@@ -35,6 +36,7 @@ from eodatareaders.eo_data_reader import eoDataReader
         params = node[1]
         filepaths = node[2]
         node_dependencies = node[3]
+        operator = node[4]
         
         if filepaths:
             filepaths0 = 'filepaths = '
@@ -58,9 +60,9 @@ from eodatareaders.eo_data_reader import eoDataReader
 params = {params}
 
 # evaluate node
-{node_id} = eoDataReader(filepaths, params)
+{node_id} = {operator}(filepaths, params)
 
-'''.format(node_id=node_id, params=params, filepaths=filepaths, filepaths0=filepaths0)
+'''.format(node_id=node_id, params=params, filepaths=filepaths, filepaths0=filepaths0, operator=operator)
                 
         translated_nodes_keys.append(node_id)
     
@@ -69,6 +71,7 @@ params = {params}
         params = node[1]
         filepaths = node[2]
         node_dependencies = node[3]
+        operator = node[4]
         
         current_index = translated_nodes_keys.index(node_id)
         dep_indices = []
@@ -87,10 +90,11 @@ params = {params}
     
     # Get output file format from last node (should be save_raster)
     output_format = None
+    output_folder = None
     for item in params:
-        if item['name'] == 'set_output_folder':
+        if isinstance(item, dict) and item['name'] == 'set_output_folder':
             output_folder = item['folder_name']
-        if item['name'] == 'save_raster':
+        if isinstance(item, dict) and item['name'] == 'save_raster':
             if 'format' in item.keys():
                 output_format = item['name']['format']
             else:

@@ -100,8 +100,12 @@ def map_reduce(process):
         if per_file:
             dict_item['per_file'] = per_file
     else:
+        if process['reducer_name'] == 'run_udf':
+            format_type = 'Gtiff'
+        else:
+            format_type = 'vrt'
         # Add saving to vrt, else no vrt file is generated
-        dict_item = map_save_result(process, delete_vrt=False, format_type='vrt')[0]
+        dict_item = map_save_result(process, delete_vrt=False, format_type=format_type)[0]
 
     return [dict_item]
     
