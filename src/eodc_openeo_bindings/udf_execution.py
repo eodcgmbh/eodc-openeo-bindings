@@ -40,10 +40,10 @@ def array_to_raster(array, out_folder, out_filename, wkt_projection, raster_size
 class UdfExec:
 
     def __init__(self, input_paths: List[str], params: Dict[str, str]):
-        self.url = "http://localhost:5000/udf"  # TODO should come from environment variable
         self.input_paths = input_paths
         self.input_params = params
         self.output_folder = self.input_params["output_folder"]
+        self.url = self.get_url()
 
         self.json_params: dict = None
         self.input_json: dict = None
@@ -60,6 +60,14 @@ class UdfExec:
             return Exception(response)
         self.return_json = json.loads(response)
         self.write_to_disk()
+
+    def get_url(self):
+        runtime = self.input_params["runtime"]
+        if runtime == "python":
+            return os.environ.get("OPENEO_PYTHON_UDF_URL")
+        if runtime == "r":
+            return os.environ.get("OPENEO_R_UDF_URL")
+        raise Exception(f"Runtime {runtime} is currently not supported")
 
     def create_json_param(self):
         self.json_params = {
