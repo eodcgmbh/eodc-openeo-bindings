@@ -1,3 +1,4 @@
+import os
 import json
 from typing import List, Dict
 from uuid import uuid4
@@ -11,16 +12,19 @@ from geopathfinder.naming_conventions.eodr_naming import eoDRFilename
 from osgeo import gdal
 
 
-def array_to_raster(array, out_filename, wkt_projection, raster_size, pix_size, geotransform, x_min, y_max):
+def array_to_raster(array, out_folder, out_filename, wkt_projection, raster_size, pix_size, geotransform, x_min, y_max):
     """Array > Raster
     Save a raster from a C order array.
 
     :param array: ndarray
     """
+    
+    os.makedirs(out_folder, exist_ok=True)
+    out_filepath = os.path.join(out_folder, out_filename)
 
     driver = gdal.GetDriverByName('GTiff')
     dataset = driver.Create(
-        out_filename,
+        out_filepath,
         raster_size[0],
         raster_size[1],
         1,
@@ -39,7 +43,7 @@ class UdfExec:
         self.url = "http://localhost:5000/udf"  # TODO should come from environment variable
         self.input_paths = input_paths
         self.input_params = params
-        #self.output_folder = self.input_params["output_folder"]
+        self.output_folder = self.input_params["output_folder"]
 
         self.json_params: dict = None
         self.input_json: dict = None
@@ -176,10 +180,10 @@ class UdfExec:
                 eo_deck = eoDataReader()
                 filename_fields = {}
                 filename_fields['band'] = cube['dimensions'][0]['coordinates'][indices[0]]
-                filename_fields['dt_1'] = cube['dimensions'][1]['coordinates'][indices[1]].replace('-','').replace(' ', 'T').replace(':','').split('+')[0]                
+                filename_fields['dt_1'] = cube['dimensions'][1]['coordinates'][indices[1]].replace('-','').replace(' ', 'T').replace(':','').split('+')[0]
                 eodr_filename = str(eoDRFilename(filename_fields, ext='.tif'))
                 # Save array to disk
-                array_to_raster(raster2, eodr_filename, 
+                array_to_raster(raster2, self.output_folder, eodr_filename, 
                                 self.input_json_extra["proj_full"], self.input_json_extra["size_raster"],
                                 self.input_json_extra["size_pixel"], self.input_json_extra["geotransform"], 
                                 np.min(cube['dimensions'][3]['coordinates']), np.max(cube['dimensions'][2]['coordinates'])

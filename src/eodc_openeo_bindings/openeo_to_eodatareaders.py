@@ -57,7 +57,7 @@ def openeo_to_eodatareaders(process_graph_json, job_data, vrt_only=False):
         if graph.nodes[node_id].graph['process_id'] == 'run_udf':
             udf_exists = True
             operator = "UdfExec"
-            params = map_udf(graph.nodes[node_id].graph)
+            params = map_udf(graph.nodes[node_id].graph, job_data, node_id)
             filepaths = None
         else:
             params, filepaths = map_process(
