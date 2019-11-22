@@ -1,9 +1,9 @@
-import os
+import itertools
 import json
+import os
 from typing import List, Dict
 from uuid import uuid4
 
-import itertools
 import numpy as np
 import osr
 import requests
@@ -12,7 +12,7 @@ from geopathfinder.naming_conventions.eodr_naming import eoDRFilename
 from osgeo import gdal
 
 
-def array_to_raster(array, out_folder, out_filename, wkt_projection, raster_size, pix_size, geotransform, x_min, y_max):
+def array_to_raster(array, out_folder, out_filename, wkt_projection, raster_size, geotransform):
     """Array > Raster
     Save a raster from a C order array.
 
@@ -158,37 +158,43 @@ class UdfExec:
 
     def write_to_disk(self):
         # TODO extent to other data types
+        def set_filename_param(filename_field, dim_name):
+            if dim_name in dim_idx:
+                dim_param_idx = dim_idx[dim_name]
+                filename_fields[filename_field] = cube["dimensions"][dim_param_idx]["coordinates"][indices[dim_param_idx]]
+            if dim_name == "time":
+                filename_fields[filename_field] = self.convert_datetime_fmt(filename_fields[filename_field])
+
         for cube in self.return_json['hypercubes']:
-            
+            # create dict of {dim_name: dim_index}
+            dim_idx = {}
+            for idx, dim in enumerate(cube['dimensions']):
+                dim_idx[dim["name"]] = idx
+
             num_dims = len(cube['dimensions']) - 2
             dim_elems = []
             for k in np.arange(num_dims):
                 dim = cube['dimensions'][k]
                 dim_elems.append(list(np.arange(0, len(dim['coordinates']))))
-            
+
             indices_list = list(itertools.product(*dim_elems))
             for indices in indices_list:
                 raster = cube['data']            
-                #dims = []
                 for k, index in enumerate(indices):
-                    #dims.append(cube['dimensions'][k]['coordinates'])
                     raster = raster[index]
-                
                 raster2 = np.array(raster)
                 
-                # Create filename
-                eo_deck = eoDataReader()
+                # Create filename, set needed params if given in dimensions
                 filename_fields = {}
-                filename_fields['band'] = cube['dimensions'][0]['coordinates'][indices[0]]
-                filename_fields['dt_1'] = cube['dimensions'][1]['coordinates'][indices[1]].replace('-','').replace(' ', 'T').replace(':','').split('+')[0]
+                set_filename_param(filename_field="band", dim_name="band")
+                set_filename_param(filename_field="dt_1", dim_name="time")
                 eodr_filename = str(eoDRFilename(filename_fields, ext='.tif'))
                 # Save array to disk
                 array_to_raster(raster2, self.output_folder, eodr_filename, 
                                 self.input_json_extra["proj_full"], self.input_json_extra["size_raster"],
-                                self.input_json_extra["size_pixel"], self.input_json_extra["geotransform"], 
-                                np.min(cube['dimensions'][3]['coordinates']), np.max(cube['dimensions'][2]['coordinates'])
+                                self.input_json_extra["geotransform"]
                                 )
-    
 
-                
-        
+    @staticmethod
+    def convert_datetime_fmt(time_str: str):
+        return time_str.replace('-', '').replace(' ', 'T').replace(':', '').split('+')[0]
