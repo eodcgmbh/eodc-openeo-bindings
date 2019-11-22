@@ -2,10 +2,35 @@ import json
 from typing import List, Dict
 from uuid import uuid4
 
+import itertools
 import numpy as np
 import osr
 import requests
 from eodatareaders.eo_data_reader import eoDataReader
+from geopathfinder.naming_conventions.eodr_naming import eoDRFilename
+from osgeo import gdal
+
+
+def array_to_raster(array, out_filename, wkt_projection, raster_size, pix_size, geotransform, x_min, y_max):
+    """Array > Raster
+    Save a raster from a C order array.
+
+    :param array: ndarray
+    """
+
+    driver = gdal.GetDriverByName('GTiff')
+    dataset = driver.Create(
+        out_filename,
+        raster_size[0],
+        raster_size[1],
+        1,
+        gdal.GDT_Float32, )
+
+    dataset.SetGeoTransform(geotransform)
+
+    dataset.SetProjection(wkt_projection)
+    dataset.GetRasterBand(1).WriteArray(array)
+    dataset.FlushCache()  # Write to disk.
 
 
 class UdfExec:
@@ -19,6 +44,7 @@ class UdfExec:
         self.json_params: dict = None
         self.input_json: dict = None
         self.return_json: dict = None
+        self.input_json_extra: dict = None
 
         self.execute()
 
@@ -38,6 +64,7 @@ class UdfExec:
             "source": self.input_params["udf"],
             "language": self.input_params["runtime"]
         }
+        self.input_json_extra = {}
         eo_deck = eoDataReader(self.input_paths)
         
         # NB assumes the projection is already the same for all rasters
@@ -47,8 +74,13 @@ class UdfExec:
         self.json_params["bands"] = list(set(eo_deck.eo_mdc.band))
         self.json_params["time"] = list(set(eo_deck.eo_mdc.time.astype(str)))
         
-        x_size = eo_deck.eo_mdc.iloc[0].raster.size_raster[0]
-        y_size = eo_deck.eo_mdc.iloc[0].raster.size_raster[1]
+        self.input_json_extra["proj_full"] = eo_deck.eo_mdc.iloc[0].raster.projection
+        self.input_json_extra["geotransform"] = eo_deck.eo_mdc.iloc[0].raster.geotransform
+        self.input_json_extra["size_pixel"] = eo_deck.eo_mdc.iloc[0].raster.size_pixel[0]
+        self.input_json_extra["size_raster"] = eo_deck.eo_mdc.iloc[0].raster.size_raster
+        
+        x_size = self.input_json_extra["size_raster"][0]
+        y_size = self.input_json_extra["size_raster"][1]
         x = np.arange(0, x_size)
         y = np.arange(0, y_size)
         data = np.meshgrid(x, y)
@@ -121,5 +153,38 @@ class UdfExec:
         return False, response.text
 
     def write_to_disk(self):
-        # TODO write response json to disk
-        pass
+        # TODO extent to other data types
+        for cube in self.return_json['hypercubes']:
+            
+            num_dims = len(cube['dimensions']) - 2
+            dim_elems = []
+            for k in np.arange(num_dims):
+                dim = cube['dimensions'][k]
+                dim_elems.append(list(np.arange(0, len(dim['coordinates']))))
+            
+            indices_list = list(itertools.product(*dim_elems))
+            for indices in indices_list:
+                raster = cube['data']            
+                #dims = []
+                for k, index in enumerate(indices):
+                    #dims.append(cube['dimensions'][k]['coordinates'])
+                    raster = raster[index]
+                
+                raster2 = np.array(raster)
+                
+                # Create filename
+                eo_deck = eoDataReader()
+                filename_fields = {}
+                filename_fields['band'] = cube['dimensions'][0]['coordinates'][indices[0]]
+                filename_fields['dt_1'] = cube['dimensions'][1]['coordinates'][indices[1]].replace('-','').replace(' ', 'T').replace(':','').split('+')[0]                
+                eodr_filename = str(eoDRFilename(filename_fields, ext='.tif'))
+                # Save array to disk
+                array_to_raster(raster2, eodr_filename, 
+                                self.input_json_extra["proj_full"], self.input_json_extra["size_raster"],
+                                self.input_json_extra["size_pixel"], self.input_json_extra["geotransform"], 
+                                np.min(cube['dimensions'][3]['coordinates']), np.max(cube['dimensions'][2]['coordinates'])
+                                )
+    
+
+                
+        
