@@ -91,14 +91,19 @@ params = {params}
     # Get output file format from last node (should be save_raster)
     output_format = None
     output_folder = None
-    for item in params:
-        if isinstance(item, dict) and item['name'] == 'set_output_folder':
-            output_folder = item['folder_name']
-        if isinstance(item, dict) and item['name'] == 'save_raster':
-            if 'format' in item.keys():
-                output_format = item['name']['format']
-            else:
-                output_format = 'Gtiff'
+    if isinstance(params, dict) and 'udf' in params:
+        output_folder = params['output_folder']
+        output_format = 'Gtiff'
+    else:
+        for item in params:
+            import pdb; pdb.set_trace()
+            if isinstance(item, dict) and item['name'] == 'set_output_folder':
+                output_folder = item['folder_name']
+            if isinstance(item, dict) and item['name'] == 'save_raster':
+                if 'format' in item.keys():
+                    output_format = item['name']['format']
+                else:
+                    output_format = 'Gtiff'
     
     # Close file
     basic_job.close()
