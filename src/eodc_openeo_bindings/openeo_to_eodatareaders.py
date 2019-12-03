@@ -4,6 +4,7 @@
 
 from openeo_pg_parser_python.translate_process_graph import translate_graph
 from eodc_openeo_bindings.map_processes import map_process
+from eodc_openeo_bindings.map_udf import map_udf
 
 
 def openeo_to_eodatareaders(process_graph_json, job_data, vrt_only=False):
@@ -50,15 +51,24 @@ def openeo_to_eodatareaders(process_graph_json, job_data, vrt_only=False):
                 reducer_dimension = 'band'
             if reducer_dimension in ('temporal', 'time'):
                 reducer_dimension = 'time'
-        params, filepaths = map_process(
-                                        graph.nodes[node_id].graph,
-                                        graph.nodes[node_id].name,
-                                        graph.nodes[node_id].id,
-                                        job_data,
-                                        reducer_name=reducer_name,
-                                        reducer_dimension=reducer_dimension,
-                                        vrt_only=vrt_only
-                                        )
+        
+        operator = "eoDataReader"
+        udf_exists = False
+        if graph.nodes[node_id].graph['process_id'] == 'run_udf':
+            udf_exists = True
+            operator = "UdfExec"
+            params = map_udf(graph.nodes[node_id].graph, job_data, node_id)
+            filepaths = None
+        else:
+            params, filepaths = map_process(
+                                            graph.nodes[node_id].graph,
+                                            graph.nodes[node_id].name,
+                                            graph.nodes[node_id].id,
+                                            job_data,
+                                            reducer_name=reducer_name,
+                                            reducer_dimension=reducer_dimension,
+                                            vrt_only=vrt_only
+                                            )
         # Get node dependencies
         if not node_dependencies and graph.nodes[node_id].dependencies:
             node_dependencies = []
@@ -71,6 +81,6 @@ def openeo_to_eodatareaders(process_graph_json, job_data, vrt_only=False):
                         params[k]['per_file'] = 'True'
         
         # Add to nodes list
-        nodes.append((graph.nodes[node_id].id, params, filepaths, node_dependencies))
+        nodes.append((graph.nodes[node_id].id, params, filepaths, node_dependencies, operator))
         
     return nodes, graph
