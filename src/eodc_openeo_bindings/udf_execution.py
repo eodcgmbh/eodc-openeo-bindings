@@ -83,8 +83,8 @@ class UdfExec:
         proj = osr.SpatialReference(wkt=eo_deck.eo_mdc.iloc[0].raster.projection)
         self.json_params["proj"] = "EPSG:" + proj.GetAttrValue('AUTHORITY', 1)
         
-        self.json_params["bands"] = list(set(eo_deck.eo_mdc.band))
-        self.json_params["time"] = list(set(eo_deck.eo_mdc.time.astype(str)))
+        self.json_params["bands"] = sorted(list(set(eo_deck.eo_mdc.band)))
+        self.json_params["time"] = sorted(list(set(eo_deck.eo_mdc.time.astype(str))))
         
         self.input_json_extra["proj_full"] = eo_deck.eo_mdc.iloc[0].raster.projection
         self.input_json_extra["geotransform"] = eo_deck.eo_mdc.iloc[0].raster.geotransform
