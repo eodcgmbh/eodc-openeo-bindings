@@ -8,7 +8,7 @@ import numpy as np
 import osr
 import requests
 from eodatareaders.eo_data_reader import eoDataReader
-from geopathfinder.naming_conventions.eodr_naming import eoDRFilename
+from geopathfinder.naming_conventions.eodr_naming import EODRFilename
 from osgeo import gdal
 
 
@@ -196,7 +196,7 @@ class UdfExec:
                 filename_fields = {}
                 set_filename_param(filename_field="band", dim_name="band")
                 set_filename_param(filename_field="dt_1", dim_name="time")
-                eodr_filename = str(eoDRFilename(filename_fields, ext='.tif'))
+                eodr_filename = str(EODRFilename(filename_fields, ext='.tif'))
                 # Save array to disk
                 array_to_raster(raster2, self.output_folder, eodr_filename, 
                                 self.input_json_extra["proj_full"], self.input_json_extra["size_raster"],
