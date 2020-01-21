@@ -96,7 +96,6 @@ params = {params}
         output_format = 'Gtiff'
     else:
         for item in params:
-            import pdb; pdb.set_trace()
             if isinstance(item, dict) and item['name'] == 'set_output_folder':
                 output_folder = item['folder_name']
             if isinstance(item, dict) and item['name'] == 'save_raster':
