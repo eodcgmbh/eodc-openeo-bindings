@@ -147,6 +147,19 @@ def map_save_result(process, delete_vrt=False, format_type = None, band_label=No
     return [dict_item]
 
 
+def map_merge_cubes(process):
+    """
+    
+    """    
+    
+    dict_item_list = [
+        {'name': 'sort_cube'},
+        map_save_result(process, delete_vrt=False, format_type='vrt')[0]  # add saving to vrt, else no vrt file is generated
+        ]
+
+    return dict_item_list
+
+
 def csw_query(collection, spatial_extent, temporal_extent):
     """
     Retrieves a file list from the EODC CSW server according to the specified parameters.
