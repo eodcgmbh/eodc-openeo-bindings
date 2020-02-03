@@ -1,32 +1,14 @@
 from typing import Optional, Union, Tuple
 
-
-class JobWriterUtils:
-
-    def get_file_list(self, filepaths: Union[str, list]) -> str:
-        if isinstance(filepaths, str):
-            file_list = f'''\
-filepaths = sorted(glob.glob('{filepaths}' + '/*'))'''
-
-        elif isinstance(filepaths, list):
-            file_list = f'''\
-input_filepaths = {filepaths}
-filepaths = []
-for path in {filepaths}:
-    filepaths.extend(sorted(glob.glob(path + '/*')))'''
-
-        else:
-            raise Exception(f'Filepaths of type {type(filepaths)} are not supported!')
-
-        return file_list
+from eodc_openeo_bindings.job_writer.utils import JobWriterUtils
 
 
 class JobWriter:
 
     utils = JobWriterUtils()
 
-    def __init__(self, process_graph_json: Union[str, dict], job_data, filepath: str = None):
-        self.filepath = self.get_filepath(filepath)
+    def __init__(self, process_graph_json: Union[str, dict], job_data, output_filepath: str = None):
+        self.output_filepath = self.get_filepath(output_filepath)
         self.process_graph_json = process_graph_json
         self.job_data = job_data
 
@@ -65,6 +47,7 @@ class JobWriter:
             job = self.append_to_job(job, nodes[node_id])
 
         self.close_job(job)
+        return self.output_format, self.output_folder
 
     def get_imports(self) -> str:
         pass
@@ -84,6 +67,7 @@ class JobWriter:
                 self.output_folder = item['folder_name']
             if item['name'] == 'save_raster':
                 if 'format' in item.keys():
+                    # TODO check this is working!
                     self.output_format = item['name']['format']
                 else:
                     self.output_format = 'Gtiff'

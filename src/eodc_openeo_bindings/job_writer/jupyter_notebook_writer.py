@@ -15,7 +15,7 @@ class JupyterNotebookWriter(SimpleJobWriter):
 
     def close_job(self, job):
         # Write data to file!
-        nbf.write(job, self.filepath)
+        nbf.write(job, self.output_filepath)
 
     def append_to_job(self, job, content):
         job['cells'].append(nbf.v4.new_code_cell(content))

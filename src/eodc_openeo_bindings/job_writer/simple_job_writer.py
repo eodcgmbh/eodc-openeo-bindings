@@ -1,3 +1,4 @@
+import os
 from typing import Tuple
 
 from eodc_openeo_bindings.job_writer.job_writer import JobWriter
@@ -67,5 +68,6 @@ params = {params}
             this_node = translated_nodes_keys.pop(current_index)
             translated_nodes_keys.insert(max(dep_indices) + 1, this_node)
 
-        self.set_output_format_and_folder(translated_nodes[translated_nodes_keys[-1]])
+        last_node = [node for node in nodes if node[0] == translated_nodes_keys[-1]][0]
+        self.set_output_format_and_folder(last_node)
         return translated_nodes, translated_nodes_keys

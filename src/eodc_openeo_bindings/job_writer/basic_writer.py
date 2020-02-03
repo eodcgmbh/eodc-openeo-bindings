@@ -7,7 +7,7 @@ class BasicJobWriter(SimpleJobWriter):
         return 'test.py'
 
     def open_job(self):
-        return open(self.filepath, 'w+')
+        return open(self.output_filepath, 'w+')
 
     def close_job(self, job):
         job.close()
