@@ -32,7 +32,7 @@ for path in input_filepaths:
         if not isinstance(node_ids, list):
             node_ids = [node_ids]
 
-        subfolders = glob.glob(job_folder + '/*')  # TODO check if os.listdir can do the same
+        subfolders = glob.glob(job_folder + '/*')
         for folder in subfolders:
             for k, node_id in enumerate(node_ids):
                 if (node_id.split('_')[0] + '_') in folder.split('/')[-1]:
@@ -51,11 +51,9 @@ for path in input_filepaths:
                 if key_value and item[key_name] == key_value:
                     value_name_matches = True
             index = k
-
-        # double check that process is indeed parallelizable > TODO separate!
         return key_name_exists, value_name_matches, index
 
-    def get_input_paths(self, node_dependencies, job_data, parallelize):
+    def get_filepaths_from_dependencies(self, node_dependencies, job_data, parallelize):
         """
         Create filepaths as a list of folders or list of files
         """
@@ -72,10 +70,8 @@ for path in input_filepaths:
             counter = 0
             while counter >= 0:
                 counter += 1
-                paths_tmp = []
-                for k, _ in enumerate(node_dependencies_path):
-                    paths_tmp.extend(
-                        glob.glob(node_dependencies_path[k] + '/*_*_*_{value}_*'.format(value=str(counter))))
+                paths_tmp = [glob.glob(os.path.join(cur_dep_path, f'/*_*_*_{str(counter)}_*'))
+                             for k, cur_dep_path in enumerate(node_dependencies_path)]
                 if paths_tmp:
                     filepaths.append(paths_tmp)
                 else:

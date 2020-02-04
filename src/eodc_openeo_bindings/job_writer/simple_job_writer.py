@@ -9,9 +9,9 @@ class SimpleJobWriter(JobWriter):
 
     def get_imports(self) -> str:
         return '''\
-    import glob
-    from eodatareaders.eo_data_reader import eoDataReader
-    '''
+import glob
+from eodatareaders.eo_data_reader import eoDataReader
+'''
 
     def get_node_txt(self, node_id, params, filepaths, filepaths0):
         return f'''\
@@ -24,7 +24,8 @@ params = {params}
 
 # evaluate node
 {node_id} = eoDataReader(filepaths, params)
-    '''
+
+'''
 
     def get_nodes(self) -> Tuple[dict, list]:
         nodes, graph = openeo_to_eodatareaders(self.process_graph_json, self.job_data)
@@ -41,7 +42,7 @@ params = {params}
                 filepaths0 = 'filepaths = '
             else:
                 if not node_dependencies:
-                    raise Exception(f'No filepaths and no node dependencies for node:{node_id}')
+                    raise Exception(f'No filepaths and no node dependencies for node: {node_id}')
 
                 filepaths0 = ''
                 filepaths = []

@@ -1,17 +1,13 @@
+from typing import Union
+
+from eodc_openeo_bindings.job_writer.file_handler import BasicFileHandler
 from eodc_openeo_bindings.job_writer.simple_job_writer import SimpleJobWriter
 
 
 class BasicJobWriter(SimpleJobWriter):
 
+    def __init__(self, process_graph_json: Union[str, dict], job_data, output_filepath: str = None):
+        super().__init__(process_graph_json, job_data, BasicFileHandler, output_filepath)
+
     def get_default_filepath(self):
         return 'test.py'
-
-    def open_job(self):
-        return open(self.output_filepath, 'w+')
-
-    def close_job(self, job):
-        job.close()
-
-    def append_to_job(self, job, content):
-        job.write(content)
-        return job

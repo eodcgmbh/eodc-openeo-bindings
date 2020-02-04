@@ -24,8 +24,7 @@ def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node):
     user_name = "jdoe_67890"
 
     writer = AirflowDagWriter(job_id, user_name, process_graph_json=evi_file, job_data=job_data)
-    writer.write_job()
-    writer.move_dag()
+    writer.write_and_move_job()
 
     with open(out_filepath) as outfile:
         out_content = outfile.read()
@@ -68,7 +67,8 @@ def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node):
                 assert value.split('/')[-2].startswith(cur_ref_node.name)
 
     # needs to match the before checked input paths!
-    assert len(actual_relations) == 14  # TODO class writes additional line at the end!
+    actual_relations = [ar for ar in actual_relations if ar != '']
+    assert len(actual_relations) == 13
 
     for actual_relation in actual_relations:
         actual_name = actual_relation.split('_')[0]
@@ -82,7 +82,7 @@ def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node):
             # Check input path match the correct dependency nodes
             assert cur_actual_dep.startswith(ref_dep)
 
-    # os.remove(out_filepath)
+    os.remove(out_filepath)
 
 
 def test_airflow_dag_parallele(csw_server, test_folder, evi_file, evi_ref_node):

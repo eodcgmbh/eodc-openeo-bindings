@@ -1,14 +1,16 @@
+from abc import ABC, abstractmethod
 from typing import Optional, Union, Tuple
 
 from eodc_openeo_bindings.job_writer.utils import JobWriterUtils
 
 
-class JobWriter:
+class JobWriter(ABC):
 
     utils = JobWriterUtils()
 
-    def __init__(self, process_graph_json: Union[str, dict], job_data, output_filepath: str = None):
-        self.output_filepath = self.get_filepath(output_filepath)
+    def __init__(self, process_graph_json: Union[str, dict], job_data, file_handler, output_filepath: str = None):
+
+        self.file_handler = file_handler(self.get_filepath(output_filepath))
         self.process_graph_json = process_graph_json
         self.job_data = job_data
 
@@ -23,38 +25,31 @@ class JobWriter:
     def get_default_filepath(self) -> str:
         pass
 
-    def open_job(self):
-        pass
-
-    def append_to_job(self, job, content):
-        pass
-
-    def close_job(self, job):
-        pass
-
     def write_job(self):
-        job = self.open_job()
-        job = self.append_to_job(job, self.get_imports())
-        job = self.append_to_job(job, '\n')
+        self.file_handler.open()
+        self.file_handler.append(self.get_imports())
+        self.file_handler.append('\n')
 
         additional_header = self.get_additional_header()
         if additional_header:
-            job = self.append_to_job(job, additional_header)
-            job = self.append_to_job(job, '\n')
+            self.file_handler.append(additional_header)
+            self.file_handler.append('\n')
 
         nodes, ordered_keys = self.get_nodes()
         for node_id in ordered_keys:
-            job = self.append_to_job(job, nodes[node_id])
+            self.file_handler.append(nodes[node_id])
 
-        self.close_job(job)
+        self.file_handler.close()
         return self.output_format, self.output_folder
 
+    @abstractmethod
     def get_imports(self) -> str:
         pass
 
     def get_additional_header(self) -> Optional[str]:
         return None
 
+    @abstractmethod
     def get_nodes(self) -> Tuple[dict, list]:
         # Needs to call set_output_format_and_folder
         pass
