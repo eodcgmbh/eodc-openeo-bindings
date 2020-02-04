@@ -6,7 +6,6 @@ This test checks the input file generation of a airflow dag job.
 import os
 import re
 
-from eodc_openeo_bindings.write_airflow_dag import write_airflow_dag
 from eodc_openeo_bindings.job_writer.dag_writer import AirflowDagWriter
 
 
@@ -82,6 +81,37 @@ def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node):
             # Check input path match the correct dependency nodes
             assert cur_actual_dep.startswith(ref_dep)
 
+    # os.remove(out_filepath)
+
+
+def test_airflow_dag_vrt_only(csw_server, test_folder, evi_file):
+    os.environ['AIRFLOW_DAGS'] = os.path.join(test_folder, 'airflow_dag')
+    job_data = os.path.join(test_folder, 'openeo_job')
+
+    job_id = "jb-12346"
+    out_filepath = os.path.join(os.environ['AIRFLOW_DAGS'], 'dag_' + job_id + '.py')
+    user_name = "jdoe_67890"
+
+    writer = AirflowDagWriter(job_id, user_name, process_graph_json=evi_file, job_data=job_data, vrt_only=True)
+    writer.write_and_move_job()
+
+    with open(out_filepath) as outfile:
+        out_content = outfile.read()
+
+    actual_nodes = re.split(r'[A-Za-z]*_[A-Za-z0-9]* = ', out_content)[2:]  # Discard header and dag definition
+    assert len(actual_nodes) == 14
+    actual_nodes[13] = actual_nodes[13].split('\n\n')[0]
+
+    for actual_node in actual_nodes:
+        actual_params = actual_node.split('\n')[3].strip()
+        actual_params = actual_params.split('=')[-1].strip()
+        actual_params = eval(actual_params)
+        for key, value in actual_params[-1].items():
+            # Check output format is vrt
+            if key == 'format_type':
+                assert value == 'vrt'
+            # TODO not in each cell?
+
     os.remove(out_filepath)
 
 
@@ -89,8 +119,9 @@ def test_airflow_dag_parallele(csw_server, test_folder, evi_file, evi_ref_node):
     os.environ['AIRFLOW_DAGS'] = os.path.join(test_folder, 'airflow_dag')
     job_data = os.path.join(test_folder, 'openeo_job')
 
-    job_id = "jb-12345"
-    out_filepath = os.path.join(os.environ['AIRFLOW_DAGS'], f'dag_{job_id}_parallelize.py')
+    job_id = "jb-first_step"
+    out_filepath = os.path.join(os.environ['AIRFLOW_DAGS'], 'dag_' + job_id + '.py')
     user_name = "jdoe_67890"
 
-    write_airflow_dag(job_id, user_name, process_graph_json=evi_file, job_data=job_data, parallelize_tasks=True)
+    writer = AirflowDagWriter(job_id, user_name, process_graph_json=evi_file, job_data=job_data, vrt_only=True)
+    writer.write_and_move_job()
