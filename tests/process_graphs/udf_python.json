@@ -1,0 +1,38 @@
+{
+  "dc": {
+    "process_id": "load_collection",
+    "description": "Loading the data; The order of the specified bands is important for the following reduce operation.",
+    "arguments": {
+      "id": "s2a_prd_msil1c",
+      "spatial_extent": {
+        "west": 11.279182434082033,
+        "east": 11.406898498535158,
+        "north": 46.522729291844286,
+        "south": 46.464349400461145
+      },
+      "temporal_extent": ["2018-06-04T00:00:00.000Z", "2018-06-12T00:00:00.000Z"],
+      "bands": [8]
+    }
+  },
+  "udfnode": {
+    "process_id": "reduce",
+    "description": " ",
+    "arguments": {
+      "data": {"from_node": "dc"},
+      "dimension": "temporal",
+      "reducer": {
+        "callback": {
+          "udf": {
+            "process_id": "run_udf",
+            "arguments": {
+              "data": {"from_argument": "data"},
+              "udf": "data2 = data.hypercube_list[0].get_array(); data2=data2*(-1); data.hypercube_list[0].set_array(data2)",
+              "runtime": "python"
+            },
+            "result": true
+          }
+        }
+      }
+    }
+  }
+}
