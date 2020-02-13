@@ -26,11 +26,12 @@ for path in input_filepaths:
         """
         Get matching node discarding the hash.
         """
-        if not (os.path.isdir(job_folder) and node_ids):
-            return node_ids
-
+        
         if not isinstance(node_ids, list):
             node_ids = [node_ids]
+            
+        if not (os.path.isdir(job_folder) and node_ids):
+            return node_ids
 
         subfolders = glob.glob(job_folder + '/*')
         for folder in subfolders:
