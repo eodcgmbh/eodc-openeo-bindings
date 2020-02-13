@@ -30,7 +30,7 @@ def csw_server():
 @pytest.fixture()
 def evi_file():
     test_folder = get_test_folder()
-    return os.path.join(test_folder, 'process_graphs/evi.json')
+    return os.path.join(test_folder, 'tests/process_graphs/evi.json')
 
 
 @pytest.fixture()
