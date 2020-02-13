@@ -14,8 +14,21 @@ def get_ref_node_from_name(name, all_nodes):
     return all_nodes[cur_ref_index]
 
 
-def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node):
+def setup_folder(test_folder):
     os.environ['AIRFLOW_DAGS'] = os.path.join(test_folder, 'airflow_dag')
+    os.makedirs(os.environ['AIRFLOW_DAGS'])
+        
+
+def cleanup(out_filepath):
+
+    os.remove(out_filepath)
+    os.rmdir(os.environ['AIRFLOW_DAGS'])
+
+
+def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node):
+
+    setup_folder(test_folder)
+        
     job_data = os.path.join(test_folder, 'openeo_job')
 
     job_id = "jb-12345"
@@ -81,11 +94,13 @@ def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node):
             # Check input path match the correct dependency nodes
             assert cur_actual_dep.startswith(ref_dep)
 
-    # os.remove(out_filepath)
+    cleanup(out_filepath)
 
 
 def test_airflow_dag_vrt_only(csw_server, test_folder, evi_file):
-    os.environ['AIRFLOW_DAGS'] = os.path.join(test_folder, 'airflow_dag')
+    
+    setup_folder(test_folder)
+    
     job_data = os.path.join(test_folder, 'openeo_job')
 
     job_id = "jb-12346"
@@ -112,11 +127,13 @@ def test_airflow_dag_vrt_only(csw_server, test_folder, evi_file):
                 assert value == 'vrt'
             # TODO not in each cell?
 
-    os.remove(out_filepath)
+    cleanup(out_filepath)
 
 
 def test_airflow_dag_parallele(csw_server, test_folder, evi_file, evi_ref_node):
-    os.environ['AIRFLOW_DAGS'] = os.path.join(test_folder, 'airflow_dag')
+    
+    setup_folder(test_folder)
+    
     job_data = os.path.join(test_folder, 'openeo_job')
 
     job_id = "jb-first_step"
@@ -125,3 +142,7 @@ def test_airflow_dag_parallele(csw_server, test_folder, evi_file, evi_ref_node):
 
     writer = AirflowDagWriter(job_id, user_name, process_graph_json=evi_file, job_data=job_data, vrt_only=True)
     writer.write_and_move_job()
+    
+    # TODO add checks
+    
+    cleanup(out_filepath)
