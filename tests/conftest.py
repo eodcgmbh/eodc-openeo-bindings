@@ -24,13 +24,19 @@ def test_folder():
 
 @pytest.fixture()
 def csw_server():
-    os.environ['CSW_SERVER'] = 'https://csw.eodc.eu'
+    os.environ['CSW_SERVER'] = 'http://pycsw:8000'
 
 
 @pytest.fixture()
 def evi_file():
     test_folder = get_test_folder()
     return os.path.join(test_folder, 'tests/process_graphs/evi.json')
+    
+
+@pytest.fixture()
+def ref_airflow_job_folder():
+    test_folder = get_test_folder()
+    return os.path.join(test_folder, 'tests/ref_airflow_job')
 
 
 @pytest.fixture()
