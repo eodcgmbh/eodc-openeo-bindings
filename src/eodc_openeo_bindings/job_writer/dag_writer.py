@@ -17,6 +17,8 @@ class AirflowDagWriter(JobWriter):
         self.job_description = job_description if job_description else 'No description provided'
         self.parallelize_task = parallelize_tasks
         self.vrt_only = vrt_only
+        self.nodes = None
+        self.graph = None
         super().__init__(process_graph_json, job_data, BasicFileHandler, self.get_dag_filepath())
 
         self.not_parallelizable_func = (
@@ -157,24 +159,25 @@ dag = DAG(dag_id="{self.job_id}",
         return node_dependencies3
 
     def get_nodes(self) -> Tuple[dict, list]:
-        nodes, graph = openeo_to_eodatareaders(self.process_graph_json, self.job_data, vrt_only=self.vrt_only)
+        if not self.nodes:
+            self.nodes, self.graph = openeo_to_eodatareaders(self.process_graph_json, self.job_data, vrt_only=self.vrt_only)
 
         # Add nodes
         parallel_nodes\
             = {}
         dep_subnodes = {}
         translated_nodes = {}
-        for node in nodes:
+        for node in self.nodes:
             node_id, params, filepaths, node_dependencies = self._get_node_info(node)
 
             # Check node can be parallelized if requested
             parallel_node = False
             if self.parallelize_task:
-                if not self._check_key_is_parallelizable(params, 'per_file'):
-                    raise ValueError(f'Node {node_id} cannot be parallelized because of node type.')
-                if not node_dependencies or filepaths:
-                    raise ValueError(f'Node {node_id} cannot be parallelized as it has no dependencies')
                 parallel_node = True
+                if not self._check_key_is_parallelizable(params, 'per_file'):
+                    parallel_node = False
+                if not node_dependencies or filepaths:
+                    parallel_node = False
 
             if node_dependencies:
                 filepaths = self.utils.get_filepaths_from_dependencies(node_dependencies, self.job_data,
@@ -184,11 +187,15 @@ dag = DAG(dag_id="{self.job_id}",
 
             if parallel_node:
                 dep_subnodes[node_id] = []
-                for k, filepath in enumerate(filepaths):
-                    node_sub_id = node_id + '_' + str(k)
-                    quotes = "" if isinstance(filepath, list) else "'"
-                    translated_nodes[node_sub_id] = self.get_task_txt(task_id=node_sub_id, filepaths=filepath,
-                                                                      process_graph=params, quotes=quotes)
+                N_deps = len(filepaths)
+                N_files = len(filepaths[0])
+                for counter_1 in range(N_files):
+                    in_files = []
+                    for counter_2 in range(N_deps):
+                        in_files.append(filepaths[counter_2][counter_1])
+                    node_sub_id = node_id + '_' + str(counter_1 + 1)
+                    quotes = "" if isinstance(in_files, list) else "'"
+                    translated_nodes[node_sub_id] = self.get_task_txt(task_id=node_sub_id, filepaths=in_files, process_graph=params, quotes=quotes)
                     dep_subnodes[node_id].append(node_sub_id)
             else:
                 translated_nodes[node_id] = self.get_task_txt(task_id=node_id, filepaths=filepaths,
@@ -196,7 +203,7 @@ dag = DAG(dag_id="{self.job_id}",
             parallel_nodes[node_id] = parallel_node
 
         # Add node dependencies
-        for node in nodes:
+        for node in self.nodes:
             node_id, params, _, node_dependencies = self._get_node_info(node)
 
             if node_dependencies:
