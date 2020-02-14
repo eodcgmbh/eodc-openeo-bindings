@@ -161,6 +161,11 @@ dag = DAG(dag_id="{self.job_id}",
     def get_nodes(self) -> Tuple[dict, list]:
         if not self.nodes:
             self.nodes, self.graph = openeo_to_eodatareaders(self.process_graph_json, self.job_data, vrt_only=self.vrt_only)
+        else:
+            existing_nodes = []
+            for item in self.nodes:
+                existing_nodes.append(item[0])
+            self.nodes, self.graph = openeo_to_eodatareaders(self.process_graph_json, self.job_data, vrt_only=self.vrt_only, existing_node_ids=existing_nodes)
 
         # Add nodes
         parallel_nodes\

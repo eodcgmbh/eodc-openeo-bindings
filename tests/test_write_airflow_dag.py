@@ -157,6 +157,7 @@ def test_airflow_dag_parallele(csw_server, test_folder, evi_file, ref_airflow_jo
     
     # (Re)write DAG, noe parallelised
     writer.parallelize_task = True
+    writer.vrt_only = False
     writer.write_and_move_job()
     # TODO add checks
     

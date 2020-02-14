@@ -7,7 +7,7 @@ from eodc_openeo_bindings.map_processes import map_process
 from eodc_openeo_bindings.map_udf import map_udf
 
 
-def openeo_to_eodatareaders(process_graph_json, job_data, vrt_only=False):
+def openeo_to_eodatareaders(process_graph_json, job_data, vrt_only=False, existing_node_ids=None):
     """
     
     """
@@ -81,6 +81,11 @@ def openeo_to_eodatareaders(process_graph_json, job_data, vrt_only=False):
                         params[k]['per_file'] = 'True'
         
         # Add to nodes list
-        nodes.append((graph.nodes[node_id].id, params, filepaths, node_dependencies, operator))
+        final_node_id = graph.nodes[node_id].id
+        if existing_node_ids:
+            for existing_node_id in existing_node_ids:
+                if graph.nodes[node_id].id.split('_')[0] == existing_node_id.split('_')[0]:
+                    final_node_id = existing_node_id
+        nodes.append((final_node_id, params, filepaths, node_dependencies, operator))
         
     return nodes, graph
