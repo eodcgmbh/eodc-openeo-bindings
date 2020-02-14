@@ -68,15 +68,10 @@ for path in input_filepaths:
 
         filepaths = []
         if parallelize:
-            counter = 0
-            while counter >= 0:
-                counter += 1
-                paths_tmp = [glob.glob(os.path.join(cur_dep_path, f'/*_*_*_{str(counter)}_*'))
-                             for k, cur_dep_path in enumerate(node_dependencies_path)]
-                if paths_tmp:
-                    filepaths.append(paths_tmp)
-                else:
-                    counter = -1
+            paths_tmp = [sorted(glob.glob(os.path.join(cur_dep_path, '*')))
+                         for k, cur_dep_path in enumerate(node_dependencies_path)]
+            if paths_tmp:
+                filepaths.extend(paths_tmp)
         else:
             for item in node_dependencies_path:
                 if os.path.isdir(item):
