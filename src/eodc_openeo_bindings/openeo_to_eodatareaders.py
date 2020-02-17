@@ -14,7 +14,7 @@ def openeo_to_eodatareaders(process_graph_json_in, job_data, vrt_only=False, exi
     """
     
     if isinstance(process_graph_json_in, dict):
-        process_graph_json = deepcopy(process_graph_json)
+        process_graph_json = deepcopy(process_graph_json_in)
     else:
         process_graph_json = process_graph_json_in
     graph = translate_graph(process_graph_json)
