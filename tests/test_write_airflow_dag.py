@@ -5,8 +5,6 @@ This test checks the input file generation of a airflow dag job.
 
 import os
 import re
-import glob
-from shutil import copytree, rmtree
 
 from eodc_openeo_bindings.job_writer.dag_writer import AirflowDagWriter
 
@@ -16,23 +14,9 @@ def get_ref_node_from_name(name, all_nodes):
     return all_nodes[cur_ref_index]
 
 
-def setup_folder(test_folder):
-    os.environ['AIRFLOW_DAGS'] = os.path.join(test_folder, 'airflow_dag')
-    if not os.path.exists(os.environ['AIRFLOW_DAGS']):
-        os.makedirs(os.environ['AIRFLOW_DAGS'])
-        
+def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node, setup_airflow_dag_folder):
 
-def cleanup(out_filepath):
-
-    os.remove(out_filepath)
-    os.rmdir(os.environ['AIRFLOW_DAGS'])
-
-
-def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node):
-
-    setup_folder(test_folder)
-        
-    job_data = os.path.join(test_folder, 'openeo_job')
+   job_data = os.path.join(test_folder, 'openeo_job')
 
     job_id = "jb-12345"
     out_filepath = os.path.join(os.environ['AIRFLOW_DAGS'], 'dag_' + job_id + '.py')
@@ -97,14 +81,10 @@ def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node):
             # Check input path match the correct dependency nodes
             assert cur_actual_dep.startswith(ref_dep)
 
-    cleanup(out_filepath)
 
-
-def test_airflow_dag_vrt_only(csw_server, test_folder, evi_file):
+def test_airflow_dag_vrt_only(csw_server, test_folder, evi_file, setup_airflow_dag_folder):
     
-    setup_folder(test_folder)
-    
-    job_data = os.path.join(test_folder, 'openeo_job')
+   job_data = os.path.join(test_folder, 'openeo_job')
 
     job_id = "jb-12346"
     out_filepath = os.path.join(os.environ['AIRFLOW_DAGS'], 'dag_' + job_id + '.py')
@@ -130,12 +110,8 @@ def test_airflow_dag_vrt_only(csw_server, test_folder, evi_file):
                 assert value == 'vrt'
             # TODO not in each cell?
 
-    cleanup(out_filepath)
 
-
-def test_airflow_dag_parallele(csw_server, test_folder, evi_file, ref_airflow_job_folder):    
-    
-    setup_folder(test_folder)
+def test_airflow_dag_parallele(csw_server, test_folder, evi_file, setup_airflow_dag_folder):    
     
     job_data = os.path.join(test_folder, 'openeo_job')
 
@@ -160,6 +136,3 @@ def test_airflow_dag_parallele(csw_server, test_folder, evi_file, ref_airflow_jo
     writer.vrt_only = False
     writer.write_and_move_job()
     # TODO add checks
-    
-    rmtree(job_data)
-    cleanup(out_filepath)
