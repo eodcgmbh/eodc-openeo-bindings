@@ -18,7 +18,6 @@ class AirflowDagWriter(JobWriter):
         self.parallelize_task = parallelize_tasks
         self.vrt_only = vrt_only
         self.nodes = None
-        self.graph = None
         super().__init__(process_graph_json, job_data, BasicFileHandler, self.get_dag_filepath())
 
         self.not_parallelizable_func = (
@@ -160,12 +159,12 @@ dag = DAG(dag_id="{self.job_id}",
 
     def get_nodes(self) -> Tuple[dict, list]:
         if not self.nodes:
-            self.nodes, self.graph = openeo_to_eodatareaders(self.process_graph_json, self.job_data, vrt_only=self.vrt_only)
+            self.nodes, _ = openeo_to_eodatareaders(self.process_graph_json, self.job_data, vrt_only=self.vrt_only)
         else:
             existing_nodes = []
             for item in self.nodes:
                 existing_nodes.append(item[0])
-            self.nodes, self.graph = openeo_to_eodatareaders(self.process_graph_json, self.job_data, vrt_only=self.vrt_only, existing_node_ids=existing_nodes)
+            self.nodes, _ = openeo_to_eodatareaders(self.process_graph_json, self.job_data, vrt_only=self.vrt_only, existing_node_ids=existing_nodes)
 
         # Add nodes
         parallel_nodes\
