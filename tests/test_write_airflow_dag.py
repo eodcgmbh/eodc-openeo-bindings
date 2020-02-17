@@ -16,8 +16,22 @@ def get_ref_node_from_name(name, all_nodes):
     return all_nodes[cur_ref_index]
 
 
-def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node, setup_airflow_dag_folder):
+def setup_folder(test_folder):
+    os.environ['AIRFLOW_DAGS'] = os.path.join(test_folder, 'airflow_dag')
+    if not os.path.exists(os.environ['AIRFLOW_DAGS']):
+        os.makedirs(os.environ['AIRFLOW_DAGS'])
+        
 
+def cleanup(out_filepath):
+
+    os.remove(out_filepath)
+    os.rmdir(os.environ['AIRFLOW_DAGS'])
+
+
+def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node):
+
+    setup_folder(test_folder)
+        
     job_data = os.path.join(test_folder, 'openeo_job')
 
     job_id = "jb-12345"
@@ -83,9 +97,13 @@ def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node, setup_airf
             # Check input path match the correct dependency nodes
             assert cur_actual_dep.startswith(ref_dep)
 
+    cleanup(out_filepath)
 
-def test_airflow_dag_vrt_only(csw_server, test_folder, evi_file, setup_airflow_dag_folder):
 
+def test_airflow_dag_vrt_only(csw_server, test_folder, evi_file):
+    
+    setup_folder(test_folder)
+    
     job_data = os.path.join(test_folder, 'openeo_job')
 
     job_id = "jb-12346"
@@ -112,8 +130,13 @@ def test_airflow_dag_vrt_only(csw_server, test_folder, evi_file, setup_airflow_d
                 assert value == 'vrt'
             # TODO not in each cell?
 
+    cleanup(out_filepath)
 
-def test_airflow_dag_parallele(csw_server, test_folder, evi_file, evi_ref_node, setup_airflow_dag_folder):
+
+def test_airflow_dag_parallele(csw_server, test_folder, evi_file, ref_airflow_job_folder):    
+    
+    setup_folder(test_folder)
+    
     job_data = os.path.join(test_folder, 'openeo_job')
 
     job_id = "jb-first_step"
@@ -137,3 +160,6 @@ def test_airflow_dag_parallele(csw_server, test_folder, evi_file, evi_ref_node, 
     writer.vrt_only = False
     writer.write_and_move_job()
     # TODO add checks
+    
+    rmtree(job_data)
+    cleanup(out_filepath)

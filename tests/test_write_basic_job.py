@@ -10,7 +10,7 @@ from eodc_openeo_bindings.job_writer.basic_writer import BasicJobWriter
 
 def test_basic(csw_server, test_folder, evi_file, evi_ref_node):
     job_data = os.path.join(test_folder, 'basic_job')
-    out_filepath = os.path.join(test_folder, 'basic_job.py')
+    out_filepath = os.path.join(test_folder, "basic_job.py")
 
     output_format, output_folder = BasicJobWriter(evi_file, job_data, output_filepath=out_filepath).write_job()
     assert output_format == 'Gtiff'
