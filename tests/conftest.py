@@ -9,12 +9,14 @@
 """
 
 import os
-import pytest
+import shutil
 from collections import namedtuple
+
+import pytest
 
 
 def get_test_folder():
-    return os.getcwd()
+    return os.path.dirname(os.path.abspath(__file__))
 
 
 @pytest.fixture()
@@ -30,7 +32,7 @@ def csw_server():
 @pytest.fixture()
 def evi_file():
     test_folder = get_test_folder()
-    return os.path.join(test_folder, 'tests/process_graphs/evi.json')
+    return os.path.join(test_folder, 'process_graphs', 'evi.json')
 
 
 @pytest.fixture()
@@ -52,3 +54,17 @@ def evi_ref_node():
         refNode('mintime', ['min']),
         refNode('save', ['mintime'])
     ]
+
+
+@pytest.fixture()
+def setup_airflow_dag_folder(request):
+    test_folder = get_test_folder()
+    os.environ['AIRFLOW_DAGS'] = os.path.join(test_folder, 'airflow_dag')
+    if os.path.isdir(os.environ['AIRFLOW_DAGS']):
+        shutil.rmtree(os.environ['AIRFLOW_DAGS'])
+    os.makedirs(os.environ['AIRFLOW_DAGS'])
+
+    def fin():
+        shutil.rmtree(os.environ['AIRFLOW_DAGS'])
+
+    request.addfinalizer(fin)
