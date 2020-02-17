@@ -5,7 +5,7 @@ This test checks the input file generation of a airflow dag job.
 
 import os
 import re
-
+from shutil import copytree, rmtree
 from eodc_openeo_bindings.job_writer.dag_writer import AirflowDagWriter
 
 
@@ -83,7 +83,7 @@ def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node, setup_airf
 
 
 def test_airflow_dag_vrt_only(csw_server, test_folder, evi_file, setup_airflow_dag_folder):
-
+    
     job_data = os.path.join(test_folder, 'openeo_job')
 
     job_id = "jb-12346"
@@ -111,7 +111,8 @@ def test_airflow_dag_vrt_only(csw_server, test_folder, evi_file, setup_airflow_d
             # TODO not in each cell?
 
 
-def test_airflow_dag_parallele(csw_server, test_folder, evi_file, evi_ref_node, setup_airflow_dag_folder):
+def test_airflow_dag_parallele(csw_server, test_folder, evi_file, setup_airflow_dag_folder, airflow_job_folder):    
+    
     job_data = os.path.join(test_folder, 'openeo_job')
 
     job_id = "jb-first_step"
@@ -121,4 +122,19 @@ def test_airflow_dag_parallele(csw_server, test_folder, evi_file, evi_ref_node, 
     writer = AirflowDagWriter(job_id, user_name, process_graph_json=evi_file, job_data=job_data, vrt_only=True)
     writer.write_and_move_job()
     
+    # Simulate that job has ran (place vrt files in node folders)
+    _, node_ids = writer.get_nodes()
+    ref_node_ids = ['blue', 'dc', 'div', 'evi', 'min', 'mintime', 'nir', 'p1', 'p2', 'p3', 'red', 'save', 'sub', 'sum']
+    for node_id in node_ids:
+        node_folder = os.path.join(job_data, node_id)
+        for ref_node_id in ref_node_ids:
+            if ref_node_id == node_id.split('_')[0]:
+                copytree(os.path.join(airflow_job_folder, ref_node_id), node_folder)
+    
+    # (Re)write DAG, noe parallelised
+    writer.parallelize_task = True
+    writer.vrt_only = False
+    writer.write_and_move_job()
     # TODO add checks
+    
+    rmtree(os.path.join(test_folder, 'openeo_job'))

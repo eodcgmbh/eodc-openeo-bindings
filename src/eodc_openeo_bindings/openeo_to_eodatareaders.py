@@ -5,13 +5,18 @@
 from openeo_pg_parser_python.translate_process_graph import translate_graph
 from eodc_openeo_bindings.map_processes import map_process
 from eodc_openeo_bindings.map_udf import map_udf
+from copy import deepcopy
 
 
-def openeo_to_eodatareaders(process_graph_json, job_data, vrt_only=False):
+def openeo_to_eodatareaders(process_graph_json_in, job_data, vrt_only=False, existing_node_ids=None):
     """
     
     """
-
+    
+    if isinstance(process_graph_json_in, dict):
+        process_graph_json = deepcopy(process_graph_json_in)
+    else:
+        process_graph_json = process_graph_json_in
     graph = translate_graph(process_graph_json)
     nodes = []
     for node_id in graph.nodes:            
@@ -81,6 +86,11 @@ def openeo_to_eodatareaders(process_graph_json, job_data, vrt_only=False):
                         params[k]['per_file'] = 'True'
         
         # Add to nodes list
-        nodes.append((graph.nodes[node_id].id, params, filepaths, node_dependencies, operator))
+        final_node_id = graph.nodes[node_id].id
+        if existing_node_ids:
+            for existing_node_id in existing_node_ids:
+                if graph.nodes[node_id].id.split('_')[0] == existing_node_id.split('_')[0]:
+                    final_node_id = existing_node_id
+        nodes.append((final_node_id, params, filepaths, node_dependencies, operator))
         
     return nodes, graph

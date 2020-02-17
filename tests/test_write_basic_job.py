@@ -8,7 +8,7 @@ import re
 from eodc_openeo_bindings.job_writer.basic_writer import BasicJobWriter
 
 
-def test_basic(csw_server, test_folder, evi_file, evi_ref_node):
+def test_basic(csw_server, test_folder, evi_file, evi_ref_node):    
     job_data = os.path.join(test_folder, 'basic_job')
     out_filepath = os.path.join(test_folder, 'basic_job.py')
 

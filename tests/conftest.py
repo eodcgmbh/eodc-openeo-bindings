@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
     Dummy conftest.py for eodc_openeo_bindings.
-
     If you don't know what this is for, just leave it empty.
     Read more about conftest.py under:
     https://pytest.org/latest/plugins.html
@@ -26,7 +25,7 @@ def test_folder():
 
 @pytest.fixture()
 def csw_server():
-    os.environ['CSW_SERVER'] = 'https://csw.eodc.eu'
+    os.environ['CSW_SERVER'] = 'http://pycsw:8000'
 
 
 @pytest.fixture()
@@ -68,3 +67,8 @@ def setup_airflow_dag_folder(request):
         shutil.rmtree(os.environ['AIRFLOW_DAGS'])
 
     request.addfinalizer(fin)
+
+
+@pytest.fixture()
+def airflow_job_folder():
+    return os.path.join(get_test_folder(), 'ref_airflow_job')

@@ -1,0 +1,17 @@
+<VRTDataset rasterXSize="961" rasterYSize="678">
+  <SRS dataAxisToSRSAxisMapping="1,2">PROJCS["WGS 84 / UTM zone 32N",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",9],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","32632"]]</SRS>
+  <GeoTransform>  6.7499794279094832e+05,  9.9980559648066940e+00,  0.0000000000000000e+00,  5.1549434723341633e+06,  0.0000000000000000e+00, -9.9963756621057023e+00</GeoTransform>
+  <Metadata>
+    <MDI key="AREA_OR_POINT">Area</MDI>
+  </Metadata>
+  <VRTRasterBand dataType="Float32" band="1">
+    <ColorInterp>Gray</ColorInterp>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="0">/usr/src/sync-results/51527b41-f229-472a-8d6d-3e773ec71102/p3_7075699f9aa710c4/003-1a401587_20180618T101021_20180618T101021_3_eo-multiply-78ba74.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="961" RasterYSize="678" DataType="Float32" BlockXSize="961" BlockYSize="2" />
+      <SrcRect xOff="0" yOff="0" xSize="961" ySize="678" />
+      <DstRect xOff="0" yOff="0" xSize="961" ySize="678" />
+    </SimpleSource>
+  </VRTRasterBand>
+</VRTDataset>
