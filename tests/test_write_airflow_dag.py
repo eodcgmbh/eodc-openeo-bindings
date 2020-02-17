@@ -5,7 +5,7 @@ This test checks the input file generation of a airflow dag job.
 
 import os
 import re
-
+from shutil import copytree, rmtree
 from eodc_openeo_bindings.job_writer.dag_writer import AirflowDagWriter
 
 
@@ -16,7 +16,7 @@ def get_ref_node_from_name(name, all_nodes):
 
 def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node, setup_airflow_dag_folder):
 
-   job_data = os.path.join(test_folder, 'openeo_job')
+    job_data = os.path.join(test_folder, 'openeo_job')
 
     job_id = "jb-12345"
     out_filepath = os.path.join(os.environ['AIRFLOW_DAGS'], 'dag_' + job_id + '.py')
@@ -84,7 +84,7 @@ def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node, setup_airf
 
 def test_airflow_dag_vrt_only(csw_server, test_folder, evi_file, setup_airflow_dag_folder):
     
-   job_data = os.path.join(test_folder, 'openeo_job')
+    job_data = os.path.join(test_folder, 'openeo_job')
 
     job_id = "jb-12346"
     out_filepath = os.path.join(os.environ['AIRFLOW_DAGS'], 'dag_' + job_id + '.py')
@@ -111,7 +111,7 @@ def test_airflow_dag_vrt_only(csw_server, test_folder, evi_file, setup_airflow_d
             # TODO not in each cell?
 
 
-def test_airflow_dag_parallele(csw_server, test_folder, evi_file, setup_airflow_dag_folder):    
+def test_airflow_dag_parallele(csw_server, test_folder, evi_file, setup_airflow_dag_folder, airflow_job_folder):    
     
     job_data = os.path.join(test_folder, 'openeo_job')
 
@@ -129,10 +129,12 @@ def test_airflow_dag_parallele(csw_server, test_folder, evi_file, setup_airflow_
         node_folder = os.path.join(job_data, node_id)
         for ref_node_id in ref_node_ids:
             if ref_node_id == node_id.split('_')[0]:
-                copytree(os.path.join(ref_airflow_job_folder, ref_node_id), node_folder)
+                copytree(os.path.join(airflow_job_folder, ref_node_id), node_folder)
     
     # (Re)write DAG, noe parallelised
     writer.parallelize_task = True
     writer.vrt_only = False
     writer.write_and_move_job()
     # TODO add checks
+    
+    rmtree(os.path.join(test_folder, 'openeo_job'))

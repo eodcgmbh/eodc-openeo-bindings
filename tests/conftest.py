@@ -67,3 +67,8 @@ def setup_airflow_dag_folder(request):
         shutil.rmtree(os.environ['AIRFLOW_DAGS'])
 
     request.addfinalizer(fin)
+
+
+@pytest.fixture()
+def airflow_job_folder():
+    return os.path.join(get_test_folder(), 'ref_airflow_job')
