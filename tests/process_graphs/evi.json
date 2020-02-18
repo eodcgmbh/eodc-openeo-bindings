@@ -3,7 +3,7 @@
     "process_id": "load_collection",
     "description": "Loading the data; The order of the specified bands is important for the following reduce operation.",
     "arguments": {
-      "id": "s2a_prd_msil1c",
+      "id": "s2%_prd_msil1c",
       "spatial_extent": {
         "west": 11.279182434082033,
         "east": 11.406898498535158,
@@ -64,7 +64,7 @@
           "sum": {
             "process_id": "sum",
             "arguments": {
-              "data": [1, {"from_node": "nir"}, {"from_node": "p1"}, {"from_node": "p2"}]
+              "data": [10000, {"from_node": "nir"}, {"from_node": "p1"}, {"from_node": "p2"}]
             }
           },
           "div": {

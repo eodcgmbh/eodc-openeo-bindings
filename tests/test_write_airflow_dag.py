@@ -107,7 +107,7 @@ def test_airflow_dag_vrt_only(csw_server, test_folder, evi_file, setup_airflow_d
         for key, value in actual_params[-1].items():
             # Check output format is vrt
             if key == 'format_type':
-                assert value == 'vrt'
+                assert value == 'VRT'
             # TODO not in each cell?
 
 

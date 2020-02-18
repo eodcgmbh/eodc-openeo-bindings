@@ -59,7 +59,7 @@ class JobWriter(ABC):
 
         for item in params:
             if item['name'] == 'set_output_folder':
-                self.output_folder = item['folder_name']
+                self.output_folder = item['out_dirpath']
             if item['name'] == 'save_raster':
                 if 'format' in item.keys():
                     # TODO check this is working!

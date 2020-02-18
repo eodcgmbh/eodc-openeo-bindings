@@ -76,8 +76,7 @@ def set_output_folder(root_folder, folder_name, options=[]):
 
     # Set output_folder for this operation
     dict_item = {'name': 'set_output_folder',\
-                 'folder_name': root_folder + path.sep + folder_name + path.sep,\
-                 'absolute_path': '1;int'}
+                 'out_dirpath': root_folder + path.sep + folder_name + path.sep}
 
 
     return options.append(dict_item)

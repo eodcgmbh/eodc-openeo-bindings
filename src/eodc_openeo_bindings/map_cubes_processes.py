@@ -76,43 +76,37 @@ def map_filter_bbox(process):
             crs_value = process['arguments']['spatial_extent']['crs']
         else:
             crs_value = 'EPSG:4326'
-        dict_item = {'name': 'crop', 'bbox': bbox, 'crs': crs_value}
+        dict_item = {'name': 'crop', 'extent': bbox, 'crs': crs_value}
         dict_item_list.append(dict_item)
 
     return dict_item_list
     
 
-#def map_reduce(process, reducer_name, reducer_dimension):
 def map_reduce(process):
     """
-    Reduce(self, f_input, dimension='time', per_file=False, in_memory=False):
+    Reduce(self, f_input, dimension='time'):
     """
     
     if 'f_input' in process.keys():
-        per_file = None
-        if 'per_file' in process['f_input']:
-            per_file = process['f_input'].pop('per_file')
         dict_item = {
             'name': 'reduce',
             'dimension': process['reducer_dimension'],
             'f_input': process['f_input']
             }
-        if per_file:
-            dict_item['per_file'] = per_file
     else:
         if process['reducer_name'] == 'run_udf':
             format_type = 'Gtiff'
         else:
-            format_type = 'vrt'
+            format_type = 'VRT'
         # Add saving to vrt, else no vrt file is generated
-        dict_item = map_save_result(process, delete_vrt=False, format_type=format_type)[0]
+        dict_item = map_save_result(process, in_place=False, format_type=format_type)[0]
 
     return [dict_item]
     
 
 def map_apply(process):
     """
-    Reduce(self, f_input, dimension='time', per_file=False, in_memory=False):
+    Reduce(self, f_input, dimension='time'):
     """    
     
     dict_item_list = [
@@ -124,7 +118,7 @@ def map_apply(process):
     return dict_item_list
     
     
-def map_save_result(process, delete_vrt=False, format_type = None, band_label=None):
+def map_save_result(process, in_place=False, format_type = None, band_label=None):
     """
 
     """
@@ -133,16 +127,13 @@ def map_save_result(process, delete_vrt=False, format_type = None, band_label=No
         'name': 'save_raster',
         }
     #
-    if delete_vrt:
-        dict_item['delete_vrt'] = 'True;bool'
+    if in_place:
+        dict_item['in_place'] = 'True;bool'
     # Add format type
     if 'format_type' in process.keys():
         dict_item['format_type'] = process['arguments']['format']
     elif format_type:
         dict_item['format_type'] = format_type
-    # Add band_label of band(s) to save
-    if band_label:
-        dict_item['band_label'] = band_label
 
     return [dict_item]
 
@@ -154,7 +145,7 @@ def map_merge_cubes(process):
     
     dict_item_list = [
         {'name': 'sort_cube'},
-        map_save_result(process, delete_vrt=False, format_type='vrt')[0]  # add saving to vrt, else no vrt file is generated
+        map_save_result(process, in_place=False, format_type='VRT')[0]  # add saving to vrt, else no vrt file is generated
         ]
 
     return dict_item_list
