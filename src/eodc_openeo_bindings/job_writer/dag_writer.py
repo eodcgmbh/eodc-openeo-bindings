@@ -99,9 +99,7 @@ dag = DAG(dag_id="{self.job_id}",
 
         return node_id, params, filepaths, node_dependencies
 
-    def _check_key_is_parallelizable(self, params: List[dict], key: str):
-        key_exists, _, _ = self.utils.check_params_key(params, key)
-
+    def _check_key_is_parallelizable(self, params: List[dict]):
         parallelizable = False
         for item in params:
             # TODO could there be multiple function?
