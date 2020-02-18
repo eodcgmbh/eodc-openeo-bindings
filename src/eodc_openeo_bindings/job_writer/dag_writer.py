@@ -176,7 +176,7 @@ dag = DAG(dag_id="{self.job_id}",
             parallel_node = False
             if self.parallelize_task:
                 parallel_node = True
-                if not self._check_key_is_parallelizable(params, 'per_file'):
+                if not self._check_key_is_parallelizable(params):
                     parallel_node = False
                 if not node_dependencies or filepaths:
                     parallel_node = False
