@@ -134,9 +134,6 @@ def map_save_result(process, in_place=False, format_type = None, band_label=None
         dict_item['format_type'] = process['arguments']['format']
     elif format_type:
         dict_item['format_type'] = format_type
-    # # Add band_label of band(s) to save
-    # if band_label:
-    #     dict_item['band_label'] = band_label
 
     return [dict_item]
 
