@@ -80,10 +80,6 @@ def openeo_to_eodatareaders(process_graph_json_in, job_data, vrt_only=False, exi
             for dependency in graph.nodes[node_id].dependencies:
                 if 'callback' not in dependency.id:
                     node_dependencies.append(dependency.id)
-            if reducer_dimension != 'time':
-                for k, item in enumerate(params):
-                    if item['name'] == 'reduce':
-                        params[k]['per_file'] = 'True'
         
         # Add to nodes list
         final_node_id = graph.nodes[node_id].id
