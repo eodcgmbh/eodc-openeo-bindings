@@ -93,7 +93,6 @@ dag = DAG(dag_id="{self.job_id}",
         filepaths = node[2]
         node_dependencies = node[3]
 
-        params, node_id = self._check_node_id_with_original_dag(params, node_id)
         if node_dependencies:
             node_dependencies = self.utils.get_existing_node(self.job_data, node_dependencies)
 
@@ -109,12 +108,6 @@ dag = DAG(dag_id="{self.job_id}",
 
         return parallelizable
 
-    def _check_node_id_with_original_dag(self, params, node_id):
-        # Retrieve node_ids of original DAG ( useful only if re-running to parallelize, else it does nothing)
-        node_id_orig = self.utils.get_existing_node(self.job_data, node_id)[0]
-        if node_id != node_id_orig:
-            params[0]['folder_name'] = params[0]['folder_name'].replace(node_id, node_id_orig)
-        return params, node_id_orig
 
     def expand_node_dependencies(self, node_dependencies, dep_subnodes, split_dependencies=False):
         """
@@ -139,7 +132,7 @@ dag = DAG(dag_id="{self.job_id}",
         if split_dependencies:
             for k, dep in enumerate(node_dependencies2):
                 if max_n > len(dep) > 1:
-                    print('somethign wrokńg here.')
+                    print('somethign wrong here.')
                 if len(dep) < max_n:
                     node_dependencies2[k] = node_dependencies2[k] * max_n
 
