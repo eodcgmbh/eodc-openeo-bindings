@@ -82,11 +82,6 @@ def openeo_to_eodatareaders(process_graph_json_in, job_data, vrt_only=False, exi
                     node_dependencies.append(dependency.id)
         
         # Add to nodes list
-        final_node_id = graph.nodes[node_id].id
-        if existing_node_ids:
-            for existing_node_id in existing_node_ids:
-                if graph.nodes[node_id].id.split('_')[0] == existing_node_id.split('_')[0]:
-                    final_node_id = existing_node_id
-        nodes.append((final_node_id, params, filepaths, node_dependencies, operator))
+        nodes.append((graph.nodes[node_id].id, params, filepaths, node_dependencies, operator))
         
     return nodes, graph
