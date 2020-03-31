@@ -47,11 +47,18 @@ class AirflowDagWriter(JobWriter):
         os.remove(self.file_handler.filepath)
 
     def get_imports(self) -> str:
-        return '''\
+        imports = '''\
 from datetime import datetime, timedelta
-from airflow import DAG
+from airflow import DAG'''
+        if self.add_delete_sensor:
+            imports += '''
+from airflow.operators import eoDataReadersOp, CancelOp, RunningTaskSkipOp, TaskSkipOp
+'''
+        else:
+            imports += '''
 from airflow.operators import eoDataReadersOp
 '''
+        return imports
 
     def get_additional_header(self):
         # dag default args and dag instance
