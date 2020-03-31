@@ -1,6 +1,6 @@
 import os
 from shutil import copyfile
-from typing import Tuple, List
+from typing import Tuple, List, Optional
 
 from eodc_openeo_bindings.job_writer.file_handler import BasicFileHandler
 from eodc_openeo_bindings.job_writer.job_writer import JobWriter
@@ -10,13 +10,14 @@ from eodc_openeo_bindings.openeo_to_eodatareaders import openeo_to_eodatareaders
 class AirflowDagWriter(JobWriter):
 
     def __init__(self, job_id, user_name, process_graph_json, job_data, user_email=None, job_description=None,
-                 parallelize_tasks=False, vrt_only=False):
+                 parallelize_tasks=False, vrt_only=False, add_delete_sensor=False):
         self.job_id = job_id
         self.user_name = user_name
         self.user_email = user_email
         self.job_description = job_description if job_description else 'No description provided'
         self.parallelize_task = parallelize_tasks
         self.vrt_only = vrt_only
+        self.add_delete_sensor = add_delete_sensor
         self.nodes = None
         super().__init__(process_graph_json, job_data, BasicFileHandler, self.get_dag_filepath())
 
@@ -71,7 +72,7 @@ dag = DAG(dag_id="{self.job_id}",
           default_args=default_args)
 '''
 
-    def get_task_txt(self, task_id, filepaths, process_graph, quotes):
+    def get_eodatareaders_task_txt(self, task_id, filepaths, process_graph, quotes):
         return f'''\
 {task_id} = eoDataReadersOp(task_id='{task_id}',
                         dag=dag,
@@ -107,7 +108,6 @@ dag = DAG(dag_id="{self.job_id}",
                     parallelizable = True
 
         return parallelizable
-
 
     def expand_node_dependencies(self, node_dependencies, dep_subnodes, split_dependencies=False):
         """
@@ -158,8 +158,7 @@ dag = DAG(dag_id="{self.job_id}",
             self.nodes, _ = openeo_to_eodatareaders(self.process_graph_json, self.job_data, vrt_only=self.vrt_only, existing_node_ids=existing_nodes)
 
         # Add nodes
-        parallel_nodes\
-            = {}
+        parallel_nodes = {}
         dep_subnodes = {}
         translated_nodes = {}
         for node in self.nodes:
@@ -190,11 +189,11 @@ dag = DAG(dag_id="{self.job_id}",
                         in_files.append(filepaths[counter_2][counter_1])
                     node_sub_id = node_id + '_' + str(counter_1 + 1)
                     quotes = "" if isinstance(in_files, list) else "'"
-                    translated_nodes[node_sub_id] = self.get_task_txt(task_id=node_sub_id, filepaths=in_files, process_graph=params, quotes=quotes)
+                    translated_nodes[node_sub_id] = self.get_eodatareaders_task_txt(task_id=node_sub_id, filepaths=in_files, process_graph=params, quotes=quotes)
                     dep_subnodes[node_id].append(node_sub_id)
             else:
-                translated_nodes[node_id] = self.get_task_txt(task_id=node_id, filepaths=filepaths,
-                                                              process_graph=params, quotes="")
+                translated_nodes[node_id] = self.get_eodatareaders_task_txt(task_id=node_id, filepaths=filepaths,
+                                                                            process_graph=params, quotes="")
             parallel_nodes[node_id] = parallel_node
 
         # Add node dependencies
@@ -213,3 +212,27 @@ dag = DAG(dag_id="{self.job_id}",
 
         # 2nd output needed for compatibility with main JobWriter
         return translated_nodes, list(translated_nodes.keys())
+
+    def get_additional_nodes(self, last_node_id: str, **kwargs) -> Optional[Tuple[dict, list]]:
+        if self.add_delete_sensor:
+            return self.get_delete_sensor_txt(last_node_id)
+
+    def get_delete_sensor_txt(self, last_node_id: str) -> Tuple[dict, list]:
+        nodes = {
+            "cancel_sensor": f'''
+cancel_sensor = CancelOp(task_id='cancel_sensor',
+                         dag=dag,
+                         stop_file='{self.job_data}/STOP',
+                         )
+''',
+            "cancel_action": f'''
+cancel_action = RunningTaskSkipOp(task_id='cancel_action', dag=dag)
+''',
+            "cancel_skipper": f'''
+cancel_skipper = TaskSkipOp(task_id='cancel_skipper', dag=dag, task=cancel_sensor)
+
+''',
+            "dep_cancel_action": self.get_dependencies_txt("cancel_action", ["cancel_sensor"]),
+            "dep_cancel_skipper": self.get_dependencies_txt("cancel_skipper", [last_node_id]),
+        }
+        return nodes, list(nodes.keys())
