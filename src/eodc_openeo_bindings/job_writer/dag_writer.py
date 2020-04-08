@@ -76,6 +76,7 @@ default_args = {{
 dag = DAG(dag_id="{self.job_id}",
           description="{self.job_description}",
           catchup=True,
+          max_active_runs=1,
           default_args=default_args)
 '''
 
