@@ -79,12 +79,13 @@ dag = DAG(dag_id="{self.job_id}",
           default_args=default_args)
 '''
 
-    def get_eodatareaders_task_txt(self, task_id, filepaths, process_graph, quotes):
+    def get_eodatareaders_task_txt(self, task_id, filepaths, process_graph, quotes, queue: str = 'process'):
         return f'''\
 {task_id} = eoDataReadersOp(task_id='{task_id}',
                         dag=dag,
                         input_filepaths={quotes}{filepaths}{quotes},
-                        input_params={process_graph}
+                        input_params={process_graph},
+                        queue='{queue}'
                         )
 
 '''
@@ -230,13 +231,14 @@ dag = DAG(dag_id="{self.job_id}",
 cancel_sensor = CancelOp(task_id='cancel_sensor',
                          dag=dag,
                          stop_file='{self.job_data}/STOP',
+                         queue='sensor'
                          )
 ''',
             "cancel_action": f'''
-cancel_action = RunningTaskSkipOp(task_id='cancel_action', dag=dag)
+cancel_action = RunningTaskSkipOp(task_id='cancel_action', dag=dag, queue='process')
 ''',
             "cancel_skipper": f'''
-cancel_skipper = TaskSkipOp(task_id='cancel_skipper', dag=dag, task=cancel_sensor)
+cancel_skipper = TaskSkipOp(task_id='cancel_skipper', dag=dag, task=cancel_sensor, queue='process')
 
 ''',
             "dep_cancel_action": self.get_dependencies_txt("cancel_action", ["cancel_sensor"]),
