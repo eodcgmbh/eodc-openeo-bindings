@@ -62,6 +62,7 @@ from airflow.operators import eoDataReadersOp
 
     def get_additional_header(self):
         # dag default args and dag instance
+        # some params (e.g. schedule_interval or max_active_runs MUST be set directly as params in DAG to work)
         return f'''\
 default_args = {{
     'owner': "{self.user_name}",
@@ -70,13 +71,13 @@ default_args = {{
     'email': "{self.user_email}",
     'email_on_failure': False,
     'email_on_retry': False,
-    'schedule_interval': None,
 }}
 
 dag = DAG(dag_id="{self.job_id}",
           description="{self.job_description}",
           catchup=True,
           max_active_runs=1,
+          schedule_interval=None,
           default_args=default_args)
 '''
 
