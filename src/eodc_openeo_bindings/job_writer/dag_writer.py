@@ -52,7 +52,7 @@ from datetime import datetime, timedelta
 from airflow import DAG'''
         if self.add_delete_sensor:
             imports += '''
-from airflow.operators import eoDataReadersOp, CancelOp, StopDagOp, AddStopFileOp
+from airflow.operators import eoDataReadersOp, CancelOp, StopDagOp
 '''
         else:
             imports += '''
@@ -222,11 +222,11 @@ dag = DAG(dag_id="{self.job_id}",
         # 2nd output needed for compatibility with main JobWriter
         return translated_nodes, list(translated_nodes.keys())
 
-    def get_additional_nodes(self, last_node_id: str, **kwargs) -> Optional[Tuple[dict, list]]:
+    def get_additional_nodes(self, **kwargs) -> Optional[Tuple[dict, list]]:
         if self.add_delete_sensor:
-            return self.get_delete_sensor_txt(last_node_id)
+            return self.get_delete_sensor_txt()
 
-    def get_delete_sensor_txt(self, last_node_id: str) -> Tuple[dict, list]:
+    def get_delete_sensor_txt(self) -> Tuple[dict, list]:
         nodes = {
             "cancel_sensor": f'''
 cancel_sensor = CancelOp(task_id='cancel_sensor',
@@ -238,11 +238,6 @@ cancel_sensor = CancelOp(task_id='cancel_sensor',
             "stop_dag": f'''
 stop_dag = StopDagOp(task_id='stop_dag', dag=dag, queue='process')
 ''',
-            "add_stop_file": f'''
-add_stop_file = AddStopFileOp(task_id='add_stop_file', dag=dag, task=cancel_sensor, queue='process')
-
-''',
             "dep_cancel_action": self.get_dependencies_txt("stop_dag", ["cancel_sensor"]),
-            "dep_cancel_skipper": self.get_dependencies_txt("add_stop_file", [last_node_id]),
         }
         return nodes, list(nodes.keys())

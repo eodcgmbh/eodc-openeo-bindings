@@ -39,7 +39,7 @@ class JobWriter(ABC):
         for node_id in ordered_keys:
             self.file_handler.append(nodes[node_id])
 
-        additional_nodes = self.get_additional_nodes(last_node_id=self.get_last_normal_node(ordered_keys))
+        additional_nodes = self.get_additional_nodes()
         if additional_nodes:
             for node_id in additional_nodes[1]:
                 self.file_handler.append(additional_nodes[0][node_id])
