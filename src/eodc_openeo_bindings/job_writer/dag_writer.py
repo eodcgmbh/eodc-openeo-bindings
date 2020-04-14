@@ -52,7 +52,7 @@ from datetime import datetime, timedelta
 from airflow import DAG'''
         if self.add_delete_sensor:
             imports += '''
-from airflow.operators import eoDataReadersOp, CancelOp, RunningTaskSkipOp, TaskSkipOp
+from airflow.operators import eoDataReadersOp, CancelOp, StopDagOp, AddStopFileOp
 '''
         else:
             imports += '''
@@ -232,17 +232,17 @@ dag = DAG(dag_id="{self.job_id}",
 cancel_sensor = CancelOp(task_id='cancel_sensor',
                          dag=dag,
                          stop_file='{self.job_data}/STOP',
-                         queue='sensor'
+                         queue='sensor',
                          )
 ''',
-            "cancel_action": f'''
-cancel_action = RunningTaskSkipOp(task_id='cancel_action', dag=dag, queue='process')
+            "stop_dag": f'''
+stop_dag = StopDagOp(task_id='stop_dag', dag=dag, queue='process')
 ''',
-            "cancel_skipper": f'''
-cancel_skipper = TaskSkipOp(task_id='cancel_skipper', dag=dag, task=cancel_sensor, queue='process')
+            "add_stop_file": f'''
+add_stop_file = AddStopFileOp(task_id='add_stop_file', dag=dag, task=cancel_sensor, queue='process')
 
 ''',
-            "dep_cancel_action": self.get_dependencies_txt("cancel_action", ["cancel_sensor"]),
-            "dep_cancel_skipper": self.get_dependencies_txt("cancel_skipper", [last_node_id]),
+            "dep_cancel_action": self.get_dependencies_txt("stop_dag", ["cancel_sensor"]),
+            "dep_cancel_skipper": self.get_dependencies_txt("add_stop_file", [last_node_id]),
         }
         return nodes, list(nodes.keys())
