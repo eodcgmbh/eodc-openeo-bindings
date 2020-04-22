@@ -48,5 +48,6 @@ MANIFEST
 # Per-project virtualenvs
 .venv*/
 
+*.ipynb_checkpoints/
 tests/*.ipynb
 tests/dag_jb*.py
