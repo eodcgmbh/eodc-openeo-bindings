@@ -53,7 +53,7 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
             for node_edge in cur_node.edges:
                 # Pass dimension parameter to children of callback
                 if node_edge.node_ids[0] == cur_node.id and node_edge.name == 'callback':
-                    parent_node_graph = graph.nodes[node_edge.node_ids[1]].content
+                    parent_node_graph = graph[node_edge.node_ids[1]].content
                     if 'dimension' in parent_node_graph['arguments'].keys():
                         reducer_dimension = parent_node_graph['arguments']['dimension']
                         reducer_name = cur_node.content['process_id']
