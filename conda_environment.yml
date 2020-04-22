@@ -10,4 +10,4 @@ dependencies:
 - regex
 - pip:
     - git+https://github.com/TUW-GEO/Equi7Grid.git@v0.0.4#egg=equi7grid
-    - git+https://github.com/TUW-GEO/geopathfinder.git@eodatareaders_extension#egg=geopathfinder
+    - git+https://github.com/TUW-GEO/geopathfinder.git#egg=geopathfinder
