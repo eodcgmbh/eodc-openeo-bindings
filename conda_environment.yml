@@ -3,11 +3,4 @@ channels:
 - defaults
 dependencies:
 - python=3.6
-- gdal=2.2.4
-- netCDF4=1.4.1
-- numpy=1.16.1
-- pyproj=1.9.5
 - regex
-- pip:
-    - git+https://github.com/TUW-GEO/Equi7Grid.git@v0.0.4#egg=equi7grid
-    - git+https://github.com/TUW-GEO/geopathfinder.git@eodatareaders_extension#egg=geopathfinder
