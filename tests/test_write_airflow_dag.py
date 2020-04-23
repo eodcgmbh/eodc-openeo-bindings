@@ -60,9 +60,9 @@ def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node, setup_airf
         # Only parent folder is checked, but no other parameters
         actual_params = actual_params.split('=')[-1].strip()
         actual_params = eval(actual_params)
-        for key, value in actual_params[0].items():
+        for key, value in actual_params[0][0].items():
             # Check parent node name
-            if key == 'folder_name':
+            if key == 'out_dirpath':
                 assert value.split('/')[-2].startswith(cur_ref_node.name)
 
     # needs to match the before checked input paths!
@@ -104,7 +104,7 @@ def test_airflow_dag_vrt_only(csw_server, test_folder, evi_file, setup_airflow_d
         actual_params = actual_node.split('\n')[3].strip()
         actual_params = actual_params.split('=')[-1].strip()
         actual_params = eval(actual_params)
-        for key, value in actual_params[-1].items():
+        for key, value in actual_params[0][-1].items():
             # Check output format is vrt
             if key == 'format_type':
                 assert value == 'VRT'
@@ -155,4 +155,4 @@ def test_airflow_dag_delete_sensor(csw_server, test_folder, evi_file, evi_ref_no
         out_content = outfile.read()
 
     actual_nodes = re.split(r'[A-Za-z]*_[A-Za-z0-9]* = ', out_content)[2:]  # Discard header and dag definition
-    assert len(actual_nodes) == 17
+    assert len(actual_nodes) == 16
