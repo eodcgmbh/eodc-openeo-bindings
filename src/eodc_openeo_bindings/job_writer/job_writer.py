@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Union, Tuple
+from typing import Optional, Union, Tuple, List
 
 from eodc_openeo_bindings.job_writer.utils import JobWriterUtils
 
@@ -39,6 +39,11 @@ class JobWriter(ABC):
         for node_id in ordered_keys:
             self.file_handler.append(nodes[node_id])
 
+        additional_nodes = self.get_additional_nodes()
+        if additional_nodes:
+            for node_id in additional_nodes[1]:
+                self.file_handler.append(additional_nodes[0][node_id])
+
         self.file_handler.close()
         return self.output_format, self.output_folder
 
@@ -47,7 +52,10 @@ class JobWriter(ABC):
         pass
 
     def get_additional_header(self) -> Optional[str]:
-        return None
+        return
+
+    def get_additional_nodes(self, **kwargs) -> Optional[Tuple[dict, list]]:
+        return
 
     @abstractmethod
     def get_nodes(self) -> Tuple[dict, list]:
@@ -66,3 +74,8 @@ class JobWriter(ABC):
                     self.output_format = item['name']['format']
                 else:
                     self.output_format = 'Gtiff'
+
+    def get_last_normal_node(self, node_ids: List[str]) -> str:
+        for node_id in node_ids[::-1]:
+            if not node_id.startswith("dep_"):
+                return node_id

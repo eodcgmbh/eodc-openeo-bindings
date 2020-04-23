@@ -138,3 +138,21 @@ def test_airflow_dag_parallele(csw_server, test_folder, evi_file, setup_airflow_
     # TODO add checks
     
     rmtree(os.path.join(test_folder, 'openeo_job'))
+
+
+def test_airflow_dag_delete_sensor(csw_server, test_folder, evi_file, evi_ref_node, setup_airflow_dag_folder):
+
+    job_data = os.path.join(test_folder, 'openeo_job')
+
+    job_id = "jb-12345"
+    out_filepath = os.path.join(os.environ['AIRFLOW_DAGS'], 'dag_' + job_id + '.py')
+    user_name = "jdoe_67890"
+
+    writer = AirflowDagWriter(job_id, user_name, process_graph_json=evi_file, job_data=job_data, add_delete_sensor=True)
+    writer.write_and_move_job()
+
+    with open(out_filepath) as outfile:
+        out_content = outfile.read()
+
+    actual_nodes = re.split(r'[A-Za-z]*_[A-Za-z0-9]* = ', out_content)[2:]  # Discard header and dag definition
+    assert len(actual_nodes) == 17
