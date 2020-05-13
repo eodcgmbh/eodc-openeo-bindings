@@ -8,15 +8,13 @@ import re
 from eodc_openeo_bindings.job_writer.basic_writer import BasicJobWriter
 
 
-def test_basic(csw_server, test_folder, evi_file, evi_ref_node):    
+def test_basic(csw_server, test_folder, evi_file, evi_ref_node, out_filepath_basic):
     job_data = os.path.join(test_folder, 'basic_job')
-    out_filepath = os.path.join(test_folder, 'basic_job.py')
 
-    output_format, output_folder = BasicJobWriter(evi_file, job_data, output_filepath=out_filepath).write_job()
-    assert output_format == 'Gtiff'
-    assert 'save' in output_folder
+    BasicJobWriter().write_job(process_graph_json=evi_file, job_data=job_data,
+                               output_filepath=out_filepath_basic)
 
-    with open(out_filepath) as outfile:
+    with open(out_filepath_basic) as outfile:
         out_content = outfile.read()
 
     actual_nodes = re.split(r'### .+ ###', out_content)[1:]
@@ -46,8 +44,6 @@ def test_basic(csw_server, test_folder, evi_file, evi_ref_node):
             if key == 'folder_name':
                 assert value.split('/')[-2].startswith(evi_ref_node[i].name)
 
-        assert evaluate_node.startswith(evi_ref_node[i].name)
+        assert evaluate_node.strip().startswith(evi_ref_node[i].name)
         # Check eoDataReader command
         assert re.match(r'^.+ = eoDataReader\(filepaths, params\)', evaluate_node)
-
-    os.remove(out_filepath)
