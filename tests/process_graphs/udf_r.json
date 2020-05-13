@@ -21,11 +21,11 @@
       "data": {"from_node": "dc"},
       "dimension": "temporal",
       "reducer": {
-        "callback": {
+        "process_graph": {
           "udf": {
             "process_id": "run_udf",
             "arguments": {
-              "data": {"from_argument": "data"},
+              "data": {"from_parameter": "data"},
               "udf": "data2 = data*(-1); data2",
               "runtime": "r"
             },
