@@ -56,6 +56,19 @@ def evi_ref_node():
 
 
 @pytest.fixture()
+def out_filepath_basic(request):
+    path = os.path.join(get_test_folder(), 'basic_job.py')
+
+    def fin():
+        if os.path.isfile(path):
+            os.remove(path)
+    request.addfinalizer(fin)
+    return path
+
+
+
+
+@pytest.fixture()
 def setup_airflow_dag_folder(request):
     test_folder = get_test_folder()
     os.environ['AIRFLOW_DAGS'] = os.path.join(test_folder, 'airflow_dag')

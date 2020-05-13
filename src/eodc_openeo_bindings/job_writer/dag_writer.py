@@ -1,26 +1,15 @@
 import os
 from shutil import copyfile
-from typing import Tuple, List, Optional
+from typing import Tuple, List, Optional, Union
 
-from eodc_openeo_bindings.job_writer.file_handler import BasicFileHandler
+from eodc_openeo_bindings.job_writer.job_domain import AirflowDagDomain
 from eodc_openeo_bindings.job_writer.job_writer import JobWriter
 from eodc_openeo_bindings.openeo_to_eodatareaders import openeo_to_eodatareaders
 
 
 class AirflowDagWriter(JobWriter):
 
-    def __init__(self, job_id, user_name, process_graph_json, job_data, user_email=None, job_description=None,
-                 parallelize_tasks=False, vrt_only=False, add_delete_sensor=False):
-        self.job_id = job_id
-        self.user_name = user_name
-        self.user_email = user_email
-        self.job_description = job_description if job_description else 'No description provided'
-        self.parallelize_task = parallelize_tasks
-        self.vrt_only = vrt_only
-        self.add_delete_sensor = add_delete_sensor
-        self.nodes = None
-        super().__init__(process_graph_json, job_data, BasicFileHandler, self.get_dag_filepath())
-
+    def __init__(self):
         self.not_parallelizable_func = (
             'filter_bands',
             'filter_bbox',
@@ -28,29 +17,41 @@ class AirflowDagWriter(JobWriter):
             'eo_array_element'
         )
 
-    def get_dag_filepath(self):
-        dag_name = f'dag_{self.job_id}'
-        if self.parallelize_task:
-            dag_name += '_parallelize'
-        return dag_name + '.py'
+    def get_domain(self, job_id: str, user_name: str, process_graph_json: Union[str, dict], job_data: str,
+                   user_email: str = None, job_description: str = None, parallelize_tasks: bool = False,
+                   vrt_only: bool = False, add_delete_sensor: bool = False) -> AirflowDagDomain:
+        return AirflowDagDomain(job_id, user_name, process_graph_json, job_data, user_email, job_description,
+                                parallelize_tasks, vrt_only, add_delete_sensor)
 
-    def get_default_filepath(self) -> str:
-        return 'test_dag.py'
+    def write_job(self, job_id: str, user_name: str, process_graph_json: Union[str, dict], job_data: str,
+                  user_email: str = None, job_description: str = None, parallelize_tasks: bool = False,
+                  vrt_only: bool = False, add_delete_sensor: bool = False):
+        return super().write_job(job_id=job_id, user_name=user_name, process_graph_json=process_graph_json,
+                                 job_data=job_data, user_email=user_email, job_description=job_description,
+                                 parallelize_tasks=parallelize_tasks, vrt_only=vrt_only,
+                                 add_delete_sensor=add_delete_sensor)
 
-    def write_and_move_job(self):
-        super().write_job()
-        self.move_dag()
-
-    def move_dag(self):
+    def move_dag(self, filepath: str):
         # Move file to DAGs folder (must copy/delete because of different volume mounts)
-        copyfile(self.file_handler.filepath, os.environ.get('AIRFLOW_DAGS') + "/" + self.file_handler.filepath)
-        os.remove(self.file_handler.filepath)
+        copyfile(filepath, os.environ.get('AIRFLOW_DAGS') + "/" + filepath)
+        os.remove(filepath)
 
-    def get_imports(self) -> str:
+    def write_and_move_job(self, job_id: str, user_name: str, process_graph_json: Union[str, dict], job_data: str,
+                           user_email: str = None, job_description: str = None, parallelize_tasks: bool = False,
+                           vrt_only: bool = False, add_delete_sensor: bool = False):
+        _, domain = self.write_job(job_id, user_name, process_graph_json, job_data, user_email, job_description,
+                                   parallelize_tasks, vrt_only, add_delete_sensor)
+        self.move_dag(domain.filepath)
+
+    def rewrite_and_move_job(self, domain: AirflowDagDomain):
+        _, domain = self.rewrite_job(domain)
+        self.move_dag(domain.filepath)
+
+    def get_imports(self, domain: AirflowDagDomain) -> str:
         imports = '''\
 from datetime import datetime, timedelta
 from airflow import DAG'''
-        if self.add_delete_sensor:
+        if domain.add_delete_sensor:
             imports += '''
 from airflow.operators import eoDataReadersOp, CancelOp, StopDagOp
 '''
@@ -60,21 +61,21 @@ from airflow.operators import eoDataReadersOp
 '''
         return imports
 
-    def get_additional_header(self):
+    def get_additional_header(self, domain: AirflowDagDomain):
         # dag default args and dag instance
         # some params (e.g. schedule_interval or max_active_runs MUST be set directly as params in DAG to work)
         return f'''\
 default_args = {{
-    'owner': "{self.user_name}",
+    'owner': "{domain.user_name}",
     'depends_on_past': False,
     'start_date': datetime.combine(datetime.today() - timedelta(1), datetime.min.time()),
-    'email': "{self.user_email}",
+    'email': "{domain.user_email}",
     'email_on_failure': False,
     'email_on_retry': False,
 }}
 
-dag = DAG(dag_id="{self.job_id}",
-          description="{self.job_description}",
+dag = DAG(dag_id="{domain.job_id}",
+          description="{domain.job_description}",
           catchup=True,
           max_active_runs=1,
           schedule_interval=None,
@@ -98,14 +99,14 @@ dag = DAG(dag_id="{self.job_id}",
 
 '''
 
-    def _get_node_info(self, node):
+    def _get_node_info(self, node, domain):
         node_id = node[0]
         params = node[1]
         filepaths = node[2]
         node_dependencies = node[3]
 
         if node_dependencies:
-            node_dependencies = self.utils.get_existing_node(self.job_data, node_dependencies)
+            node_dependencies = self.utils.get_existing_node(domain.job_data, node_dependencies)
 
         return node_id, params, filepaths, node_dependencies
 
@@ -158,25 +159,26 @@ dag = DAG(dag_id="{self.job_id}",
 
         return node_dependencies3
 
-    def get_nodes(self) -> Tuple[dict, list]:
-        if not self.nodes:
-            self.nodes, _ = openeo_to_eodatareaders(self.process_graph_json, self.job_data, vrt_only=self.vrt_only)
+    def get_nodes(self, domain: AirflowDagDomain) -> Tuple[dict, list]:
+        if not domain.nodes:
+            domain.nodes, _ = openeo_to_eodatareaders(domain.process_graph_json, domain.job_data, vrt_only=domain.vrt_only)
         else:
             existing_nodes = []
-            for item in self.nodes:
+            for item in domain.nodes:
                 existing_nodes.append(item[0])
-            self.nodes, _ = openeo_to_eodatareaders(self.process_graph_json, self.job_data, vrt_only=self.vrt_only, existing_node_ids=existing_nodes)
+            domain.nodes, _ = openeo_to_eodatareaders(domain.process_graph_json, domain.job_data, vrt_only=domain.vrt_only,
+                                                      existing_node_ids=existing_nodes)
 
         # Add nodes
         parallel_nodes = {}
         dep_subnodes = {}
         translated_nodes = {}
-        for node in self.nodes:
-            node_id, params, filepaths, node_dependencies = self._get_node_info(node)
+        for node in domain.nodes:
+            node_id, params, filepaths, node_dependencies = self._get_node_info(node, domain)
 
             # Check node can be parallelized if requested
             parallel_node = False
-            if self.parallelize_task:
+            if domain.parallelize_task:
                 parallel_node = True
                 if not self._check_key_is_parallelizable(params):
                     parallel_node = False
@@ -184,7 +186,7 @@ dag = DAG(dag_id="{self.job_id}",
                     parallel_node = False
 
             if node_dependencies:
-                filepaths = self.utils.get_filepaths_from_dependencies(node_dependencies, self.job_data,
+                filepaths = self.utils.get_filepaths_from_dependencies(node_dependencies, domain.job_data,
                                                                        parallelize=parallel_node)
             if not filepaths or len(filepaths) <= 1:
                 parallel_node = False
@@ -207,8 +209,8 @@ dag = DAG(dag_id="{self.job_id}",
             parallel_nodes[node_id] = parallel_node
 
         # Add node dependencies
-        for node in self.nodes:
-            node_id, params, _, node_dependencies = self._get_node_info(node)
+        for node in domain.nodes:
+            node_id, params, _, node_dependencies = self._get_node_info(node, domain)
 
             if node_dependencies:
                 node_dependencies2 = self.expand_node_dependencies(node_dependencies, dep_subnodes, parallel_nodes[node_id])
@@ -223,16 +225,16 @@ dag = DAG(dag_id="{self.job_id}",
         # 2nd output needed for compatibility with main JobWriter
         return translated_nodes, list(translated_nodes.keys())
 
-    def get_additional_nodes(self, **kwargs) -> Optional[Tuple[dict, list]]:
-        if self.add_delete_sensor:
-            return self.get_delete_sensor_txt()
+    def get_additional_nodes(self, domain: AirflowDagDomain, **kwargs) -> Optional[Tuple[dict, list]]:
+        if domain.add_delete_sensor:
+            return self.get_delete_sensor_txt(domain)
 
-    def get_delete_sensor_txt(self) -> Tuple[dict, list]:
+    def get_delete_sensor_txt(self, domain: AirflowDagDomain) -> Tuple[dict, list]:
         nodes = {
             "cancel_sensor": f'''
 cancel_sensor = CancelOp(task_id='cancel_sensor',
                          dag=dag,
-                         stop_file='{self.job_data}/STOP',
+                         stop_file='{domain.job_data}/STOP',
                          queue='sensor',
                          )
 ''',
