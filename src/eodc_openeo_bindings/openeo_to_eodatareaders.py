@@ -22,7 +22,7 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
         process_graph_json = deepcopy(process_graph_json_in)
     else:
         process_graph_json = process_graph_json_in
-    graph = translate_process_graph(process_graph_json)
+    graph = translate_process_graph(process_graph_json).sort(by='dependency')
 
     nodes = []
     for cur_node in graph.nodes:
@@ -36,16 +36,25 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
 
             # Callback is using an existing process
             if 'callback' in cur_reducer.keys() and 'process_id' in cur_reducer['callback']:
+                # NB This block of code seems unused, also 'callback' is not supported an more by API v1.0
                 reducer_name = graph[cur_reducer['from_node']].content['process_id']
                 reducer_dimension = cur_node.content['arguments']['dimension']
 
             # Callback is itself a process graph
             elif 'from_node' in cur_reducer.keys():
                 node_dependencies = [cur_reducer['from_node']]
+                if cur_node.content['process_id'] == "reduce":
+                    reducer_name = graph[cur_reducer['from_node']].content['process_id']
+                    reducer_dimension = cur_node.content['arguments']['dimension']
 
             if cur_node.content['process_id'] == "reduce":
-                reducer_name = graph[cur_reducer['from_node']].content['process_id']
-                reducer_dimension = cur_node.content['arguments']['dimension']
+                if 'from_node' in cur_reducer.keys():
+                    reducer_name = graph[cur_reducer['from_node']].content['process_id']
+                    reducer_dimension = cur_node.content['arguments']['dimension']
+                else:
+                    # NB This is needed for UDFs, currently usable only from within a reduce call
+                    reducer_name = cur_reducer['callback']['udf']['process_id']
+                    reducer_dimension = cur_node.content['arguments']['dimension']
 
         # Convert OpenEO process to eoDataReaders syntax
         # Check if this node comes from a reduce node
