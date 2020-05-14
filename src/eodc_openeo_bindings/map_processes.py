@@ -42,12 +42,12 @@ def map_process(process, process_name, process_id, root_folder,
     if not isinstance(dict_items, list):
         dict_items = [dict_items]
     
-    if 'result' in process.keys() and process['process_id'] != 'save_result':
+    if 'result' in process.keys() and process['result'] and process['process_id'] != 'save_result':
         # Add save_result node
         if vrt_only:
             dict_item = map_save_result(process, format_type='VRT')
         else:
-            dict_item =map_save_result(process, format_type='Gtiff', in_place=True) 
+            dict_item = map_save_result(process, format_type='Gtiff', in_place=True) 
         dict_items.extend(dict_item)
     elif process['process_id'] == 'save_result':
         if vrt_only:
