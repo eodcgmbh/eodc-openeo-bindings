@@ -39,13 +39,13 @@ def evi_ref_node():
     refNode = namedtuple('RefNode', 'name input_filepaths')
     return [
         refNode('dc', None),
+        refNode('nir', ['dc']),
+        refNode('red', ['dc']),
+        refNode('sub', ['nir', 'red']),
+        refNode('p1', ['red']),
         refNode('blue', ['dc']),
         refNode('p2', ['blue']),
-        refNode('red', ['dc']),
-        refNode('p1', ['red']),
-        refNode('nir', ['dc']),
         refNode('sum', ['nir', 'p1', 'p2']),
-        refNode('sub', ['nir', 'red']),
         refNode('div', ['sub', 'sum']),
         refNode('p3', ['div']),
         refNode('evi', ['p3']),
