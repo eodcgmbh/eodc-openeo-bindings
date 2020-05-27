@@ -17,23 +17,23 @@ class BasicJobWriter(JobWriter):
 
     def get_imports(self, domain) -> str:
         return '''\
-    import glob
-    from eodatareaders.eo_data_reader import eoDataReader
-    '''
+import glob
+from eodatareaders.eo_data_reader import eoDataReader
+'''
 
     def get_node_txt(self, node_id, params, filepaths, filepaths0):
         return f'''\
-    ### {node_id} ###
-    # node input files
-    {filepaths0}{filepaths}
+### {node_id} ###
+# node input files
+{filepaths0}{filepaths}
 
-    # node input parameters
-    params = {params}
+# node input parameters
+params = {params}
 
-    # evaluate node
-    {node_id} = eoDataReader(filepaths, params)
+# evaluate node
+{node_id} = eoDataReader(filepaths, params)
 
-    '''
+'''
 
     def get_nodes(self, domain: BasicJobDomain) -> Tuple[dict, list]:
         nodes, graph = openeo_to_eodatareaders(domain.process_graph_json, domain.job_data)
