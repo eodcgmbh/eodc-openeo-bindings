@@ -63,7 +63,10 @@ def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node, setup_airf
         for key, value in actual_params[0][0].items():
             # Check parent node name
             if key == 'out_dirpath':
-                assert value.split('/')[-2].startswith(cur_ref_node.name)
+                try:
+                    assert value.split('/')[-2].startswith(cur_ref_node.name)
+                except:
+                    assert value.split('/')[-2] == 'result'
 
     # needs to match the before checked input paths!
     actual_relations = [ar for ar in actual_relations if ar != '']
