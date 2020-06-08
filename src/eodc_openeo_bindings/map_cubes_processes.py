@@ -82,7 +82,7 @@ def map_filter_bbox(process):
     return dict_item_list
     
 
-def map_reduce(process):
+def map_reduce_dimension(process):
     """
     Reduce(self, f_input, dimension='time'):
     """

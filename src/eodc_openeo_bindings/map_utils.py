@@ -6,7 +6,7 @@ from os import path
 import inspect
 import importlib
 from numbers import Number
-from eodc_openeo_bindings.map_cubes_processes import map_apply, map_reduce
+from eodc_openeo_bindings.map_cubes_processes import map_apply, map_reduce_dimension
 
 
 def __map_default(process, process_name, mapping, **kwargs):
@@ -24,7 +24,7 @@ def __map_default(process, process_name, mapping, **kwargs):
     if mapping == 'apply':
         return map_apply(process)
     elif mapping == 'reduce':
-        return map_reduce(process)
+        return map_reduce_dimension(process)
     
     
 def __simple_process(process):
