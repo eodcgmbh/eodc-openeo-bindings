@@ -9,7 +9,7 @@ from eodc_openeo_bindings.map_array_processes import *
 from eodc_openeo_bindings.map_utils import set_output_folder
 
 
-def map_process(process, process_name, process_id, root_folder, 
+def map_process(process, node_id, root_folder, 
                 reducer_name=None, reducer_dimension=None,
                 options=None, vrt_only=False):
     """
@@ -26,8 +26,7 @@ def map_process(process, process_name, process_id, root_folder,
     filepaths = None
 
     # Add/set output folder
-    set_output_folder(root_folder, process_id, options)
-            
+    set_output_folder(root_folder, node_id, options)            
     if reducer_name:
         process['reducer_name'] = reducer_name
     if reducer_dimension:
