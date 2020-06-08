@@ -28,6 +28,8 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
     # this way an application can send a url, list or foldername
     graph = translate_process_graph(process_graph_json, process_defs="http://localhost:3000/v1.0/processes").sort(by='dependency')
     
+    empty_processes = ('apply', 'apply_dimension', 'reduce_dimension', 'reduce_dimension_binary')
+    
     nodes = []
     for node_id in graph.ids:
         cur_node = graph[node_id]
@@ -80,10 +82,12 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
             )
         
         # Get dependencies
-        if graph[node_id].result_process:
-            node_dependencies = [graph[node_id].result_process.id]
+        if cur_node.result_process and (cur_node.process_id in empty_processes):
+            # The current process is a shell/empty process, which embeds a process graph
+            # It only dependency is the node in the embedded process graph, where 'result' is set to True.
+            node_dependencies = [cur_node.result_process.id]
         else:
-            node_dependencies = list(graph[node_id].dependencies.ids)
+            node_dependencies = list(cur_node.dependencies.ids)
         
         # Add to nodes list
         nodes.append((cur_node.id, params, filepaths, node_dependencies, operator))
