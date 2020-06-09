@@ -51,7 +51,7 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
                 wrapper_name = cur_node.process_id
                 wrapper_dimension = cur_node.dimension
         else:
-            wrapper_name = 'apply'
+            wrapper_name = cur_node.process_id
             recuder_dimension = None # for clarity, this will be needed when also 'apply_dimension' is supported by eoDataReaders
         
         # Workaround for process "array_element" until it has the category "reducer" set
