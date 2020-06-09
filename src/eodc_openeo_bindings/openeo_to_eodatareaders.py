@@ -10,7 +10,8 @@ from openeo_pg_parser_python.graph import Graph
 from openeo_pg_parser_python.translate import translate_process_graph
 
 
-def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: str, vrt_only: bool = False,
+def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: str, 
+                            process_defs: Union[dict, list, str], vrt_only: bool = False,
                             existing_node_ids: List[Tuple] = None) \
         -> Tuple[List[Tuple[str, List[str], Optional[str], List[str], str]], Graph]:
     """
@@ -28,7 +29,7 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
         process_graph_json = process_graph_json_in
     # TODO process_defs must be defined from the outer functions using openeo_to_eodatareaders
     # this way an application can send a url, list or foldername
-    graph = translate_process_graph(process_graph_json, process_defs="http://localhost:3000/v1.0/processes").sort(by='dependency')
+    graph = translate_process_graph(process_graph_json, process_defs=process_defs).sort(by='dependency')
     
     wrapper_processes = get_wrapper_processes()
     

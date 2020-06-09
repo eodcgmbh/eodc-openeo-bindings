@@ -14,7 +14,7 @@ def get_ref_node_from_name(name, all_nodes):
     return all_nodes[cur_ref_index]
 
 
-def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node, setup_airflow_dag_folder):
+def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node, setup_airflow_dag_folder, backend_processes):
 
     job_data = os.path.join(test_folder, 'openeo_job')
 
@@ -23,7 +23,8 @@ def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node, setup_airf
     user_name = "jdoe_67890"
 
     writer = AirflowDagWriter()
-    writer.write_and_move_job(job_id=job_id, user_name=user_name, process_graph_json=evi_file, job_data=job_data)
+    writer.write_and_move_job(job_id=job_id, user_name=user_name, process_graph_json=evi_file, job_data=job_data,
+                              process_defs=backend_processes)
 
     with open(out_filepath) as outfile:
         out_content = outfile.read()
@@ -85,7 +86,7 @@ def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node, setup_airf
             assert cur_actual_dep.startswith(ref_dep)
 
 
-def test_airflow_dag_vrt_only(csw_server, test_folder, evi_file, setup_airflow_dag_folder):
+def test_airflow_dag_vrt_only(csw_server, test_folder, evi_file, setup_airflow_dag_folder, backend_processes):
     
     job_data = os.path.join(test_folder, 'openeo_job')
 
@@ -95,7 +96,7 @@ def test_airflow_dag_vrt_only(csw_server, test_folder, evi_file, setup_airflow_d
 
     writer = AirflowDagWriter()
     writer.write_and_move_job(job_id=job_id, user_name=user_name, process_graph_json=evi_file, job_data=job_data,
-                              vrt_only=True)
+                              process_defs=backend_processes, vrt_only=True)
 
     with open(out_filepath) as outfile:
         out_content = outfile.read()
@@ -115,7 +116,7 @@ def test_airflow_dag_vrt_only(csw_server, test_folder, evi_file, setup_airflow_d
             # TODO not in each cell?
 
 
-def test_airflow_dag_parallel(csw_server, test_folder, evi_file, setup_airflow_dag_folder, airflow_job_folder):
+def test_airflow_dag_parallel(csw_server, test_folder, evi_file, setup_airflow_dag_folder, airflow_job_folder, backend_processes):
     
     job_data = os.path.join(test_folder, 'openeo_job')
 
@@ -124,10 +125,10 @@ def test_airflow_dag_parallel(csw_server, test_folder, evi_file, setup_airflow_d
 
     writer = AirflowDagWriter()
     writer.write_and_move_job(job_id=job_id, user_name=user_name, process_graph_json=evi_file, job_data=job_data,
-                              vrt_only=True)
+                              process_defs=backend_processes, vrt_only=True)
     
     # Simulate that job has ran (place vrt files in node folders)
-    domain = writer.get_domain(job_id, user_name, evi_file, job_data, vrt_only=True)
+    domain = writer.get_domain(job_id, user_name, evi_file, job_data, process_defs=backend_processes, vrt_only=True)
     _, node_ids = writer.get_nodes(domain)
     ref_node_ids = ['blue', 'dc', 'div', 'evi', 'min', 'mintime', 'nir', 'p1', 'p2', 'p3', 'red', 'save', 'sub', 'sum']
     for node_id in node_ids:
@@ -145,7 +146,7 @@ def test_airflow_dag_parallel(csw_server, test_folder, evi_file, setup_airflow_d
     rmtree(os.path.join(test_folder, 'openeo_job'))
 
 
-def test_airflow_dag_delete_sensor(csw_server, test_folder, evi_file, evi_ref_node, setup_airflow_dag_folder):
+def test_airflow_dag_delete_sensor(csw_server, test_folder, evi_file, evi_ref_node, setup_airflow_dag_folder, backend_processes):
 
     job_data = os.path.join(test_folder, 'openeo_job')
 
@@ -155,7 +156,7 @@ def test_airflow_dag_delete_sensor(csw_server, test_folder, evi_file, evi_ref_no
 
     writer = AirflowDagWriter()
     writer.write_and_move_job(job_id=job_id, user_name=user_name, process_graph_json=evi_file, job_data=job_data,
-                              add_delete_sensor=True)
+                              process_defs=backend_processes, add_delete_sensor=True)
 
     with open(out_filepath) as outfile:
         out_content = outfile.read()

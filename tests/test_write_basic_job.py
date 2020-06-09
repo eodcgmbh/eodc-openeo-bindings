@@ -8,11 +8,11 @@ import re
 from eodc_openeo_bindings.job_writer.basic_writer import BasicJobWriter
 
 
-def test_basic(csw_server, test_folder, evi_file, evi_ref_node, out_filepath_basic):
+def test_basic(csw_server, test_folder, evi_file, evi_ref_node, out_filepath_basic, backend_processes):
     job_data = os.path.join(test_folder, 'basic_job')
 
     BasicJobWriter().write_job(process_graph_json=evi_file, job_data=job_data,
-                               output_filepath=out_filepath_basic)
+                               process_defs=backend_processes, output_filepath=out_filepath_basic)
 
     with open(out_filepath_basic) as outfile:
         out_content = outfile.read()

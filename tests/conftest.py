@@ -8,6 +8,7 @@
 """
 
 import os
+import json
 import shutil
 from collections import namedtuple
 
@@ -82,6 +83,11 @@ def out_filepath_basic_apply(request):
     request.addfinalizer(fin)
     return path
 
+
+@pytest.fixture()
+def backend_processes():
+    test_folder = get_test_folder()
+    return json.load(open(os.path.join(test_folder, 'backend_processes.json')))['processes']
 
 
 

@@ -1,0 +1,5046 @@
+{
+  "links": [], 
+  "processes": [
+    {
+      "categories": [
+        "math"
+      ], 
+      "deprecated": false, 
+      "description": "Computes the absolute value of a real number `x`, which is the \"unsigned\" portion of x and often denoted as *|x|*.\n\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 0
+          }, 
+          "returns": 0
+        }, 
+        {
+          "arguments": {
+            "x": 3.5
+          }, 
+          "returns": 3.5
+        }, 
+        {
+          "arguments": {
+            "x": -0.4
+          }, 
+          "returns": 0.4
+        }, 
+        {
+          "arguments": {
+            "x": -3.5
+          }, 
+          "returns": 3.5
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "absolute", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/AbsoluteValue.html", 
+          "rel": "about", 
+          "title": "Absolute value explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A number.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {
+        "if": {
+          "arguments": {
+            "accept": {
+              "from_node": "multiply"
+            }, 
+            "reject": {
+              "from_parameter": "x"
+            }, 
+            "value": {
+              "from_node": "lt"
+            }
+          }, 
+          "process_id": "if", 
+          "result": true
+        }, 
+        "lt": {
+          "arguments": {
+            "x": {
+              "from_parameter": "x"
+            }, 
+            "y": 0
+          }, 
+          "process_id": "lt"
+        }, 
+        "multiply": {
+          "arguments": {
+            "x": {
+              "from_parameter": "x"
+            }, 
+            "y": -1
+          }, 
+          "process_id": "multiply"
+        }
+      }, 
+      "returns": {
+        "description": "The computed absolute value.", 
+        "schema": {
+          "minItems": 0.0, 
+          "minimum": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Absolute value"
+    }, 
+    {
+      "categories": [
+        "cubes"
+      ], 
+      "deprecated": false, 
+      "description": "Applies a *unary* process to each pixel value in the data cube (i.e. a local operation). A unary process takes a single value and returns a single value, for example ``abs()`` or ``linear_scale_range()``. In contrast, the process ``apply_dimension()`` applies a process to all pixel values along a particular dimension.", 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "apply", 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A data cube.", 
+          "experimental": false, 
+          "name": "data", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "subtype": "raster-cube", 
+            "type": "object"
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "A unary process to be applied on each value, may consist of multiple sub-processes.", 
+          "experimental": false, 
+          "name": "process", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "parameters": [
+              {
+                "deprecated": false, 
+                "description": "The value to process.", 
+                "experimental": false, 
+                "name": "x", 
+                "optional": false, 
+                "schema": {
+                  "description": "Any data type.", 
+                  "minItems": 0.0
+                }
+              }, 
+              {
+                "deprecated": false, 
+                "description": "Additional data passed by the user.", 
+                "experimental": false, 
+                "name": "context", 
+                "optional": true, 
+                "schema": {
+                  "description": "Any data type.", 
+                  "minItems": 0.0
+                }
+              }
+            ], 
+            "subtype": "process-graph", 
+            "type": "object"
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "Additional data to be passed to the process.", 
+          "experimental": false, 
+          "name": "context", 
+          "optional": true, 
+          "schema": {
+            "description": "Any data type.", 
+            "minItems": 0.0
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "A data cube with the newly computed values. The resolution, cardinality and the number of dimensions are the same as for the original data cube.", 
+        "schema": {
+          "minItems": 0.0, 
+          "subtype": "raster-cube", 
+          "type": "object"
+        }
+      }, 
+      "summary": "Apply a process to each pixel"
+    }, 
+    {
+      "categories": [
+        "math > trigonometric"
+      ], 
+      "deprecated": false, 
+      "description": "Computes the arc cosine of `x`. The arc cosine is the inverse function of the cosine so that *arccos(cos(x)) = x*.\n\nWorks on radians only.\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 1
+          }, 
+          "returns": 0
+        }, 
+        {
+          "process_graph": {
+            "arccos1": {
+              "arguments": {
+                "x": {
+                  "from_node": "cos1"
+                }
+              }, 
+              "process_id": "arccos", 
+              "result": true
+            }, 
+            "cos1": {
+              "arguments": {
+                "x": 0.5
+              }, 
+              "process_id": "cos"
+            }
+          }, 
+          "returns": 0.5
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "arccos", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/InverseCosine.html", 
+          "rel": "about", 
+          "title": "Inverse cosine explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A number.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The computed angle in radians.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Inverse cosine"
+    }, 
+    {
+      "categories": [
+        "math > trigonometric"
+      ], 
+      "deprecated": false, 
+      "description": "Computes the inverse hyperbolic cosine of `x`. It is the inverse function of the hyperbolic cosine so that *arcosh(cosh(x)) = x*.\n\nWorks on radians only.\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 1
+          }, 
+          "returns": 0
+        }, 
+        {
+          "process_graph": {
+            "arccosh1": {
+              "arguments": {
+                "x": {
+                  "from_node": "cosh1"
+                }
+              }, 
+              "process_id": "arcosh", 
+              "result": true
+            }, 
+            "cosh1": {
+              "arguments": {
+                "x": 0.5
+              }, 
+              "process_id": "cosh"
+            }
+          }, 
+          "returns": 0.5
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "arcosh", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/InverseHyperbolicCosine.html", 
+          "rel": "about", 
+          "title": "Inverse hyperbolic cosine explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A number.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The computed angle in radians.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Inverse hyperbolic cosine"
+    }, 
+    {
+      "categories": [
+        "math > trigonometric"
+      ], 
+      "deprecated": false, 
+      "description": "Computes the arc sine of `x`. The arc sine is the inverse function of the sine so that *arcsin(sin(x)) = x*.\n\nWorks on radians only.\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 0
+          }, 
+          "returns": 0
+        }, 
+        {
+          "process_graph": {
+            "arcsin1": {
+              "arguments": {
+                "x": {
+                  "from_node": "sin1"
+                }
+              }, 
+              "process_id": "arcsin", 
+              "result": true
+            }, 
+            "sin1": {
+              "arguments": {
+                "x": 0.5
+              }, 
+              "process_id": "sin"
+            }
+          }, 
+          "returns": 0.5
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "arcsin", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/InverseSine.html", 
+          "rel": "about", 
+          "title": "Inverse sine explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A number.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The computed angle in radians.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Inverse sine"
+    }, 
+    {
+      "categories": [
+        "math > trigonometric"
+      ], 
+      "deprecated": false, 
+      "description": "Computes the arc tangent of `x`. The arc tangent is the inverse function of the tangent so that *arctan(tan(x)) = x*.\n\nWorks on radians only.\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 0
+          }, 
+          "returns": 0
+        }, 
+        {
+          "process_graph": {
+            "arctan1": {
+              "arguments": {
+                "x": {
+                  "from_node": "tan1"
+                }
+              }, 
+              "process_id": "arctan", 
+              "result": true
+            }, 
+            "tan1": {
+              "arguments": {
+                "x": 0.5
+              }, 
+              "process_id": "tan"
+            }
+          }, 
+          "returns": 0.5
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "arctan", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/InverseTangent.html", 
+          "rel": "about", 
+          "title": "Inverse tangent explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A number.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The computed angle in radians.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Inverse tangent"
+    }, 
+    {
+      "categories": [
+        "math > trigonometric"
+      ], 
+      "deprecated": false, 
+      "description": "Computes the arc tangent of two numbers `x` and `y`. It is similar to calculating the arc tangent of *y / x*, except that the signs of both arguments are used to determine the quadrant of the result.\n\nWorks on radians only.\nThe no-data value `null` is passed through and therefore gets propagated if any of the arguments is `null`.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 0, 
+            "y": 0
+          }, 
+          "returns": 0
+        }, 
+        {
+          "arguments": {
+            "x": 1.5, 
+            "y": null
+          }, 
+          "returns": null
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "arctan2", 
+      "links": [
+        {
+          "href": "https://en.wikipedia.org/wiki/Atan2", 
+          "rel": "about", 
+          "title": "Two-argument inverse tangent explained by Wikipedia"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A number to be used as dividend.", 
+          "experimental": false, 
+          "name": "y", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "A number to be used as divisor.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The computed angle in radians.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Inverse tangent of two numbers"
+    }, 
+    {
+      "categories": [
+        "arrays"
+      ], 
+      "deprecated": false, 
+      "description": "Returns the element with the specified index or label from the array.\n\nEither the parameter `index` or `label` must be specified, otherwise the `ArrayElementParameterMissing` exception is thrown. If both parameters are set the `ArrayElementParameterConflict` exception is thrown.", 
+      "examples": [
+        {
+          "arguments": {
+            "data": [
+              9, 
+              8, 
+              7, 
+              6, 
+              5
+            ], 
+            "index": 2
+          }, 
+          "returns": 7
+        }, 
+        {
+          "arguments": {
+            "data": [
+              "A", 
+              "B", 
+              "C"
+            ], 
+            "index": 0
+          }, 
+          "returns": "A"
+        }, 
+        {
+          "arguments": {
+            "data": [], 
+            "index": 0, 
+            "return_nodata": true
+          }, 
+          "returns": null
+        }
+      ], 
+      "exceptions": {
+        "ArrayElementNotAvailable": {
+          "http": 400, 
+          "message": "The array has no element with the specified index or label."
+        }, 
+        "ArrayElementParameterConflict": {
+          "http": 400, 
+          "message": "The process 'array_element' only allows that either the 'index' or the 'labels' parameter is set."
+        }, 
+        "ArrayElementParameterMissing": {
+          "http": 400, 
+          "message": "The process 'array_element' requires either the 'index' or 'labels' parameter to be set."
+        }
+      }, 
+      "experimental": false, 
+      "id": "array_element", 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "An array.", 
+          "experimental": false, 
+          "name": "data", 
+          "optional": false, 
+          "schema": {
+            "items": {
+              "description": "Any data type is allowed."
+            }, 
+            "minItems": 0.0, 
+            "type": "array"
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "The zero-based index of the element to retrieve.", 
+          "experimental": false, 
+          "name": "index", 
+          "optional": true, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": "integer"
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "The label of the element to retrieve.", 
+          "experimental": false, 
+          "name": "label", 
+          "optional": true, 
+          "schema": [
+            {
+              "minItems": 0.0, 
+              "type": "number"
+            }, 
+            {
+              "minItems": 0.0, 
+              "type": "string"
+            }
+          ]
+        }, 
+        {
+          "default": true, 
+          "deprecated": false, 
+          "description": "By default this process throws an `ArrayElementNotAvailable` exception if the index or label is invalid. If you want to return `null` instead, set this flag to `true`.", 
+          "experimental": false, 
+          "name": "return_nodata", 
+          "optional": true, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": "boolean"
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The value of the requested element.", 
+        "schema": {
+          "description": "Any data type is allowed.", 
+          "minItems": 0.0
+        }
+      }, 
+      "summary": "Get an element from an array"
+    }, 
+    {
+      "categories": [
+        "math > trigonometric"
+      ], 
+      "deprecated": false, 
+      "description": "Computes the inverse hyperbolic sine of `x`. It is the inverse function of the hyperbolic sine so that *arsinh(sinh(x)) = x*.\n\nWorks on radians only.\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 0
+          }, 
+          "returns": 0
+        }, 
+        {
+          "process_graph": {
+            "arcsinh1": {
+              "arguments": {
+                "x": {
+                  "from_node": "sinh1"
+                }
+              }, 
+              "process_id": "arsinh", 
+              "result": true
+            }, 
+            "sinh1": {
+              "arguments": {
+                "x": 0.5
+              }, 
+              "process_id": "sinh"
+            }
+          }, 
+          "returns": 0.5
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "arsinh", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/InverseHyperbolicSine.html", 
+          "rel": "about", 
+          "title": "Inverse hyperbolic sine explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A number.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The computed angle in radians.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Inverse hyperbolic sine"
+    }, 
+    {
+      "categories": [
+        "math > trigonometric"
+      ], 
+      "deprecated": false, 
+      "description": "Computes the inverse hyperbolic tangent of `x`. It is the inverse function of the hyperbolic tangent so that *artanh(tanh(x)) = x*.\n\nWorks on radians only.\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 0
+          }, 
+          "returns": 0
+        }, 
+        {
+          "process_graph": {
+            "arctanh1": {
+              "arguments": {
+                "x": {
+                  "from_node": "tanh1"
+                }
+              }, 
+              "process_id": "artanh", 
+              "result": true
+            }, 
+            "cosh1": {
+              "arguments": {
+                "x": 0.5
+              }, 
+              "process_id": "tanh"
+            }
+          }, 
+          "returns": 0.5
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "artanh", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/InverseHyperbolicTangent.html", 
+          "rel": "about", 
+          "title": "Inverse hyperbolic tangent explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A number.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The computed angle in radians.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Inverse hyperbolic tangent"
+    }, 
+    {
+      "categories": [
+        "math > rounding"
+      ], 
+      "deprecated": false, 
+      "description": "The least integer greater than or equal to the number `x`.\n\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 0
+          }, 
+          "returns": 0
+        }, 
+        {
+          "arguments": {
+            "x": 3.5
+          }, 
+          "returns": 4
+        }, 
+        {
+          "arguments": {
+            "x": -0.4
+          }, 
+          "returns": 0
+        }, 
+        {
+          "arguments": {
+            "x": -3.5
+          }, 
+          "returns": -3
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "ceil", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/CeilingFunction.html", 
+          "rel": "about", 
+          "title": "Ceiling explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A number to round up.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The number rounded up.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "integer", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Round fractions up"
+    }, 
+    {
+      "categories": [
+        "math"
+      ], 
+      "deprecated": false, 
+      "description": "Clips a number between specified minimum and maximum values. A value larger than the maximal value will have the maximal value, a value lower than minimal value will have the minimal value.\n\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "max": 1, 
+            "min": -1, 
+            "x": -5
+          }, 
+          "returns": -1
+        }, 
+        {
+          "arguments": {
+            "max": 10, 
+            "min": 1, 
+            "x": 10.001
+          }, 
+          "returns": 10
+        }, 
+        {
+          "arguments": {
+            "max": 0.02, 
+            "min": 0, 
+            "x": 1e-06
+          }, 
+          "returns": 1e-06
+        }, 
+        {
+          "arguments": {
+            "max": 1, 
+            "min": 0, 
+            "x": null
+          }, 
+          "returns": null
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "clip", 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A number.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "Minimum value. If the value is lower than this value, the process will return the value of this parameter.", 
+          "experimental": false, 
+          "name": "min", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": "number"
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "Maximum value. If the value is greater than this value, the process will return the value of this parameter.", 
+          "experimental": false, 
+          "name": "max", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": "number"
+          }
+        }
+      ], 
+      "process_graph": {
+        "max": {
+          "arguments": {
+            "data": [
+              {
+                "from_parameter": "min"
+              }, 
+              {
+                "from_node": "min"
+              }
+            ], 
+            "ignore_nodata": false
+          }, 
+          "process_id": "max", 
+          "result": true
+        }, 
+        "min": {
+          "arguments": {
+            "data": [
+              {
+                "from_parameter": "max"
+              }, 
+              {
+                "from_parameter": "x"
+              }
+            ], 
+            "ignore_nodata": false
+          }, 
+          "process_id": "min"
+        }
+      }, 
+      "returns": {
+        "description": "The value clipped to the specified range.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Clip a value between a minimum and a maximum"
+    }, 
+    {
+      "categories": [
+        "math > trigonometric"
+      ], 
+      "deprecated": false, 
+      "description": "Computes the cosine of `x`.\n\nWorks on radians only.\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 0
+          }, 
+          "returns": 1
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "cos", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/Cosine.html", 
+          "rel": "about", 
+          "title": "Cosine explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "An angle in radians.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The computed cosine of `x`.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Cosine"
+    }, 
+    {
+      "categories": [
+        "math > trigonometric"
+      ], 
+      "deprecated": false, 
+      "description": "Computes the hyperbolic cosine of `x`.\n\nWorks on radians only.\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 0
+          }, 
+          "returns": 1
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "cosh", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/HyperbolicCosine.html", 
+          "rel": "about", 
+          "title": "Hyperbolic cosine explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "An angle in radians.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The computed hyperbolic cosine of `x`.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Hyperbolic cosine"
+    }, 
+    {
+      "categories": [
+        "math"
+      ], 
+      "deprecated": false, 
+      "description": "Divides argument `x` by the argument `y` (*x / y*) and returns the computed result.\n\nNo-data values are taken into account so that `null` is returned if any element is such a value.\n\nThe computations follow [IEEE Standard 754](https://ieeexplore.ieee.org/document/8766229) whenever the processing environment supports it. Therefore, a division by zero results in \u00b1infinity if the processing environment supports it. Otherwise a `DivisionByZero` error must the thrown.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 5, 
+            "y": 2.5
+          }, 
+          "returns": 2
+        }, 
+        {
+          "arguments": {
+            "x": -2, 
+            "y": 4
+          }, 
+          "returns": -0.5
+        }, 
+        {
+          "arguments": {
+            "x": 1, 
+            "y": null
+          }, 
+          "returns": null
+        }
+      ], 
+      "exceptions": {
+        "DivisionByZero": {
+          "http": 400, 
+          "message": "Division by zero is not supported."
+        }
+      }, 
+      "experimental": false, 
+      "id": "divide", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/Division.html", 
+          "rel": "about", 
+          "title": "Division explained by Wolfram MathWorld"
+        }, 
+        {
+          "href": "https://ieeexplore.ieee.org/document/8766229", 
+          "rel": "about", 
+          "title": "IEEE Standard 754-2019 for Floating-Point Arithmetic"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "The dividend.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "The divisor.", 
+          "experimental": false, 
+          "name": "y", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The computed result.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Division of two numbers"
+    }, 
+    {
+      "categories": [
+        "math > constants", 
+        "math > exponential & logarithmic"
+      ], 
+      "deprecated": false, 
+      "description": "The real number *e* is a mathematical constant that is the base of the natural logarithm such that *ln(e) = 1*. The numerical value is approximately *2.71828*.", 
+      "examples": [
+        {
+          "process_graph": {
+            "e1": {
+              "arguments": {}, 
+              "process_id": "e"
+            }, 
+            "ln1": {
+              "arguments": {
+                "data": {
+                  "from_node": "e1"
+                }
+              }, 
+              "process_id": "ln", 
+              "result": true
+            }
+          }, 
+          "returns": 1, 
+          "title": "Test for ln(e) = 1"
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "e", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/e.html", 
+          "rel": "about", 
+          "title": "Mathematical constant e explained by Wolfram MathWorld"
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The numerical value of Euler's number.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": "number"
+        }
+      }, 
+      "summary": "Euler's number (e)"
+    }, 
+    {
+      "categories": [
+        "math > exponential & logarithmic"
+      ], 
+      "deprecated": false, 
+      "description": "Exponential function to the base *e* raised to the power of `p`.\n\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "p": 0
+          }, 
+          "returns": 1
+        }, 
+        {
+          "arguments": {
+            "p": null
+          }, 
+          "returns": null
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "exp", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/ExponentialFunction.html", 
+          "rel": "about", 
+          "title": "Exponential function explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "The numerical exponent.", 
+          "experimental": false, 
+          "name": "p", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {
+        "e": {
+          "arguments": {}, 
+          "process_id": "e"
+        }, 
+        "power": {
+          "arguments": {
+            "base": {
+              "from_node": "e"
+            }, 
+            "p": {
+              "from_parameter": "p"
+            }
+          }, 
+          "process_id": "power", 
+          "result": true
+        }
+      }, 
+      "returns": {
+        "description": "The computed value for *e* raised to the power of `p`.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Exponentiation to the base e"
+    }, 
+    {
+      "categories": [
+        "filter"
+      ], 
+      "deprecated": false, 
+      "description": "Filters the bands in the data cube so that bands that don't match any of the criteria are dropped from the data cube. The data cube is expected to have only one dimension of type `bands`. Fails with a `DimensionMissing` error if no such dimension exists.\n\nThe following criteria can be used to select bands:\n\n* `bands`: band name or common band name (e.g. `B01`, `B8A`, `red` or `nir`)\n* `wavelengths`: ranges of wavelengths in micrometres (\u03bcm) (e.g. 0.5 - 0.6)\n\nAll these information are exposed in the band metadata of the collection. To keep algorithms interoperable it is recommended to prefer the common bands names or the wavelengths over collection and/or back-end specific band names.\n\nIf multiple criteria are specified, any of them must match and not all of them, i.e. they are combined with an OR-operation. If no criteria is specified, the `BandFilterParameterMissing` exception must be thrown.\n\n**Important:** The order of the specified array defines the order of the bands in the data cube, which can be important for subsequent processes. If multiple bands are matched by a single criterion (e.g. a range of wavelengths), they stay in the original order.", 
+      "exceptions": {
+        "BandFilterParameterMissing": {
+          "http": 400, 
+          "message": "The process 'filter_bands' requires any of the parameters 'bands', 'common_names' or 'wavelengths' to be set."
+        }, 
+        "DimensionMissing": {
+          "http": 400, 
+          "message": "A band dimension is missing."
+        }
+      }, 
+      "experimental": false, 
+      "id": "filter_bands", 
+      "links": [
+        {
+          "href": "https://github.com/radiantearth/stac-spec/tree/master/extensions/eo#common-band-names", 
+          "rel": "about", 
+          "title": "List of common band names as specified by the STAC specification"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A data cube with bands.", 
+          "experimental": false, 
+          "name": "data", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "subtype": "raster-cube", 
+            "type": "object"
+          }
+        }, 
+        {
+          "default": "[]", 
+          "deprecated": false, 
+          "description": "A list of band names. Either the unique band name (metadata field `name` in bands) or one of the common band names (metadata field `common_name` in bands). If unique band name and common name conflict, the unique band name has higher priority.\n\nThe order of the specified array defines the order of the bands in the data cube. If multiple bands match a common name, all matched bands are included in the original order.", 
+          "experimental": false, 
+          "name": "bands", 
+          "optional": true, 
+          "schema": {
+            "items": {
+              "subtype": "band-name", 
+              "type": "string"
+            }, 
+            "minItems": 0.0, 
+            "type": "array"
+          }
+        }, 
+        {
+          "default": "[]", 
+          "deprecated": false, 
+          "description": "A list of sub-lists with each sub-list consisting of two elements. The first element is the minimum wavelength and the second element is the maximum wavelength. Wavelengths are specified in micrometres (\u03bcm).\n\nThe order of the specified array defines the order of the bands in the data cube. If multiple bands match the wavelengths, all matched bands are included in the original order.", 
+          "experimental": false, 
+          "name": "wavelengths", 
+          "optional": true, 
+          "schema": {
+            "items": {
+              "examples": [
+                [
+                  [
+                    0.45, 
+                    0.5
+                  ], 
+                  [
+                    0.6, 
+                    0.7
+                  ]
+                ]
+              ], 
+              "items": {
+                "type": "number"
+              }, 
+              "maxItems": 2, 
+              "minItems": 2, 
+              "type": "array"
+            }, 
+            "minItems": 0.0, 
+            "type": "array"
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "A data cube limited to a subset of its original bands. Therefore, the cardinality is potentially lower, but the resolution and the number of dimensions are the same as for the original data cube.", 
+        "schema": {
+          "minItems": 0.0, 
+          "subtype": "raster-cube", 
+          "type": "object"
+        }
+      }, 
+      "summary": "Filter the bands by name"
+    }, 
+    {
+      "categories": [
+        "filter"
+      ], 
+      "deprecated": false, 
+      "description": "Limits the data cube to the specified bounding box.\n\nThe filter retains a pixel in the data cube if the point at the pixel center intersects with the bounding box (as defined in the Simple Features standard by the OGC).", 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "filter_bbox", 
+      "links": [
+        {
+          "href": "https://proj.org/usage/projections.html", 
+          "rel": "about", 
+          "title": "PROJ parameters for cartographic projections"
+        }, 
+        {
+          "href": "http://www.epsg-registry.org", 
+          "rel": "about", 
+          "title": "Official EPSG code registry"
+        }, 
+        {
+          "href": "http://www.epsg.io", 
+          "rel": "about", 
+          "title": "Unofficial EPSG code database"
+        }, 
+        {
+          "href": "http://www.opengeospatial.org/standards/sfa", 
+          "rel": "about", 
+          "title": "Simple Features standard by the OGC"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A data cube.", 
+          "experimental": false, 
+          "name": "data", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "subtype": "raster-cube", 
+            "type": "object"
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "A bounding box, which may include a vertical axis (see `base` and `height`).", 
+          "experimental": false, 
+          "name": "extent", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "properties": {
+              "base": {
+                "default": null, 
+                "description": "Base (optional, lower left corner, coordinate axis 3).", 
+                "type": [
+                  "number", 
+                  "null"
+                ]
+              }, 
+              "crs": {
+                "anyOf": [
+                  {
+                    "examples": [
+                      7099
+                    ], 
+                    "minimum": 1000, 
+                    "subtype": "epsg-code", 
+                    "title": "EPSG Code", 
+                    "type": "integer"
+                  }, 
+                  {
+                    "subtype": "wkt2-definition", 
+                    "title": "WKT2", 
+                    "type": "string"
+                  }, 
+                  {
+                    "deprecated": true, 
+                    "subtype": "proj-definition", 
+                    "title": "PROJ definition", 
+                    "type": "string"
+                  }
+                ], 
+                "default": 4326, 
+                "description": "Coordinate reference system of the extent, specified as as [EPSG code](http://www.epsg-registry.org/), [WKT2 (ISO 19162) string](http://docs.opengeospatial.org/is/18-010r7/18-010r7.html) or [PROJ definition (deprecated)](https://proj.org/usage/quickstart.html). Defaults to `4326` (EPSG code 4326) unless the client explicitly requests a different coordinate reference system."
+              }, 
+              "east": {
+                "description": "East (upper right corner, coordinate axis 1).", 
+                "type": "number"
+              }, 
+              "height": {
+                "default": null, 
+                "description": "Height (optional, upper right corner, coordinate axis 3).", 
+                "type": [
+                  "number", 
+                  "null"
+                ]
+              }, 
+              "north": {
+                "description": "North (upper right corner, coordinate axis 2).", 
+                "type": "number"
+              }, 
+              "south": {
+                "description": "South (lower left corner, coordinate axis 2).", 
+                "type": "number"
+              }, 
+              "west": {
+                "description": "West (lower left corner, coordinate axis 1).", 
+                "type": "number"
+              }
+            }, 
+            "required": [
+              "west", 
+              "south", 
+              "east", 
+              "north"
+            ], 
+            "subtype": "bounding-box", 
+            "type": "object"
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "A data cube restricted to the bounding box. Therefore, the cardinality is potentially lower, but the resolution and the number of dimensions are the same as for the original data cube.", 
+        "schema": {
+          "minItems": 0.0, 
+          "subtype": "raster-cube", 
+          "type": "object"
+        }
+      }, 
+      "summary": "Spatial filter using a bounding box"
+    }, 
+    {
+      "categories": [
+        "math > rounding"
+      ], 
+      "deprecated": false, 
+      "description": "The greatest integer less than or equal to the number `x`.\n\nThis process is *not* an alias for the ``int()`` process as defined by some mathematicians, see the examples for negative numbers in both processes for differences.\n\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 0
+          }, 
+          "returns": 0
+        }, 
+        {
+          "arguments": {
+            "x": 3.5
+          }, 
+          "returns": 3
+        }, 
+        {
+          "arguments": {
+            "x": -0.4
+          }, 
+          "returns": -1
+        }, 
+        {
+          "arguments": {
+            "x": -3.5
+          }, 
+          "returns": -4
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "floor", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/FloorFunction.html", 
+          "rel": "about", 
+          "title": "Floor explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A number to round down.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The number rounded down.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "integer", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Round fractions down"
+    }, 
+    {
+      "categories": [
+        "math", 
+        "math > rounding"
+      ], 
+      "deprecated": false, 
+      "description": "The integer part of the real number `x`.\n\nThis process is *not* an alias for the ``floor()`` process as defined by some mathematicians, see the examples for negative numbers in both processes for differences.\n\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 0
+          }, 
+          "returns": 0
+        }, 
+        {
+          "arguments": {
+            "x": 3.5
+          }, 
+          "returns": 3
+        }, 
+        {
+          "arguments": {
+            "x": -0.4
+          }, 
+          "returns": 0
+        }, 
+        {
+          "arguments": {
+            "x": -3.5
+          }, 
+          "returns": -3
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "int", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/IntegerPart.html", 
+          "rel": "about", 
+          "title": "Integer Part explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A number.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "Integer part of the number.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "integer", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Integer part of a number"
+    }, 
+    {
+      "categories": [
+        "math"
+      ], 
+      "deprecated": false, 
+      "description": "Performs a linear transformation between the input and output range.\n\nThe underlying formula is: *((x - inputMin) / (inputMax - inputMin)) * (outputMax - outputMin) + outputMin*.\n\nPotential use case include\n\n* scaling values to the 8-bit range (0 - 255) often used for numeric representation of values in one of the channels of the [RGB colour model](https://en.wikipedia.org/wiki/RGB_color_model#Numeric_representations) or\n* calculating percentages (0 - 100).\n\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "inputMax": 1, 
+            "inputMin": -1, 
+            "outputMax": 255, 
+            "outputMin": 0, 
+            "x": 0.3
+          }, 
+          "returns": 165.75
+        }, 
+        {
+          "arguments": {
+            "inputMax": 255, 
+            "inputMin": 0, 
+            "x": 25.5
+          }, 
+          "returns": 0.1
+        }, 
+        {
+          "arguments": {
+            "inputMax": 100, 
+            "inputMin": 0, 
+            "x": null
+          }, 
+          "returns": null
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "linear_scale_range", 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A number to transform.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "Minimum value the input can obtain.", 
+          "experimental": false, 
+          "name": "inputMin", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": "number"
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "Maximum value the input can obtain.", 
+          "experimental": false, 
+          "name": "inputMax", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": "number"
+          }
+        }, 
+        {
+          "default": 0, 
+          "deprecated": false, 
+          "description": "Minimum value of the desired output range.", 
+          "experimental": false, 
+          "name": "outputMin", 
+          "optional": true, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": "number"
+          }
+        }, 
+        {
+          "default": 1, 
+          "deprecated": false, 
+          "description": "Maximum value of the desired output range.", 
+          "experimental": false, 
+          "name": "outputMax", 
+          "optional": true, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": "number"
+          }
+        }
+      ], 
+      "process_graph": {
+        "add": {
+          "arguments": {
+            "x": {
+              "from_node": "multiply"
+            }, 
+            "y": {
+              "from_parameter": "outputMin"
+            }
+          }, 
+          "process_id": "add", 
+          "result": true
+        }, 
+        "divide": {
+          "arguments": {
+            "x": {
+              "from_node": "subtract1"
+            }, 
+            "y": {
+              "from_node": "subtract2"
+            }
+          }, 
+          "process_id": "divide"
+        }, 
+        "multiply": {
+          "arguments": {
+            "x": {
+              "from_node": "divide"
+            }, 
+            "y": {
+              "from_node": "subtract3"
+            }
+          }, 
+          "process_id": "multiply"
+        }, 
+        "subtract1": {
+          "arguments": {
+            "x": {
+              "from_parameter": "x"
+            }, 
+            "y": {
+              "from_parameter": "inputMin"
+            }
+          }, 
+          "process_id": "subtract"
+        }, 
+        "subtract2": {
+          "arguments": {
+            "x": {
+              "from_parameter": "inputMax"
+            }, 
+            "y": {
+              "from_parameter": "inputMin"
+            }
+          }, 
+          "process_id": "subtract"
+        }, 
+        "subtract3": {
+          "arguments": {
+            "x": {
+              "from_parameter": "outputMax"
+            }, 
+            "y": {
+              "from_parameter": "outputMin"
+            }
+          }, 
+          "process_id": "subtract"
+        }
+      }, 
+      "returns": {
+        "description": "The transformed number.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Linear transformation between two ranges"
+    }, 
+    {
+      "categories": [
+        "math > exponential & logarithmic"
+      ], 
+      "deprecated": false, 
+      "description": "The natural logarithm is the logarithm to the base *e* of the number `x`, which equals to using the *log* process with the base set to *e*. The natural logarithm is the inverse function of taking *e* to the power x.\n\nThe no-data value `null` is passed through.\n\nThe computations follow [IEEE Standard 754](https://ieeexplore.ieee.org/document/8766229) whenever the processing environment supports it. Therefore, `ln(0)` results in \u00b1infinity if the processing environment supports it or otherwise an error is thrown.", 
+      "examples": [
+        {
+          "process_graph": {
+            "e1": {
+              "arguments": {}, 
+              "process_id": "e"
+            }, 
+            "ln1": {
+              "arguments": {
+                "data": {
+                  "from_node": "e1"
+                }
+              }, 
+              "process_id": "ln", 
+              "result": true
+            }
+          }, 
+          "returns": 1, 
+          "title": "Example for ln(e) = 1"
+        }, 
+        {
+          "arguments": {
+            "x": 1
+          }, 
+          "returns": 0
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "ln", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/NaturalLogarithm.html", 
+          "rel": "about", 
+          "title": "Natural logarithm explained by Wolfram MathWorld"
+        }, 
+        {
+          "href": "https://ieeexplore.ieee.org/document/8766229", 
+          "rel": "about", 
+          "title": "IEEE Standard 754-2019 for Floating-Point Arithmetic"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A number to compute the natural logarithm for.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {
+        "e": {
+          "arguments": {}, 
+          "process_id": "e"
+        }, 
+        "log": {
+          "arguments": {
+            "base": {
+              "from_node": "e"
+            }, 
+            "x": {
+              "from_parameter": "x"
+            }
+          }, 
+          "process_id": "log", 
+          "result": true
+        }
+      }, 
+      "returns": {
+        "description": "The computed natural logarithm.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Natural logarithm"
+    }, 
+    {
+      "categories": [
+        "cubes", 
+        "import"
+      ], 
+      "deprecated": false, 
+      "description": "Loads a collection from the current back-end by its id and returns it as processable data cube. The data that is added to the data cube can be restricted with the additional `spatial_extent`, `temporal_extent`, `bands` and `properties`.\n\n**Remarks:**\n\n* The bands (and all dimensions that specify nominal dimension labels) are expected to be ordered as specified in the metadata if the `bands` parameter is set to `null`.\n* If no additional parameter is specified this would imply that the whole data set is expected to be loaded. Due to the large size of many data sets this is not recommended and may be optimized by back-ends to only load the data that is actually required after evaluating subsequent processes such as filters. This means that the pixel values should be processed only after the data has been limited to the required extents and as a consequence also to a manageable size.", 
+      "examples": [
+        {
+          "description": "Loading `Sentinel-2B` data from a `Sentinel-2` collection for 2018, but only with cloud cover between 0 and 50%.", 
+          "process_graph": {
+            "loadco1": {
+              "arguments": {
+                "id": "Sentinel-2", 
+                "properties": {
+                  "eo:cloud_cover": {
+                    "process_graph": {
+                      "cc": {
+                        "arguments": {
+                          "max": 50, 
+                          "min": 0, 
+                          "x": {
+                            "from_parameter": "value"
+                          }
+                        }, 
+                        "process_id": "between", 
+                        "result": true
+                      }
+                    }
+                  }, 
+                  "platform": {
+                    "process_graph": {
+                      "pf": {
+                        "arguments": {
+                          "case_sensitive": false, 
+                          "x": {
+                            "from_parameter": "value"
+                          }, 
+                          "y": "Sentinel-2B"
+                        }, 
+                        "process_id": "eq", 
+                        "result": true
+                      }
+                    }
+                  }
+                }, 
+                "spatial_extent": {
+                  "east": 16.6, 
+                  "north": 48.6, 
+                  "south": 47.2, 
+                  "west": 16.1
+                }, 
+                "temporal_extent": [
+                  "2018-01-01", 
+                  "2019-01-01"
+                ]
+              }, 
+              "process_id": "load_collection", 
+              "result": true
+            }
+          }, 
+          "returns": null
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "load_collection", 
+      "links": [
+        {
+          "href": "https://proj.org/usage/projections.html", 
+          "rel": "about", 
+          "title": "PROJ parameters for cartographic projections"
+        }, 
+        {
+          "href": "http://www.epsg-registry.org", 
+          "rel": "about", 
+          "title": "Official EPSG code registry"
+        }, 
+        {
+          "href": "http://www.epsg.io", 
+          "rel": "about", 
+          "title": "Unofficial EPSG code database"
+        }, 
+        {
+          "href": "http://www.opengeospatial.org/standards/sfa", 
+          "rel": "about", 
+          "title": "Simple Features standard by the OGC"
+        }, 
+        {
+          "href": "https://github.com/radiantearth/stac-spec/tree/master/extensions/eo#common-band-names", 
+          "rel": "about", 
+          "title": "List of common band names as specified by the STAC specification"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "The collection id.", 
+          "experimental": false, 
+          "name": "id", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "pattern": "^[A-Za-z0-9_\\-\\.~/]+$", 
+            "subtype": "collection-id", 
+            "type": "string"
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "Limits the data to load from the collection to the specified bounding box or polygons.\n\nThe process puts a pixel into the data cube if the point at the pixel center intersects with the bounding box or any of the polygons (as defined in the Simple Features standard by the OGC).\n\nThe GeoJSON can be one of the following GeoJSON types:\n\n* A `Polygon` geometry,\n* a `GeometryCollection` containing Polygons,\n* a `Feature` with a `Polygon` geometry or\n* a `FeatureCollection` containing `Feature`s with a `Polygon` geometry.\n\nSet this parameter to `null` to set no limit for the spatial extent. Be careful with this when loading large datasets!", 
+          "experimental": false, 
+          "name": "spatial_extent", 
+          "optional": false, 
+          "schema": [
+            {
+              "minItems": 0.0, 
+              "properties": {
+                "base": {
+                  "default": null, 
+                  "description": "Base (optional, lower left corner, coordinate axis 3).", 
+                  "type": [
+                    "number", 
+                    "null"
+                  ]
+                }, 
+                "crs": {
+                  "anyOf": [
+                    {
+                      "examples": [
+                        7099
+                      ], 
+                      "minimum": 1000, 
+                      "subtype": "epsg-code", 
+                      "title": "EPSG Code", 
+                      "type": "integer"
+                    }, 
+                    {
+                      "subtype": "wkt2-definition", 
+                      "title": "WKT2", 
+                      "type": "string"
+                    }, 
+                    {
+                      "deprecated": true, 
+                      "subtype": "proj-definition", 
+                      "title": "PROJ definition", 
+                      "type": "string"
+                    }
+                  ], 
+                  "default": 4326, 
+                  "description": "Coordinate reference system of the extent, specified as as [EPSG code](http://www.epsg-registry.org/), [WKT2 (ISO 19162) string](http://docs.opengeospatial.org/is/18-010r7/18-010r7.html) or [PROJ definition (deprecated)](https://proj.org/usage/quickstart.html). Defaults to `4326` (EPSG code 4326) unless the client explicitly requests a different coordinate reference system."
+                }, 
+                "east": {
+                  "description": "East (upper right corner, coordinate axis 1).", 
+                  "type": "number"
+                }, 
+                "height": {
+                  "default": null, 
+                  "description": "Height (optional, upper right corner, coordinate axis 3).", 
+                  "type": [
+                    "number", 
+                    "null"
+                  ]
+                }, 
+                "north": {
+                  "description": "North (upper right corner, coordinate axis 2).", 
+                  "type": "number"
+                }, 
+                "south": {
+                  "description": "South (lower left corner, coordinate axis 2).", 
+                  "type": "number"
+                }, 
+                "west": {
+                  "description": "West (lower left corner, coordinate axis 1).", 
+                  "type": "number"
+                }
+              }, 
+              "required": [
+                "west", 
+                "south", 
+                "east", 
+                "north"
+              ], 
+              "subtype": "bounding-box", 
+              "title": "Bounding Box", 
+              "type": "object"
+            }, 
+            {
+              "minItems": 0.0, 
+              "subtype": "geojson", 
+              "title": "GeoJSON", 
+              "type": "object"
+            }, 
+            {
+              "description": "Don't filter spatially. All data is included in the data cube.", 
+              "minItems": 0.0, 
+              "title": "No filter", 
+              "type": "null"
+            }
+          ]
+        }, 
+        {
+          "deprecated": false, 
+          "description": "Limits the data to load from the collection to the specified left-closed temporal interval. Applies to all temporal dimensions. The interval has to be specified as an array with exactly two elements:\n\n1. The first element is the start of the temporal interval. The specified instance in time is **included** in the interval.\n2. The second element is the end of the temporal interval. The specified instance in time is **excluded** from the interval.\n\nThe specified temporal strings follow [RFC 3339](https://tools.ietf.org/html/rfc3339). Also supports open intervals by setting one of the boundaries to `null`, but never both.\n\nSet this parameter to `null` to set no limit for the spatial extent. Be careful with this when loading large datasets!", 
+          "experimental": false, 
+          "name": "temporal_extent", 
+          "optional": false, 
+          "schema": [
+            {
+              "examples": [
+                [
+                  "2015-01-01T00:00:00Z", 
+                  "2016-01-01T00:00:00Z"
+                ], 
+                [
+                  "2015-01-01", 
+                  "2016-01-01"
+                ]
+              ], 
+              "items": {
+                "anyOf": [
+                  {
+                    "format": "date-time", 
+                    "subtype": "date-time", 
+                    "type": "string"
+                  }, 
+                  {
+                    "format": "date", 
+                    "subtype": "date", 
+                    "type": "string"
+                  }, 
+                  {
+                    "type": "null"
+                  }
+                ]
+              }, 
+              "maxItems": 2.0, 
+              "minItems": 2.0, 
+              "subtype": "temporal-interval", 
+              "type": "array"
+            }, 
+            {
+              "description": "Don't filter temporally. All data is included in the data cube.", 
+              "minItems": 0.0, 
+              "title": "No filter", 
+              "type": "null"
+            }
+          ]
+        }, 
+        {
+          "deprecated": false, 
+          "description": "Only adds the specified bands into the data cube so that bands that don't match the list of band names are not available. Applies to all dimensions of type `bands`.\n\nEither the unique band name (metadata field `name` in bands) or one of the common band names (metadata field `common_name` in bands) can be specified. If unique band name and common name conflict, the unique band name has higher priority.\n\nThe order of the specified array defines the order of the bands in the data cube. f multiple bands match a common name, all matched bands are included in the original order.", 
+          "experimental": false, 
+          "name": "bands", 
+          "optional": true, 
+          "schema": [
+            {
+              "items": {
+                "subtype": "band-name", 
+                "type": "string"
+              }, 
+              "minItems": 0.0, 
+              "type": "array"
+            }, 
+            {
+              "description": "Don't filter bands. All bands are included in the data cube.", 
+              "minItems": 0.0, 
+              "title": "No Filter", 
+              "type": "null"
+            }
+          ]
+        }, 
+        {
+          "deprecated": false, 
+          "description": "Limits the data by metadata properties to include only data in the data cube which all given conditions return `true` for (AND operation).\n\nSpecify key-value-pairs with the keys being the name of the metadata property, which can be retrieved with the openEO Data Discovery for Collections. The values must be conditions to be evaluated against the collection metadata, see the example.", 
+          "experimental": false, 
+          "name": "properties", 
+          "optional": true, 
+          "schema": [
+            {
+              "additionalProperties": {
+                "parameters": [
+                  {
+                    "description": "The property value to be checked against.", 
+                    "name": "value", 
+                    "required": true, 
+                    "schema": {
+                      "description": "Any data type."
+                    }
+                  }
+                ], 
+                "subtype": "process-graph", 
+                "type": "object"
+              }, 
+              "minItems": 0.0, 
+              "type": "object"
+            }, 
+            {
+              "description": "Don't filter by metadata properties.", 
+              "minItems": 0.0, 
+              "title": "No filter", 
+              "type": "null"
+            }
+          ]
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "A data cube for further processing.", 
+        "schema": {
+          "minItems": 0.0, 
+          "subtype": "raster-cube", 
+          "type": "object"
+        }
+      }, 
+      "summary": "Load a collection"
+    }, 
+    {
+      "categories": [
+        "math > exponential & logarithmic"
+      ], 
+      "deprecated": false, 
+      "description": "Logarithm to the base `base` of the number `x` is defined to be the inverse function of taking b to the power of x.\n\nThe no-data value `null` is passed through and therefore gets propagated if any of the arguments is `null`.\n\nThe computations follow [IEEE Standard 754](https://ieeexplore.ieee.org/document/8766229) whenever the processing environment supports it. Therefore, `log(0, 2)` results in \u00b1infinity if the processing environment supports it or otherwise an error is thrown.", 
+      "examples": [
+        {
+          "arguments": {
+            "base": 10, 
+            "x": 10
+          }, 
+          "returns": 1
+        }, 
+        {
+          "arguments": {
+            "base": 2, 
+            "x": 2
+          }, 
+          "returns": 1
+        }, 
+        {
+          "arguments": {
+            "base": 2, 
+            "x": 4
+          }, 
+          "returns": 2
+        }, 
+        {
+          "arguments": {
+            "base": 16, 
+            "x": 1
+          }, 
+          "returns": 0
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "log", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/Logarithm.html", 
+          "rel": "about", 
+          "title": "Logarithm explained by Wolfram MathWorld"
+        }, 
+        {
+          "href": "https://ieeexplore.ieee.org/document/8766229", 
+          "rel": "about", 
+          "title": "IEEE Standard 754-2019 for Floating-Point Arithmetic"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A number to compute the logarithm for.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "The numerical base.", 
+          "experimental": false, 
+          "name": "base", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The computed logarithm.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Logarithm to a base"
+    }, 
+    {
+      "categories": [
+        "math", 
+        "reducer"
+      ], 
+      "deprecated": false, 
+      "description": "Computes the largest value of an array of numbers, which is is equal to the first element of a sorted (i.e., ordered) version the array.", 
+      "examples": [
+        {
+          "arguments": {
+            "data": [
+              1, 
+              0, 
+              3, 
+              2
+            ]
+          }, 
+          "returns": 3
+        }, 
+        {
+          "arguments": {
+            "data": [
+              5, 
+              2.5, 
+              null, 
+              -0.7
+            ]
+          }, 
+          "returns": 5
+        }, 
+        {
+          "arguments": {
+            "data": [
+              1, 
+              0, 
+              3, 
+              null, 
+              2
+            ], 
+            "ignore_nodata": false
+          }, 
+          "returns": null
+        }, 
+        {
+          "arguments": {
+            "data": []
+          }, 
+          "description": "The input array is empty: return `null`.", 
+          "returns": null
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "max", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/Maximum.html", 
+          "rel": "about", 
+          "title": "Maximum explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "An array of numbers. An empty array resolves always with `null`.", 
+          "experimental": false, 
+          "name": "data", 
+          "optional": false, 
+          "schema": {
+            "items": {
+              "type": [
+                "number", 
+                "null"
+              ]
+            }, 
+            "minItems": 0.0, 
+            "type": "array"
+          }
+        }, 
+        {
+          "default": true, 
+          "deprecated": false, 
+          "description": "Indicates whether no-data values are ignored or not. Ignores them by default. Setting this flag to `false` considers no-data values so that `null` is returned if any value is such a value.", 
+          "experimental": false, 
+          "name": "ignore_nodata", 
+          "optional": true, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": "boolean"
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The maximum value.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Maximum value"
+    }, 
+    {
+      "categories": [
+        "math", 
+        "reducer"
+      ], 
+      "deprecated": false, 
+      "description": "The arithmetic mean of an array of numbers is the quantity commonly called the average. It is defined as the sum of all elements divided by the number of elements.", 
+      "examples": [
+        {
+          "arguments": {
+            "data": [
+              1, 
+              0, 
+              3, 
+              2
+            ]
+          }, 
+          "returns": 1.5
+        }, 
+        {
+          "arguments": {
+            "data": [
+              9, 
+              2.5, 
+              null, 
+              -2.5
+            ]
+          }, 
+          "returns": 3
+        }, 
+        {
+          "arguments": {
+            "data": [
+              1, 
+              null
+            ], 
+            "ignore_nodata": false
+          }, 
+          "returns": null
+        }, 
+        {
+          "arguments": {
+            "data": []
+          }, 
+          "description": "The input array is empty: return `null`.", 
+          "returns": null
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "mean", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/ArithmeticMean.html", 
+          "rel": "about", 
+          "title": "Arithmetic mean explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "An array of numbers. An empty array resolves always with `null`.", 
+          "experimental": false, 
+          "name": "data", 
+          "optional": false, 
+          "schema": {
+            "items": {
+              "type": [
+                "number", 
+                "null"
+              ]
+            }, 
+            "minItems": 0.0, 
+            "type": "array"
+          }
+        }, 
+        {
+          "default": true, 
+          "deprecated": false, 
+          "description": "Indicates whether no-data values are ignored or not. Ignores them by default. Setting this flag to `false` considers no-data values so that `null` is returned if any value is such a value.", 
+          "experimental": false, 
+          "name": "ignore_nodata", 
+          "optional": true, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": "boolean"
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The computed arithmetic mean.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Arithmetic mean (average)"
+    }, 
+    {
+      "categories": [
+        "math", 
+        "reducer"
+      ], 
+      "deprecated": false, 
+      "description": "The statistical median of an array of numbers is the value separating the higher half from the lower half of the data.\n\n**Remarks:**\n\n* For a symmetric arrays, the result is equal to the ``mean()``.\n* The median can also be calculated by computing the quantile (see process ``quantiles()``) with the probability of *0.5*: `quantiles(data, [0.5])`.\n* An empty input array returns `null`.", 
+      "examples": [
+        {
+          "arguments": {
+            "data": [
+              1, 
+              3, 
+              3, 
+              6, 
+              7, 
+              8, 
+              9
+            ]
+          }, 
+          "returns": 6
+        }, 
+        {
+          "arguments": {
+            "data": [
+              1, 
+              2, 
+              3, 
+              4, 
+              5, 
+              6, 
+              8, 
+              9
+            ]
+          }, 
+          "returns": 4.5
+        }, 
+        {
+          "arguments": {
+            "data": [
+              -1, 
+              -0.5, 
+              null, 
+              1
+            ]
+          }, 
+          "returns": -0.5
+        }, 
+        {
+          "arguments": {
+            "data": [
+              -1, 
+              0, 
+              null, 
+              1
+            ], 
+            "ignore_nodata": false
+          }, 
+          "returns": null
+        }, 
+        {
+          "arguments": {
+            "data": []
+          }, 
+          "description": "The input array is empty: return `null`.", 
+          "returns": null
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "median", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/StatisticalMedian.html", 
+          "rel": "about", 
+          "title": "Statistical Median explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "An array of numbers. An empty array resolves always with `null`.", 
+          "experimental": false, 
+          "name": "data", 
+          "optional": false, 
+          "schema": {
+            "items": {
+              "type": [
+                "number", 
+                "null"
+              ]
+            }, 
+            "minItems": 0.0, 
+            "type": "array"
+          }
+        }, 
+        {
+          "default": true, 
+          "deprecated": false, 
+          "description": "Indicates whether no-data values are ignored or not. Ignores them by default. Setting this flag to `false` considers no-data values so that `null` is returned if any value is such a value.", 
+          "experimental": false, 
+          "name": "ignore_nodata", 
+          "optional": true, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": "boolean"
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The computed statistical median.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Statistical median"
+    }, 
+    {
+      "categories": [
+        "math", 
+        "reducer"
+      ], 
+      "deprecated": false, 
+      "description": "Computes the smallest value of an array of numbers, which is is equal to the last element of a sorted (i.e., ordered) version the array.", 
+      "examples": [
+        {
+          "arguments": {
+            "data": [
+              1, 
+              0, 
+              3, 
+              2
+            ]
+          }, 
+          "returns": 0
+        }, 
+        {
+          "arguments": {
+            "data": [
+              5, 
+              2.5, 
+              null, 
+              -0.7
+            ]
+          }, 
+          "returns": -0.7
+        }, 
+        {
+          "arguments": {
+            "data": [
+              1, 
+              0, 
+              3, 
+              null, 
+              2
+            ], 
+            "ignore_nodata": false
+          }, 
+          "returns": null
+        }, 
+        {
+          "arguments": {
+            "data": []
+          }, 
+          "returns": null
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "min", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/Minimum.html", 
+          "rel": "about", 
+          "title": "Minimum explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "An array of numbers. An empty array resolves always with `null`.", 
+          "experimental": false, 
+          "name": "data", 
+          "optional": false, 
+          "schema": {
+            "items": {
+              "type": [
+                "number", 
+                "null"
+              ]
+            }, 
+            "minItems": 0.0, 
+            "type": "array"
+          }
+        }, 
+        {
+          "default": true, 
+          "deprecated": false, 
+          "description": "Indicates whether no-data values are ignored or not. Ignores them by default. Setting this flag to `false` considers no-data values so that `null` is returned if any value is such a value.", 
+          "experimental": false, 
+          "name": "ignore_nodata", 
+          "optional": true, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": "boolean"
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The minimum value.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Minimum value"
+    }, 
+    {
+      "categories": [
+        "math"
+      ], 
+      "deprecated": false, 
+      "description": "Remainder after division of `x` by `y`.\n\nThe result of a modulo operation has the sign of the divisor. The handling regarding the sign of the result [differs between programming languages](https://en.wikipedia.org/wiki/Modulo_operation) and needs careful consideration while implementing this process.\n\nThe no-data value `null` is passed through and therefore gets propagated if any of the arguments is `null`.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 27, 
+            "y": 5
+          }, 
+          "returns": 2
+        }, 
+        {
+          "arguments": {
+            "x": -27, 
+            "y": 5
+          }, 
+          "returns": 3
+        }, 
+        {
+          "arguments": {
+            "x": 27, 
+            "y": -5
+          }, 
+          "returns": -3
+        }, 
+        {
+          "arguments": {
+            "x": -27, 
+            "y": -5
+          }, 
+          "returns": -2
+        }, 
+        {
+          "arguments": {
+            "x": 27, 
+            "y": null
+          }, 
+          "returns": null
+        }, 
+        {
+          "arguments": {
+            "x": null, 
+            "y": 5
+          }, 
+          "returns": null
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "mod", 
+      "links": [
+        {
+          "href": "https://en.wikipedia.org/wiki/Modulo_operation", 
+          "rel": "about", 
+          "title": "Modulo explained by Wikipedia"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A number to be used as dividend.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "A number to be used as divisor.", 
+          "experimental": false, 
+          "name": "y", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The remainder after division.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Modulo"
+    }, 
+    {
+      "categories": [
+        "cubes"
+      ], 
+      "deprecated": false, 
+      "description": "The data cubes have to be compatible. A merge operation without overlap should be reversible with (a set of) filter operations for each of the two cubes. The process performs the join on overlapping dimensions, with the same name and type.\n\nAn overlapping dimension has the same name, type, reference system and resolution in both dimensions, but can have different labels. One of the dimensions can have different labels, for all other dimensions the labels must be equal. If data overlaps, the parameter `overlap_resolver` must be specified to resolve the overlap.\n\n**Examples for merging two data cubes:**\n\n1. Data cubes with the dimensions `x`, `y`, `t` and `bands` have the same dimension labels in `x`,`y` and `t`, but the labels for the dimension `bands` are `B1` and `B2` for the first cube and `B3` and `B4`. An overlap resolver is *not needed*. The merged data cube has the dimensions `x`, `y`, `t` and `bands` and the dimension `bands` has four dimension labels: `B1`, `B2`, `B3`, `B4`.\n2. Data cubes with the dimensions `x`, `y`, `t` and `bands` have the same dimension labels in `x`,`y` and `t`, but the labels for the dimension `bands` are `B1` and `B2` for the first data cube and `B2` and `B3` for the second. An overlap resolver is *required* to resolve overlap in band `B2`. The merged data cube has the dimensions `x`, `y`, `t` and `bands` and the dimension `bands` has three dimension labels: `B1`, `B2`, `B3`.\n3. Data cubes with the dimensions `x`, `y` and `t` have the same dimension labels in `x`,`y` and `t`. There are two options:\n   1. Keep the overlapping values separately in the merged data cube: An overlap resolver is *not needed*, but for each data cube you need to add a new dimension using ``add_dimension()``. The new dimensions must be equal, except that the labels for the new dimensions must differ by name. The merged data cube has the same dimensions and labels as the original data cubes, plus the dimension added with ``add_dimension()``, which has the two dimension labels after the merge.\n   2. Combine the overlapping values into a single value: An overlap resolver is *required* to resolve the overlap for all pixels. The merged data cube has the same dimensions and labels as the original data cubes, but all pixel values have been processed by the overlap resolver.\n4. Merging a data cube with dimensions `x`, `y`, `t` with another cube with dimensions `x`, `y` will join on the `x`, `y` dimension, so the lower dimension cube is merged with each time step in the higher dimensional cube. This can for instance be used to apply a digital elevation model to a spatiotemporal data cube.", 
+      "exceptions": {
+        "OverlapResolverMissing": {
+          "http": 400, 
+          "message": "Overlapping data cubes, but no overlap resolver has been specified."
+        }
+      }, 
+      "experimental": false, 
+      "id": "merge_cubes", 
+      "links": [
+        {
+          "href": "https://en.wikipedia.org/wiki/Reduction_Operator", 
+          "rel": "about", 
+          "title": "Background information on reduction operators (binary reducers) by Wikipedia"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "The first data cube.", 
+          "experimental": false, 
+          "name": "cube1", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "subtype": "raster-cube", 
+            "type": "object"
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "The second data cube.", 
+          "experimental": false, 
+          "name": "cube2", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "subtype": "raster-cube", 
+            "type": "object"
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "A reduction operator that resolves the conflict if the data overlaps. The reducer must return a value of the same data type as the input values are. The reduction operator may be a single process such as ``multiply()`` or consist of multiple sub-processes. `null` (the default) can be specified if no overlap resolver is required.", 
+          "experimental": false, 
+          "name": "overlap_resolver", 
+          "optional": true, 
+          "schema": {
+            "minItems": 0.0, 
+            "parameters": [
+              {
+                "deprecated": false, 
+                "description": "The first value.", 
+                "experimental": false, 
+                "name": "x", 
+                "optional": false, 
+                "schema": {
+                  "description": "Any data type.", 
+                  "minItems": 0.0
+                }
+              }, 
+              {
+                "deprecated": false, 
+                "description": "The second value.", 
+                "experimental": false, 
+                "name": "y", 
+                "optional": false, 
+                "schema": {
+                  "description": "Any data type.", 
+                  "minItems": 0.0
+                }
+              }, 
+              {
+                "deprecated": false, 
+                "description": "Additional data passed by the user.", 
+                "experimental": false, 
+                "name": "context", 
+                "optional": true, 
+                "schema": {
+                  "description": "Any data type.", 
+                  "minItems": 0.0
+                }
+              }
+            ], 
+            "subtype": "process-graph", 
+            "type": "object"
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "Additional data to be passed to the overlap resolver.", 
+          "experimental": false, 
+          "name": "context", 
+          "optional": true, 
+          "schema": {
+            "description": "Any data type.", 
+            "minItems": 0.0
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The merged data cube.", 
+        "schema": {
+          "minItems": 0.0, 
+          "subtype": "raster-cube", 
+          "type": "object"
+        }
+      }, 
+      "summary": "Merging two data cubes"
+    }, 
+    {
+      "categories": [
+        "math"
+      ], 
+      "deprecated": false, 
+      "description": "Multiplies the two numbers `x` and `y` (*x * y*) and returns the computed product.\n\nNo-data values are taken into account so that `null` is returned if any element is such a value.\n\nThe computations follow [IEEE Standard 754](https://ieeexplore.ieee.org/document/8766229) whenever the processing environment supports it.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 5, 
+            "y": 2.5
+          }, 
+          "returns": 12.5
+        }, 
+        {
+          "arguments": {
+            "x": -2, 
+            "y": -4
+          }, 
+          "returns": 8
+        }, 
+        {
+          "arguments": {
+            "x": 1, 
+            "y": null
+          }, 
+          "returns": null
+        }
+      ], 
+      "exceptions": {
+        "MultiplicandMissing": {
+          "http": 400, 
+          "message": "Multiplication requires at least two numbers."
+        }
+      }, 
+      "experimental": false, 
+      "id": "multiply", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/Product.html", 
+          "rel": "about", 
+          "title": "Product explained by Wolfram MathWorld"
+        }, 
+        {
+          "href": "https://ieeexplore.ieee.org/document/8766229", 
+          "rel": "about", 
+          "title": "IEEE Standard 754-2019 for Floating-Point Arithmetic"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "The multiplier.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "The multiplicand.", 
+          "experimental": false, 
+          "name": "y", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {
+        "product": {
+          "arguments": {
+            "data": [
+              {
+                "from_parameter": "x"
+              }, 
+              {
+                "from_parameter": "y"
+              }
+            ], 
+            "ignore_nodata": false
+          }, 
+          "process_id": "product", 
+          "result": true
+        }
+      }, 
+      "returns": {
+        "description": "The computed product of the two numbers.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Multiplication of two numbers"
+    }, 
+    {
+      "categories": [
+        "math > indices", 
+        "vegetation indices"
+      ], 
+      "deprecated": false, 
+      "description": "Computes the Normalized Difference Vegetation Index (NDVI). The NDVI is computed as *(nir - red) / (nir + red)*.\n\nThe `data` parameter expects a raster data cube with a dimension of type `bands` or a `DimensionAmbiguous` error is thrown otherwise. By default, the dimension must have at least two bands with the common names `red` and `nir` assigned or the user need to specify the parameters `nir` and `red`. Otherwise either the error `NirBandAmbiguous` or `RedBandAmbiguous` is thrown. The common names for each band are specified in the collection's band metadata and are *not* equal to the band names.\n\nBy default, the dimension of type `bands` is dropped by this process. To keep the dimension specify a new band name in the parameter `target_band`. This adds a new dimension label with the specified name to the dimension, which can be used to access the computed values. If a band with the specified name exists, a `BandExists` is thrown.\n\nThis process is very similar to the process ``normalized_difference()``, but determines the bands automatically based on the common names (`red`/`nir`) specified in the metadata.", 
+      "exceptions": {
+        "BandExists": {
+          "http": 400, 
+          "message": "A band with the specified target name exists."
+        }, 
+        "DimensionAmbiguous": {
+          "http": 400, 
+          "message": "dimension of type `bands` is not available or is ambiguous.."
+        }, 
+        "NirBandAmbiguous": {
+          "http": 400, 
+          "message": "The NIR band can't be resolved, please specify a band name."
+        }, 
+        "RedBandAmbiguous": {
+          "http": 400, 
+          "message": "The red band can't be resolved, please specify a band name."
+        }
+      }, 
+      "experimental": false, 
+      "id": "ndvi", 
+      "links": [
+        {
+          "href": "https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index", 
+          "rel": "about", 
+          "title": "NDVI explained by Wikipedia"
+        }, 
+        {
+          "href": "https://earthobservatory.nasa.gov/features/MeasuringVegetation/measuring_vegetation_2.php", 
+          "rel": "about", 
+          "title": "NDVI explained by NASA"
+        }, 
+        {
+          "href": "https://github.com/radiantearth/stac-spec/tree/master/extensions/eo#common-band-names", 
+          "rel": "about", 
+          "title": "List of common band names as specified by the STAC specification"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A raster data cube with two bands that have the common names `red` and `nir` assigned.", 
+          "experimental": false, 
+          "name": "data", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "subtype": "raster-cube", 
+            "type": "object"
+          }
+        }, 
+        {
+          "default": "nir", 
+          "deprecated": false, 
+          "description": "The name of the NIR band. Defaults to the band that has the common name `nir` assigned.\n\nEither the unique band name (metadata field `name` in bands) or one of the common band names (metadata field `common_name` in bands) can be specified. If unique band name and common name conflict, the unique band name has higher priority.", 
+          "experimental": false, 
+          "name": "nir", 
+          "optional": true, 
+          "schema": {
+            "minItems": 0.0, 
+            "subtype": "band-name", 
+            "type": "string"
+          }
+        }, 
+        {
+          "default": "red", 
+          "deprecated": false, 
+          "description": "The name of the red band. Defaults to the band that has the common name `red` assigned.\n\nEither the unique band name (metadata field `name` in bands) or one of the common band names (metadata field `common_name` in bands) can be specified. If unique band name and common name conflict, the unique band name has higher priority.", 
+          "experimental": false, 
+          "name": "red", 
+          "optional": true, 
+          "schema": {
+            "minItems": 0.0, 
+            "subtype": "band-name", 
+            "type": "string"
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "By default, the dimension of type `bands` is dropped. To keep the dimension specify a new band name in this parameter so that a new dimension label with the specified name will be added for the computed values.", 
+          "experimental": false, 
+          "name": "target_band", 
+          "optional": true, 
+          "schema": [
+            {
+              "minItems": 0.0, 
+              "pattern": "^[A-Za-z0-9_]+$", 
+              "type": "string"
+            }, 
+            {
+              "minItems": 0.0, 
+              "type": "null"
+            }
+          ]
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "A raster data cube containing the computed NDVI values.", 
+        "schema": {
+          "minItems": 0.0, 
+          "subtype": "raster-cube", 
+          "type": "object"
+        }
+      }, 
+      "summary": "Normalized Difference Vegetation Index"
+    }, 
+    {
+      "categories": [
+        "math > constants", 
+        "math > trigonometric"
+      ], 
+      "deprecated": false, 
+      "description": "The real number Pi (\u03c0) is a mathematical constant that is the ratio of the circumference of a circle to its diameter. The numerical value is approximately *3.14159*.", 
+      "examples": [
+        {
+          "process_graph": {
+            "pi1": {
+              "arguments": {}, 
+              "process_id": "pi"
+            }, 
+            "sin1": {
+              "arguments": {
+                "data": {
+                  "from_node": "pi1"
+                }
+              }, 
+              "process_id": "sin", 
+              "result": true
+            }
+          }, 
+          "returns": 0, 
+          "title": "Test for sin(\u03c0) = 0"
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "pi", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/Pi.html", 
+          "rel": "about", 
+          "title": "Mathematical constant Pi explained by Wolfram MathWorld"
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The numerical value of Pi.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": "number"
+        }
+      }, 
+      "summary": "Pi (\u03c0)"
+    }, 
+    {
+      "categories": [
+        "math", 
+        "math > exponential & logarithmic"
+      ], 
+      "deprecated": false, 
+      "description": "Computes the exponentiation for the base `base` raised to the power of `p`.\n\nThe no-data value `null` is passed through and therefore gets propagated if any of the arguments is `null`.", 
+      "examples": [
+        {
+          "arguments": {
+            "base": 0, 
+            "p": 2
+          }, 
+          "returns": 0
+        }, 
+        {
+          "arguments": {
+            "base": 2.5, 
+            "p": 0
+          }, 
+          "returns": 1
+        }, 
+        {
+          "arguments": {
+            "base": 3, 
+            "p": 3
+          }, 
+          "returns": 27
+        }, 
+        {
+          "arguments": {
+            "base": 5, 
+            "p": -1
+          }, 
+          "returns": 0.2
+        }, 
+        {
+          "arguments": {
+            "base": 1, 
+            "p": 0.5
+          }, 
+          "returns": 1
+        }, 
+        {
+          "arguments": {
+            "base": 1, 
+            "p": null
+          }, 
+          "returns": null
+        }, 
+        {
+          "arguments": {
+            "base": null, 
+            "p": 2
+          }, 
+          "returns": null
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "power", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/Power.html", 
+          "rel": "about", 
+          "title": "Power explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "The numerical base.", 
+          "experimental": false, 
+          "name": "base", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "The numerical exponent.", 
+          "experimental": false, 
+          "name": "p", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The computed value for `base` raised to the power of `p`.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Exponentiation"
+    }, 
+    {
+      "categories": [
+        "math", 
+        "reducer"
+      ], 
+      "deprecated": false, 
+      "description": "Multiplies all elements in a sequential array of numbers and returns the computed product.\n\nBy default no-data values are ignored. Setting `ignore_nodata` to `false` considers no-data values so that `null` is returned if any element is such a value.\n\nThe computations follow [IEEE Standard 754](https://ieeexplore.ieee.org/document/8766229) whenever the processing environment supports it.", 
+      "examples": [
+        {
+          "arguments": {
+            "data": [
+              5, 
+              0
+            ]
+          }, 
+          "returns": 0
+        }, 
+        {
+          "arguments": {
+            "data": [
+              -2, 
+              4, 
+              2.5
+            ]
+          }, 
+          "returns": -20
+        }, 
+        {
+          "arguments": {
+            "data": [
+              1, 
+              null
+            ], 
+            "ignore_nodata": false
+          }, 
+          "returns": null
+        }, 
+        {
+          "arguments": {
+            "data": [
+              -1
+            ]
+          }, 
+          "returns": -1
+        }, 
+        {
+          "arguments": {
+            "data": [
+              null
+            ], 
+            "ignore_nodata": false
+          }, 
+          "returns": null
+        }, 
+        {
+          "arguments": {
+            "data": []
+          }, 
+          "returns": null
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "product", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/Product.html", 
+          "rel": "about", 
+          "title": "Product explained by Wolfram MathWorld"
+        }, 
+        {
+          "href": "https://ieeexplore.ieee.org/document/8766229", 
+          "rel": "about", 
+          "title": "IEEE Standard 754-2019 for Floating-Point Arithmetic"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "An array of numbers.", 
+          "experimental": false, 
+          "name": "data", 
+          "optional": false, 
+          "schema": {
+            "items": {
+              "type": [
+                "number", 
+                "null"
+              ]
+            }, 
+            "minItems": 0.0, 
+            "type": "array"
+          }
+        }, 
+        {
+          "default": true, 
+          "deprecated": false, 
+          "description": "Indicates whether no-data values are ignored or not. Ignores them by default. Setting this flag to `false` considers no-data values so that `null` is returned if any value is such a value.", 
+          "experimental": false, 
+          "name": "ignore_nodata", 
+          "optional": true, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": "boolean"
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The computed product of the sequence of numbers.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Compute the product by multiplying numbers"
+    }, 
+    {
+      "categories": [
+        "math"
+      ], 
+      "deprecated": false, 
+      "description": "Calculates quantiles, which are cut points dividing the range of a probability distribution into either\n\n* intervals corresponding to the given `probabilities` or\n* (nearly) equal-sized intervals (q-quantiles based on the parameter `q`).\n\nEither the parameter `probabilites` or `q` must be specified, otherwise the `QuantilesParameterMissing` exception is thrown. If both parameters are set the `QuantilesParameterConflict` exception is thrown.", 
+      "examples": [
+        {
+          "arguments": {
+            "data": [
+              2, 
+              4, 
+              4, 
+              4, 
+              5, 
+              5, 
+              7, 
+              9
+            ], 
+            "probabilities": [
+              0.005, 
+              0.01, 
+              0.02, 
+              0.05, 
+              0.1, 
+              0.5
+            ]
+          }, 
+          "returns": "[2.07, 2.14, 2.28, 2.7, 3.4, 4.5]"
+        }, 
+        {
+          "arguments": {
+            "data": [
+              2, 
+              4, 
+              4, 
+              4, 
+              5, 
+              5, 
+              7, 
+              9
+            ], 
+            "q": 4
+          }, 
+          "returns": "[4, 4.5, 5.5]"
+        }, 
+        {
+          "arguments": {
+            "data": [
+              -1, 
+              -0.5, 
+              null, 
+              1
+            ], 
+            "q": 2
+          }, 
+          "returns": "[-0.5]"
+        }, 
+        {
+          "arguments": {
+            "data": [
+              -1, 
+              -0.5, 
+              null, 
+              1
+            ], 
+            "ignore_nodata": false, 
+            "q": 4
+          }, 
+          "returns": "[None, None, None]"
+        }, 
+        {
+          "arguments": {
+            "data": [], 
+            "probabilities": [
+              0.1, 
+              0.5
+            ]
+          }, 
+          "returns": "[None, None]", 
+          "title": "Empty array example"
+        }
+      ], 
+      "exceptions": {
+        "QuantilesParameterConflict": {
+          "http": 400, 
+          "message": "The process 'quantiles' only allows that either the 'probabilities' or the 'q' parameter is set."
+        }, 
+        "QuantilesParameterMissing": {
+          "http": 400, 
+          "message": "The process 'quantiles' requires either the 'probabilities' or 'q' parameter to be set."
+        }
+      }, 
+      "experimental": false, 
+      "id": "quantiles", 
+      "links": [
+        {
+          "href": "https://en.wikipedia.org/wiki/Quantile", 
+          "rel": "about", 
+          "title": "Quantiles explained by Wikipedia"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "An array of numbers.", 
+          "experimental": false, 
+          "name": "data", 
+          "optional": false, 
+          "schema": {
+            "items": {
+              "type": [
+                "number", 
+                "null"
+              ]
+            }, 
+            "minItems": 0.0, 
+            "type": "array"
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "A list of probabilities to calculate quantiles for. The probabilities must be between 0 and 1.", 
+          "experimental": false, 
+          "name": "probabilities", 
+          "optional": true, 
+          "schema": {
+            "items": {
+              "maximum": 1, 
+              "minimum": 0, 
+              "type": "number"
+            }, 
+            "minItems": 0.0, 
+            "type": "array"
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "A number of intervals to calculate quantiles for. Calculates q-quantiles with (nearly) equal-sized intervals.", 
+          "experimental": false, 
+          "name": "q", 
+          "optional": true, 
+          "schema": {
+            "minItems": 0.0, 
+            "minimum": 2.0, 
+            "type": "integer"
+          }
+        }, 
+        {
+          "default": true, 
+          "deprecated": false, 
+          "description": "Indicates whether no-data values are ignored or not. Ignores them by default. Setting this flag to `false` considers no-data values so that an array with `null` values is returned if any element is such a value.", 
+          "experimental": false, 
+          "name": "ignore_nodata", 
+          "optional": true, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": "boolean"
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "An array with the computed quantiles. The list has either\n\n* as many elements as the given list of `probabilities` had or\n* *`q`-1* elements.\n\nIf the input array is empty the resulting array is filled with as many `null` values as required according to the list above. For an example, see the 'Empty array example'.", 
+        "schema": {
+          "items": {
+            "type": [
+              "number", 
+              "null"
+            ]
+          }, 
+          "minItems": 0.0, 
+          "type": "array"
+        }
+      }, 
+      "summary": "Quantiles"
+    }, 
+    {
+      "categories": [
+        "cubes", 
+        "reducer"
+      ], 
+      "deprecated": false, 
+      "description": "Applies a unary reducer to a data cube dimension by collapsing all the pixel values along the specified dimension into an output value computed by the reducer. This process passes a list of values to the reducer. In contrast, ``reduce_dimension_binary()`` passes two values, which may be better suited especially for UDFs in case the number of values gets too large to be processed at once.\n\nThe dimension is dropped. To avoid this, use ``apply_dimension()`` instead.", 
+      "exceptions": {
+        "DimensionNotAvailable": {
+          "http": 400, 
+          "message": "A dimension with the specified name does not exist."
+        }
+      }, 
+      "experimental": false, 
+      "id": "reduce_dimension", 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A data cube.", 
+          "experimental": false, 
+          "name": "data", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "subtype": "raster-cube", 
+            "type": "object"
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "A reducer to apply on the specified dimension. A reducer is a single process such as ``mean()`` or a set of processes, which computes a single value for a list of values, see the category 'reducer' for such processes.", 
+          "experimental": false, 
+          "name": "reducer", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "parameters": [
+              {
+                "deprecated": false, 
+                "description": "A labeled array with elements of any type.", 
+                "experimental": false, 
+                "name": "data", 
+                "optional": false, 
+                "schema": {
+                  "items": {
+                    "description": "Any data type."
+                  }, 
+                  "minItems": 0.0, 
+                  "subtype": "labeled-array", 
+                  "type": "array"
+                }
+              }, 
+              {
+                "deprecated": false, 
+                "description": "Additional data passed by the user.", 
+                "experimental": false, 
+                "name": "context", 
+                "optional": true, 
+                "schema": {
+                  "description": "Any data type.", 
+                  "minItems": 0.0
+                }
+              }
+            ], 
+            "subtype": "process-graph", 
+            "type": "object"
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "The name of the dimension over which to reduce. Fails with a `DimensionNotAvailable` error if the specified dimension does not exist.\n\n**Remarks:**\n\n* The default dimensions a data cube provides are described in the collection's metadata field `cube:dimensions`.\n* There could be multiple spatial dimensions such as `x`, `y` or `z`.\n* For multi-spectral imagery there is usually a separate dimension of type `bands` for the bands.", 
+          "experimental": false, 
+          "name": "dimension", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": "string"
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "Additional data to be passed to the reducer.", 
+          "experimental": false, 
+          "name": "context", 
+          "optional": true, 
+          "schema": {
+            "description": "Any data type.", 
+            "minItems": 0.0
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "A data cube with the newly computed values. It has one dimension less than the original data cube, but the remaining dimensions have their resolution and cardinality preserved.", 
+        "schema": {
+          "minItems": 0.0, 
+          "subtype": "raster-cube", 
+          "type": "object"
+        }
+      }, 
+      "summary": "Reduce dimensions"
+    }, 
+    {
+      "categories": [
+        "math > rounding"
+      ], 
+      "deprecated": false, 
+      "description": "Rounds a real number `x` to specified precision `p`.\n\nIf the fractional part of `x` is halfway between two integers, one of which is even and the other odd, then the even number is returned.\nThis behaviour follows [IEEE Standard 754](https://ieeexplore.ieee.org/document/8766229). This kind of rounding is also called \"rounding to nearest\" or \"banker's rounding\". It minimizes rounding errors that result from consistently rounding a midpoint value in a single direction.\n\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 0
+          }, 
+          "returns": 0
+        }, 
+        {
+          "arguments": {
+            "p": 1, 
+            "x": 3.56
+          }, 
+          "returns": 3.6
+        }, 
+        {
+          "arguments": {
+            "p": 2, 
+            "x": -0.4444444
+          }, 
+          "returns": -0.44
+        }, 
+        {
+          "arguments": {
+            "x": -2.5
+          }, 
+          "returns": -2
+        }, 
+        {
+          "arguments": {
+            "x": -3.5
+          }, 
+          "returns": -4
+        }, 
+        {
+          "arguments": {
+            "p": -2, 
+            "x": 1234.5
+          }, 
+          "returns": 1200
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "round", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/AbsoluteValue.html", 
+          "rel": "about", 
+          "title": "Absolute value explained by Wolfram MathWorld"
+        }, 
+        {
+          "href": "https://ieeexplore.ieee.org/document/8766229", 
+          "rel": "about", 
+          "title": "IEEE Standard 754-2019 for Floating-Point Arithmetic"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A number to round.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }, 
+        {
+          "default": 0, 
+          "deprecated": false, 
+          "description": "A positive number specifies the number of digits after the decimal point to round to. A negative number means rounding to a power of ten, so for example *-2* rounds to the nearest hundred. Defaults to *0*.", 
+          "experimental": false, 
+          "name": "p", 
+          "optional": true, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": "integer"
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The rounded number.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Round to a specified precision"
+    }, 
+    {
+      "categories": [
+        "import", 
+        "udf"
+      ], 
+      "deprecated": false, 
+      "description": "Runs an UDF in one of the supported runtime environments.\n\nThe process can either:\n\n1. load and run a locally stored UDF from a file in the workspace of the authenticated user. The path to the UDF file must be relative to the root directory of the user's workspace.\n2. fetch and run a remotely stored and published UDF by absolute URI, for example from [openEO Hub](https://hub.openeo.org)).\n3. run the source code specified inline as string.\n\nThe loaded UDF can be executed in several processes such as ``aggregate_spatial()``, ``apply()``, ``apply_dimension()`` and ``reduce_dimension()``. In this case an array is passed instead of a raster data cube. The user must ensure that the data is properly passed as an array so that the UDF can make sense of it.", 
+      "exceptions": {
+        "InvalidVersion": {
+          "http": 400, 
+          "message": "The specified UDF runtime version is not supported."
+        }
+      }, 
+      "experimental": false, 
+      "id": "run_udf", 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "The data to be passed to the UDF as array or raster data cube.", 
+          "experimental": false, 
+          "name": "data", 
+          "optional": false, 
+          "schema": [
+            {
+              "minItems": 0.0, 
+              "subtype": "raster-cube", 
+              "title": "Raster data cube", 
+              "type": "object"
+            }, 
+            {
+              "items": {
+                "description": "Any data type."
+              }, 
+              "minItems": 1.0, 
+              "title": "Array", 
+              "type": "array"
+            }, 
+            {
+              "description": "A single value of any data type.", 
+              "minItems": 0.0, 
+              "title": "Single Value"
+            }
+          ]
+        }, 
+        {
+          "deprecated": false, 
+          "description": "Either source code, an absolute URL or a path to an UDF script.", 
+          "experimental": false, 
+          "name": "udf", 
+          "optional": false, 
+          "schema": [
+            {
+              "description": "URI to an UDF", 
+              "format": "uri", 
+              "minItems": 0.0, 
+              "subtype": "uri", 
+              "type": "string"
+            }, 
+            {
+              "description": "Path to an UDF uploaded to the server.", 
+              "minItems": 0.0, 
+              "subtype": "file-path", 
+              "type": "string"
+            }, 
+            {
+              "description": "Source code as string", 
+              "minItems": 0.0, 
+              "subtype": "udf-code", 
+              "type": "string"
+            }
+          ]
+        }, 
+        {
+          "deprecated": false, 
+          "description": "An UDF runtime identifier available at the back-end.", 
+          "experimental": false, 
+          "name": "runtime", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "subtype": "udf-runtime", 
+            "type": "string"
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "An UDF runtime version. If set to `null`, the default runtime version specified for each runtime is used.", 
+          "experimental": false, 
+          "name": "version", 
+          "optional": true, 
+          "schema": [
+            {
+              "minItems": 0.0, 
+              "subtype": "udf-runtime-version", 
+              "type": "string"
+            }, 
+            {
+              "minItems": 0.0, 
+              "title": "Default runtime version", 
+              "type": "null"
+            }
+          ]
+        }, 
+        {
+          "default": "{}", 
+          "deprecated": false, 
+          "description": "Additional data such as configuration options that should be passed to the UDF.", 
+          "experimental": false, 
+          "name": "context", 
+          "optional": true, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": "object"
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The data processed by the UDF. Returns a raster data cube if a raster data cube was passed for `data`. If an array was passed for `data`, the returned value is defined by the context and is exactly what the UDF returned.", 
+        "schema": [
+          {
+            "minItems": 0.0, 
+            "subtype": "raster-cube", 
+            "title": "Raster data cube", 
+            "type": "object"
+          }, 
+          {
+            "description": "Any data type.", 
+            "minItems": 0.0, 
+            "title": "Any"
+          }
+        ]
+      }, 
+      "summary": "Run an UDF"
+    }, 
+    {
+      "categories": [
+        "cubes", 
+        "export"
+      ], 
+      "deprecated": false, 
+      "description": "Saves processed data to the local user workspace / data store of the authenticated user. This process aims to be compatible to GDAL/OGR formats and options. STAC-compatible metadata should be stored with the processed data.\n\nCalling this process may be rejected by back-ends in the context of secondary web services.", 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "save_result", 
+      "links": [
+        {
+          "href": "https://www.gdal.org/formats_list.html", 
+          "rel": "about", 
+          "title": "GDAL Raster Formats"
+        }, 
+        {
+          "href": "https://www.gdal.org/ogr_formats.html", 
+          "rel": "about", 
+          "title": "OGR Vector Formats"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "The data to save.", 
+          "experimental": false, 
+          "name": "data", 
+          "optional": false, 
+          "schema": [
+            {
+              "minItems": 0.0, 
+              "subtype": "raster-cube", 
+              "type": "object"
+            }, 
+            {
+              "minItems": 0.0, 
+              "subtype": "vector-cube", 
+              "type": "object"
+            }
+          ]
+        }, 
+        {
+          "deprecated": false, 
+          "description": "The file format to save to. It must be one of the values that the server reports as supported output file formats, which usually correspond to the short GDAL/OGR codes. This parameter is *case insensitive*.", 
+          "experimental": false, 
+          "name": "format", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "subtype": "output-format", 
+            "type": "string"
+          }
+        }, 
+        {
+          "default": "{}", 
+          "deprecated": false, 
+          "description": "The file format options to be used to create the file(s). Must correspond to the options that the server reports as supported options for the chosen `format`. The option names and valid values usually correspond to the GDAL/OGR format options.", 
+          "experimental": false, 
+          "name": "options", 
+          "optional": true, 
+          "schema": {
+            "minItems": 0.0, 
+            "subtype": "output-format-options", 
+            "type": "object"
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "`false` if saving failed, `true` otherwise.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": "boolean"
+        }
+      }, 
+      "summary": "Save processed data to storage"
+    }, 
+    {
+      "categories": [
+        "math", 
+        "reducer"
+      ], 
+      "deprecated": false, 
+      "description": "Computes the sample standard deviation, which quantifies the amount of variation of an array of numbers. It is defined to be the square root of the corresponding variance (see ``variance()``).\n\nA low standard deviation indicates that the values tend to be close to the expected value, while a high standard deviation indicates that the values are spread out over a wider range.", 
+      "examples": [
+        {
+          "arguments": {
+            "data": [
+              -1, 
+              1, 
+              3, 
+              null
+            ]
+          }, 
+          "returns": 2
+        }, 
+        {
+          "arguments": {
+            "data": [
+              -1, 
+              1, 
+              3, 
+              null
+            ], 
+            "ignore_nodata": false
+          }, 
+          "returns": null
+        }, 
+        {
+          "arguments": {
+            "data": []
+          }, 
+          "description": "The input array is empty: return `null`.", 
+          "returns": null
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "sd", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/StandardDeviation.html", 
+          "rel": "about", 
+          "title": "Standard deviation explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "An array of numbers. An empty array resolves always with `null`.", 
+          "experimental": false, 
+          "name": "data", 
+          "optional": false, 
+          "schema": {
+            "items": {
+              "type": [
+                "number", 
+                "null"
+              ]
+            }, 
+            "minItems": 0.0, 
+            "type": "array"
+          }
+        }, 
+        {
+          "default": true, 
+          "deprecated": false, 
+          "description": "Indicates whether no-data values are ignored or not. Ignores them by default. Setting this flag to `false` considers no-data values so that `null` is returned if any value is such a value.", 
+          "experimental": false, 
+          "name": "ignore_nodata", 
+          "optional": true, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": "boolean"
+          }
+        }
+      ], 
+      "process_graph": {
+        "power": {
+          "arguments": {
+            "base": {
+              "from_node": "variance"
+            }, 
+            "p": 0.5
+          }, 
+          "process_id": "power", 
+          "result": true
+        }, 
+        "variance": {
+          "arguments": {
+            "data": {
+              "from_parameter": "data"
+            }, 
+            "ignore_nodata": {
+              "from_parameter": "ignore_nodata"
+            }
+          }, 
+          "process_id": "variance"
+        }
+      }, 
+      "returns": {
+        "description": "The computed sample standard deviation.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Standard deviation"
+    }, 
+    {
+      "categories": [
+        "math"
+      ], 
+      "deprecated": false, 
+      "description": "The signum (also known as *sign*) of `x` is defined as:\n\n* *1* if *x > 0*\n* *0* if *x = 0*\n* *-1* if *x < 0*\n\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": -2
+          }, 
+          "returns": -1
+        }, 
+        {
+          "arguments": {
+            "x": 3.5
+          }, 
+          "returns": 1
+        }, 
+        {
+          "arguments": {
+            "x": 0
+          }, 
+          "returns": 0
+        }, 
+        {
+          "arguments": {
+            "x": null
+          }, 
+          "returns": null
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "sgn", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/Sign.html", 
+          "rel": "about", 
+          "title": "Sign explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A number.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {
+        "gt0": {
+          "arguments": {
+            "x": {
+              "from_parameter": "x"
+            }, 
+            "y": 0
+          }, 
+          "process_id": "gt"
+        }, 
+        "if_gt0": {
+          "arguments": {
+            "accept": 1, 
+            "reject": {
+              "from_parameter": "x"
+            }, 
+            "value": {
+              "from_node": "gt0"
+            }
+          }, 
+          "process_id": "if"
+        }, 
+        "if_lt0": {
+          "arguments": {
+            "accept": -1, 
+            "reject": {
+              "from_node": "if_gt0"
+            }, 
+            "value": {
+              "from_node": "lt0"
+            }
+          }, 
+          "process_id": "if", 
+          "result": true
+        }, 
+        "lt0": {
+          "arguments": {
+            "x": {
+              "from_parameter": "x"
+            }, 
+            "y": 0
+          }, 
+          "process_id": "lt"
+        }
+      }, 
+      "returns": {
+        "description": "The computed signum value of `x`.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Signum"
+    }, 
+    {
+      "categories": [
+        "math > trigonometric"
+      ], 
+      "deprecated": false, 
+      "description": "Computes the sine of `x`.\n\nWorks on radians only.\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 0
+          }, 
+          "returns": 0
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "sin", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/Sine.html", 
+          "rel": "about", 
+          "title": "Sine explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "An angle in radians.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The computed sine of `x`.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Sine"
+    }, 
+    {
+      "categories": [
+        "math > trigonometric"
+      ], 
+      "deprecated": false, 
+      "description": "Computes the hyperbolic sine of `x`.\n\nWorks on radians only.\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 0
+          }, 
+          "returns": 0
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "sinh", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/HyperbolicSine.html", 
+          "rel": "about", 
+          "title": "Hyperbolic sine explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "An angle in radians.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The computed hyperbolic sine of `x`.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Hyperbolic sine"
+    }, 
+    {
+      "categories": [
+        "math", 
+        "math > exponential & logarithmic"
+      ], 
+      "deprecated": false, 
+      "description": "Computes the square root of a real number `x`, which is equal to calculating `x` to the power of *0.5*.\n\nA square root of x is a number a such that *a^2^ = x*. Therefore, the square root is the inverse function of a to the power of 2, but only for *a >= 0*.\n\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 0
+          }, 
+          "returns": 0
+        }, 
+        {
+          "arguments": {
+            "x": 1
+          }, 
+          "returns": 1
+        }, 
+        {
+          "arguments": {
+            "x": 9
+          }, 
+          "returns": 3
+        }, 
+        {
+          "arguments": {
+            "x": null
+          }, 
+          "returns": null
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "sqrt", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/SquareRoot.html", 
+          "rel": "about", 
+          "title": "Square root explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "A number.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {
+        "power": {
+          "arguments": {
+            "base": {
+              "from_parameter": "x"
+            }, 
+            "p": 0.5
+          }, 
+          "process_id": "power", 
+          "result": true
+        }
+      }, 
+      "returns": {
+        "description": "The computed square root.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Square root"
+    }, 
+    {
+      "categories": [
+        "math"
+      ], 
+      "deprecated": false, 
+      "description": "Subtracts argument `y` from the argument `x` (*x - y*) and returns the computed result.\n\nNo-data values are taken into account so that `null` is returned if any element is such a value.\n\nThe computations follow [IEEE Standard 754](https://ieeexplore.ieee.org/document/8766229) whenever the processing environment supports it.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 5, 
+            "y": 2.5
+          }, 
+          "returns": 2.5
+        }, 
+        {
+          "arguments": {
+            "x": -2, 
+            "y": 4
+          }, 
+          "returns": -6
+        }, 
+        {
+          "arguments": {
+            "x": 1, 
+            "y": null
+          }, 
+          "returns": null
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "subtract", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/Subtraction.html", 
+          "rel": "about", 
+          "title": "Subtraction explained by Wolfram MathWorld"
+        }, 
+        {
+          "href": "https://ieeexplore.ieee.org/document/8766229", 
+          "rel": "about", 
+          "title": "IEEE Standard 754-2019 for Floating-Point Arithmetic"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "The minuend.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }, 
+        {
+          "deprecated": false, 
+          "description": "The subtrahend.", 
+          "experimental": false, 
+          "name": "y", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The computed result.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Subtraction of two numbers"
+    }, 
+    {
+      "categories": [
+        "math", 
+        "reducer"
+      ], 
+      "deprecated": false, 
+      "description": "Sums up all elements in a sequential array of numbers and returns the computed sum.\n\nBy default no-data values are ignored. Setting `ignore_nodata` to `false` considers no-data values so that `null` is returned if any element is such a value.\n\nThe computations follow [IEEE Standard 754](https://ieeexplore.ieee.org/document/8766229) whenever the processing environment supports it.", 
+      "examples": [
+        {
+          "arguments": {
+            "data": [
+              5, 
+              1
+            ]
+          }, 
+          "returns": 6
+        }, 
+        {
+          "arguments": {
+            "data": [
+              -2, 
+              4, 
+              2.5
+            ]
+          }, 
+          "returns": 4.5
+        }, 
+        {
+          "arguments": {
+            "data": [
+              1, 
+              null
+            ], 
+            "ignore_nodata": false
+          }, 
+          "returns": null
+        }, 
+        {
+          "arguments": {
+            "data": [
+              100
+            ]
+          }, 
+          "returns": 100
+        }, 
+        {
+          "arguments": {
+            "data": [
+              null
+            ], 
+            "ignore_nodata": false
+          }, 
+          "returns": null
+        }, 
+        {
+          "arguments": {
+            "data": []
+          }, 
+          "returns": null
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "sum", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/Sum.html", 
+          "rel": "about", 
+          "title": "Sum explained by Wolfram MathWorld"
+        }, 
+        {
+          "href": "https://ieeexplore.ieee.org/document/8766229", 
+          "rel": "about", 
+          "title": "IEEE Standard 754-2019 for Floating-Point Arithmetic"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "An array of numbers.", 
+          "experimental": false, 
+          "name": "data", 
+          "optional": false, 
+          "schema": {
+            "items": {
+              "type": [
+                "number", 
+                "null"
+              ]
+            }, 
+            "minItems": 0.0, 
+            "type": "array"
+          }
+        }, 
+        {
+          "default": true, 
+          "deprecated": false, 
+          "description": "Indicates whether no-data values are ignored or not. Ignores them by default. Setting this flag to `false` considers no-data values so that `null` is returned if any value is such a value.", 
+          "experimental": false, 
+          "name": "ignore_nodata", 
+          "optional": true, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": "boolean"
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The computed sum of the sequence of numbers.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Compute the sum by adding up numbers"
+    }, 
+    {
+      "categories": [
+        "math > trigonometric"
+      ], 
+      "deprecated": false, 
+      "description": "Computes the tangent of `x`. The tangent is defined to be the sine of x divided by the cosine of x.\n\nWorks on radians only.\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 0
+          }, 
+          "returns": 0
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "tan", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/Tangent.html", 
+          "rel": "about", 
+          "title": "Tangent explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "An angle in radians.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The computed tangent of `x`.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Tangent"
+    }, 
+    {
+      "categories": [
+        "math > trigonometric"
+      ], 
+      "deprecated": false, 
+      "description": "Computes the hyperbolic tangent of `x`. The tangent is defined to be the hyperbolic sine of x divided by the hyperbolic cosine of x.\n\nWorks on radians only.\nThe no-data value `null` is passed through and therefore gets propagated.", 
+      "examples": [
+        {
+          "arguments": {
+            "x": 0
+          }, 
+          "returns": 0
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "tanh", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/HyperbolicTangent.html", 
+          "rel": "about", 
+          "title": "Hyperbolic tangent explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "An angle in radians.", 
+          "experimental": false, 
+          "name": "x", 
+          "optional": false, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": [
+              "number", 
+              "null"
+            ]
+          }
+        }
+      ], 
+      "process_graph": {}, 
+      "returns": {
+        "description": "The computed hyperbolic tangent of `x`.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Hyperbolic tangent"
+    }, 
+    {
+      "categories": [
+        "math", 
+        "reducer"
+      ], 
+      "deprecated": false, 
+      "description": "Computes the sample variance of an array of numbers by calculating the square of the standard deviation (see ``sd()``). It is defined to be the expectation of the squared deviation of a random variable from its expected value. Basically, it measures how far the numbers in the array are spread out from their average value.", 
+      "examples": [
+        {
+          "arguments": {
+            "data": [
+              -1, 
+              1, 
+              3
+            ]
+          }, 
+          "returns": 4
+        }, 
+        {
+          "arguments": {
+            "data": [
+              2, 
+              3, 
+              3, 
+              null, 
+              4, 
+              4, 
+              5
+            ]
+          }, 
+          "returns": 1.1
+        }, 
+        {
+          "arguments": {
+            "data": [
+              -1, 
+              1, 
+              null, 
+              3
+            ], 
+            "ignore_nodata": false
+          }, 
+          "returns": null
+        }, 
+        {
+          "arguments": {
+            "data": []
+          }, 
+          "description": "The input array is empty: return `null`.", 
+          "returns": null
+        }
+      ], 
+      "exceptions": {}, 
+      "experimental": false, 
+      "id": "variance", 
+      "links": [
+        {
+          "href": "http://mathworld.wolfram.com/Variance.html", 
+          "rel": "about", 
+          "title": "Variance explained by Wolfram MathWorld"
+        }
+      ], 
+      "parameters": [
+        {
+          "deprecated": false, 
+          "description": "An array of numbers. An empty array resolves always with `null`.", 
+          "experimental": false, 
+          "name": "data", 
+          "optional": false, 
+          "schema": {
+            "items": {
+              "type": [
+                "number", 
+                "null"
+              ]
+            }, 
+            "minItems": 0.0, 
+            "type": "array"
+          }
+        }, 
+        {
+          "default": true, 
+          "deprecated": false, 
+          "description": "Indicates whether no-data values are ignored or not. Ignores them by default. Setting this flag to `false` considers no-data values so that `null` is returned if any value is such a value.", 
+          "experimental": false, 
+          "name": "ignore_nodata", 
+          "optional": true, 
+          "schema": {
+            "minItems": 0.0, 
+            "type": "boolean"
+          }
+        }
+      ], 
+      "process_graph": {
+        "apply": {
+          "arguments": {
+            "context": {
+              "from_node": "mean"
+            }, 
+            "data": {
+              "from_parameter": "data"
+            }, 
+            "process": {
+              "process-graph": {
+                "power": {
+                  "arguments": {
+                    "base": {
+                      "from_node": "subtract"
+                    }, 
+                    "p": 2
+                  }, 
+                  "process_id": "power", 
+                  "result": true
+                }, 
+                "subtract": {
+                  "arguments": {
+                    "x": {
+                      "from_parameter": "x"
+                    }, 
+                    "y": {
+                      "from_parameter": "context"
+                    }
+                  }, 
+                  "process_id": "subtract"
+                }
+              }
+            }
+          }, 
+          "process_id": "apply"
+        }, 
+        "mean": {
+          "arguments": {
+            "data": {
+              "from_parameter": "data"
+            }
+          }, 
+          "process_id": "mean"
+        }, 
+        "mean2": {
+          "arguments": {
+            "data": {
+              "from_node": "apply"
+            }, 
+            "ignore_nodata": {
+              "from_parameter": "ignore_nodata"
+            }
+          }, 
+          "process_id": "mean", 
+          "result": true
+        }
+      }, 
+      "returns": {
+        "description": "The computed sample variance.", 
+        "schema": {
+          "minItems": 0.0, 
+          "type": [
+            "number", 
+            "null"
+          ]
+        }
+      }, 
+      "summary": "Variance"
+    }
+  ]
+}
