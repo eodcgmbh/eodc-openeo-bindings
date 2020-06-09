@@ -13,5 +13,3 @@ def test_basic(csw_server, test_folder, apply_file, out_filepath_basic_apply):
 
     BasicJobWriter().write_job(process_graph_json=apply_file, job_data=job_data,
                                output_filepath=out_filepath_basic_apply)
-
-    import pdb; pdb.set_trace()
