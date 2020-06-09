@@ -87,7 +87,7 @@ def map_reduce_dimension(process):
     Reduce(self, f_input, dimension='time'):
     """
     
-    if 'f_input' in process.keys():
+    if 'f_input' in process:
         dict_item = {
             'name': 'reduce',
             'dimension': process['wrapper_dimension'],
@@ -109,13 +109,16 @@ def map_apply(process):
     Reduce(self, f_input, dimension='time'):
     """    
     
-    dict_item_list = [
-                {'name': 'apply',
-                'f_input': {'f_name': 'eo_' + process['wrapper_name']} # TODO change name, reducer is confusing here
-                }
-                ]
+    if 'f_input' in process:
+        dict_item = {
+            'name': 'apply', 
+            'f_input': process['f_input']
+            }
+    else:
+        # Add saving to vrt, else no vrt file is generated
+        dict_item = map_save_result(process, in_place=False, format_type='VRT')[0]
 
-    return dict_item_list
+    return dict_item
     
     
 def map_save_result(process, in_place=False, format_type = None, band_label=None):
