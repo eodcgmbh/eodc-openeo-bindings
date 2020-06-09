@@ -90,11 +90,11 @@ def map_reduce_dimension(process):
     if 'f_input' in process.keys():
         dict_item = {
             'name': 'reduce',
-            'dimension': process['reducer_dimension'],
+            'dimension': process['wrapper_dimension'],
             'f_input': process['f_input']
             }
     else:
-        if process['reducer_name'] == 'run_udf':
+        if process['wrapper_name'] == 'run_udf':
             format_type = 'Gtiff'
         else:
             format_type = 'VRT'
@@ -111,7 +111,7 @@ def map_apply(process):
     
     dict_item_list = [
                 {'name': 'apply',
-                'f_input': {'f_name': 'eo_' + process['reducer_name']} # TODO change name, reducer is confusing here
+                'f_input': {'f_name': 'eo_' + process['wrapper_name']} # TODO change name, reducer is confusing here
                 }
                 ]
 

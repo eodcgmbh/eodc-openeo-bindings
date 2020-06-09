@@ -10,7 +10,7 @@ from eodc_openeo_bindings.map_utils import set_output_folder
 
 
 def map_process(process, node_id, root_folder, 
-                reducer_name=None, reducer_dimension=None,
+                wrapper_name=None, wrapper_dimension=None,
                 options=None, vrt_only=False):
     """
     Entry point.
@@ -27,10 +27,10 @@ def map_process(process, node_id, root_folder,
 
     # Add/set output folder
     set_output_folder(root_folder, node_id, options)            
-    if reducer_name:
-        process['reducer_name'] = reducer_name
-    if reducer_dimension:
-        process['reducer_dimension'] = reducer_dimension
+    if wrapper_name:
+        process['wrapper_name'] = wrapper_name
+    if wrapper_dimension:
+        process['wrapper_dimension'] = wrapper_dimension
         
     dict_items = eval("map_" + process['process_id'] + "(process)")
     
