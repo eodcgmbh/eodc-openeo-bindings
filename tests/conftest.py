@@ -106,5 +106,11 @@ def setup_airflow_dag_folder(request):
 
 
 @pytest.fixture()
+def setup_ref_job_folder(request):
+    test_folder = get_test_folder()
+    os.environ['REF_JOBS'] = os.path.join(test_folder, 'ref_jobs')
+
+
+@pytest.fixture()
 def airflow_job_folder():
     return os.path.join(get_test_folder(), 'ref_airflow_job')
