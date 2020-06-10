@@ -98,10 +98,11 @@ def map_multiply(process):
     """
     
     """
+
+    process_params = {}
+    process_params['y'] = str(process['arguments']['y']) + ';float'
     
-    process_params = __set_extra_values(process)
-    
-    return __map_default(process, 'eo_multiply', 'reduce', **process_params)
+    return __map_default(process, 'eo_multiply', 'apply', **process_params)
     
     
 def map_power(process):

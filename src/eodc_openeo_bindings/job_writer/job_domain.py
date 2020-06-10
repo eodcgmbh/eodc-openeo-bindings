@@ -12,9 +12,11 @@ class JobDomain:
 
 class BasicJobDomain(JobDomain):
 
-    def __init__(self, process_graph_json: Union[str, dict], job_data: str, output_filepath: str = None):
+    def __init__(self, process_graph_json: Union[str, dict], job_data: str, 
+                 process_defs: Union[dict, list, str], output_filepath: str = None):
         self.process_graph_json = process_graph_json
         self.job_data = job_data
+        self.process_defs= process_defs
         self.output_filepath = output_filepath
         super(BasicJobDomain, self).__init__()
 
@@ -24,11 +26,13 @@ class BasicJobDomain(JobDomain):
 
 class AirflowDagDomain(JobDomain):
 
-    def __init__(self, job_id: str, user_name: str, process_graph_json: Union[str, dict], job_data: str,
+    def __init__(self, job_id: str, user_name: str, process_graph_json: Union[str, dict], job_data: str, 
+                 process_defs: Union[dict, list, str], 
                  user_email: str = None, job_description: str = None, parallelize_tasks: bool = False,
                  vrt_only: bool = False, add_delete_sensor: bool = False):
         self.process_graph_json = process_graph_json
         self.job_data = job_data
+        self.process_defs= process_defs
         self.job_id = job_id
         self.user_name = user_name
         self.user_email = user_email

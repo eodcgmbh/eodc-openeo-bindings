@@ -8,12 +8,14 @@ from eodc_openeo_bindings.openeo_to_eodatareaders import openeo_to_eodatareaders
 
 class BasicJobWriter(JobWriter):
 
-    def write_job(self, process_graph_json: Union[str, dict], job_data: str, output_filepath: str = None):
+    def write_job(self, process_graph_json: Union[str, dict], job_data: str, 
+                  process_defs: Union[dict, list, str], output_filepath: str = None):
         return super().write_job(process_graph_json=process_graph_json, job_data=job_data,
-                                 output_filepath=output_filepath)
+                                 process_defs=process_defs, output_filepath=output_filepath)
 
-    def get_domain(self, process_graph_json: Union[str, dict], job_data: str, output_filepath: str = None):
-        return BasicJobDomain(process_graph_json, job_data, output_filepath)
+    def get_domain(self, process_graph_json: Union[str, dict], job_data: str, 
+                   process_defs: Union[dict, list, str], output_filepath: str = None):
+        return BasicJobDomain(process_graph_json, job_data, process_defs, output_filepath)
 
     def get_imports(self, domain) -> str:
         return '''\
@@ -36,7 +38,7 @@ params = {params}
 '''
 
     def get_nodes(self, domain: BasicJobDomain) -> Tuple[dict, list]:
-        nodes, graph = openeo_to_eodatareaders(domain.process_graph_json, domain.job_data)
+        nodes, graph = openeo_to_eodatareaders(domain.process_graph_json, domain.job_data, domain.process_defs)
 
         translated_nodes = {}
         translated_nodes_keys = []

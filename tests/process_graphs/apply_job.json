@@ -4,37 +4,42 @@
       "process_id": "load_collection",
       "description": "Loading the data; The order of the specified bands is important for the following reduce operation.",
       "arguments": {
-        "id": "s2a_prd_msil1c",
+        "id": "s2%_prd_msil1c",
         "spatial_extent": {
           "west": 11.279182434082033,
           "east": 11.406898498535158,
           "north": 46.522729291844286,
           "south": 46.464349400461145
         },
-        "temporal_extent": ["2018-06-04T00:00:00.000Z", "2018-06-12T00:00:00.000Z"],
-        "bands": [8]
+        "temporal_extent": ["2018-06-04", "2018-06-23"],
+        "bands": [8, 4, 2]
       }
     },
-    "udfnode": {
-      "process_id": "reduce_dimension",
-      "description": " ",
+    "apply_multiply": {
       "arguments": {
         "data": {"from_node": "dc"},
-        "dimension": "temporal",
-        "reducer": {
+        "process": {
           "process_graph": {
-            "udf": {
-              "process_id": "run_udf",
+            "mult": {
               "arguments": {
-                "data": {"from_parameter": "data"},
-                "udf": "data2 = data*(-1); data2",
-                "runtime": "r"
+                "x": {"from_parameter": "x"},
+                "y": -1
               },
+              "process_id": "multiply",
               "result": true
             }
           }
         }
-      }
+      },
+      "process_id": "apply"
+    },
+    "save": {
+      "process_id": "save_result",
+      "arguments": {
+        "data": {"from_node": "apply_multiply"},
+        "format": "Gtiff"
+      },
+      "result": true
     }
   }
 }
