@@ -6,8 +6,8 @@ from typing import Union, List, Tuple, Optional
 
 from eodc_openeo_bindings.map_processes import map_process
 from eodc_openeo_bindings.map_udf import map_udf
-from openeo_pg_parser.graph import Graph
-from openeo_pg_parser.translate import translate_process_graph
+from openeo_pg_parser_python.graph import Graph
+from openeo_pg_parser_python.translate import translate_process_graph
 
 
 def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: str, 
