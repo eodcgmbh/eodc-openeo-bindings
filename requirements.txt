@@ -15,4 +15,8 @@
 # numpy==1.13.3
 # scipy==1.0
 
-git+git://github.com/Open-EO/openeo-pg-parser-python.git@v1.0.0#egg=openeo-pg-parser-python
+# install pg-parser's dependencies, else they fail with setup.cfg
+numpy
+python-igraph
+
+git+git://github.com/Open-EO/openeo-pg-parser-python.git@v1.0.0#egg=openeo-pg-parser
