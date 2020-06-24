@@ -23,7 +23,7 @@ import glob
 from eodatareaders.eo_data_reader import eoDataReader
 '''
 
-    def get_node_txt(self, node_id, params, filepaths, filepaths0):
+    def get_node_txt(self, node_id, params, filepaths, filepaths0, node_operator):
         return f'''\
 ### {node_id} ###
 # node input files
@@ -33,7 +33,7 @@ from eodatareaders.eo_data_reader import eoDataReader
 params = {params}
 
 # evaluate node
-{node_id} = eoDataReader(filepaths, params)
+{node_id} = {node_operator}(filepaths, params)
 
 '''
 
@@ -47,6 +47,7 @@ params = {params}
             params = node[1]
             filepaths = node[2]
             node_dependencies = node[3]
+            node_operator = node[4]
 
             if filepaths:
                 filepaths0 = 'filepaths = '
@@ -61,7 +62,7 @@ params = {params}
                 filepaths = self.utils.get_file_list(filepaths)
 
             translated_nodes[node_id] = self.get_node_txt(node_id=node_id, params=params, filepaths=filepaths,
-                                                          filepaths0=filepaths0)
+                                                          filepaths0=filepaths0, node_operator=node_operator)
             translated_nodes_keys.append(node_id)
 
         for node in nodes:
