@@ -20,17 +20,15 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
     Each openEO process is wrapped into an apply/reduce call using eoDataReaders methods.
 
     """
-    
-    # TODO make process_defs and job_data env variables
 
+    # Translate openEO PG to traversable object
     if isinstance(process_graph_json_in, dict):
         process_graph_json = deepcopy(process_graph_json_in)
     else:
         process_graph_json = process_graph_json_in
-    # TODO process_defs must be defined from the outer functions using openeo_to_eodatareaders
-    # this way an application can send a url, list or foldername
     graph = translate_process_graph(process_graph_json, process_defs=process_defs).sort(by='dependency')
     
+    # Get wrapper processes -> TODO: is this really needed?
     wrapper_processes = get_wrapper_processes()
     
     nodes = []
@@ -107,7 +105,7 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
 def get_wrapper_processes():
     """
     Return openEO processes which are wrappers around other processes.
-    Their dependencies are handles differently than for common processes.
+    Their dependencies are handled differently than for common processes.
     """
     
     

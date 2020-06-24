@@ -32,6 +32,7 @@ def map_load_collection(process):
 
     # Map bbox filter
     if 'spatial_extent' in process['arguments'].keys():
+        process['arguments']['extent'] = process['arguments']['spatial_extent']
         dict_item = map_filter_bbox(process)[0]
         dict_item_list.append(dict_item)
 
@@ -47,8 +48,6 @@ def map_filter_bands(process):
 
     if 'bands' in process['arguments'].keys():
         load_bands = process['arguments']['bands']
-    elif 'names' in process['arguments'].keys():
-        load_bands = process['arguments']['names']
     # elif 'wavelenghts' in process['args'].keys():
     #     # add this option
     else:
@@ -69,11 +68,11 @@ def map_filter_bbox(process):
 
     dict_item_list = []
 
-    if 'spatial_extent' in process['arguments'].keys():
-        bbox = (process['arguments']['spatial_extent']['west'], process['arguments']['spatial_extent']['south'],\
-                process['arguments']['spatial_extent']['east'], process['arguments']['spatial_extent']['north'])
-        if 'crs' in process['arguments']['spatial_extent'].keys():
-            crs_value = process['arguments']['spatial_extent']['crs']
+    if 'extent' in process['arguments'].keys():
+        bbox = (process['arguments']['extent']['west'], process['arguments']['extent']['south'],\
+                process['arguments']['extent']['east'], process['arguments']['extent']['north'])
+        if 'crs' in process['arguments']['extent'].keys():
+            crs_value = process['arguments']['extent']['crs']
         else:
             crs_value = 'EPSG:4326'
         dict_item = {'name': 'crop', 'extent': bbox, 'crs': crs_value}

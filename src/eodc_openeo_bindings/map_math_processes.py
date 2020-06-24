@@ -2,7 +2,7 @@
 
 """
 
-from eodc_openeo_bindings.map_utils import __map_default, __simple_process, __set_extra_values
+from eodc_openeo_bindings.map_utils import map_default, set_extra_values, get_process_params
 
 
 def map_absolute(process):
@@ -10,7 +10,7 @@ def map_absolute(process):
     
     """
     
-    return __simple_process(process)
+    return map_default(process, 'eo_clip', 'apply')
 
 
 def map_clip(process):
@@ -19,9 +19,8 @@ def map_clip(process):
     """
     
     param_dict = {'min': 'float', 'max': 'float'}
-    process_params = __get_process_params(process, param_dict)
     
-    return __map_default(process, 'eo_clip', 'apply', **process_params)
+    return map_default(process, 'eo_clip', 'apply', param_dict)
 
 
 def map_divide(process):
@@ -29,9 +28,9 @@ def map_divide(process):
     
     """
     
-    process_params = __set_extra_values(process, add_extra_idxs=True)
+    param_dict = {'y': 'float'}
     
-    return __map_default(process, 'eo_divide', 'reduce', **process_params)
+    return map_default(process, 'eo_divide', 'reduce', param_dict)
     
     
 def map_linear_scale_range(process):
@@ -39,14 +38,10 @@ def map_linear_scale_range(process):
     
     """
     
-    param_dict = {'input_min': 'float', 'input_max': 'float', 'output_min': 'float', 'output_max': 'float'}
-    process_params = __get_process_params(process, param_dict)
-    if not process_params['output_min']:
-        process_params['output_min'] = 0
-    if not process_params['output_max']:
-        process_params['output_max'] = 1
+    param_dict = {'input_min': 'float', 'input_max': 'float',
+                  'output_min': 'float', 'output_max': 'float'}
     
-    return __map_default(process, 'eo_linear_scale_range', 'apply', **process_params)
+    return map_default(process, 'eo_linear_scale_range', 'apply', param_dict)
     
     
 def map_max(process):
@@ -54,7 +49,9 @@ def map_max(process):
     
     """
     
-    return __map_default(process, 'eo_max', 'reduce')
+    param_dict = {'ignore_nodata': 'bool'}
+        
+    return map_default(process, 'eo_max', 'reduce', param_dict)
     
     
 def map_min(process):
@@ -62,9 +59,9 @@ def map_min(process):
     
     """
     
-    return __map_default(process, 'eo_min', 'reduce')
+    param_dict = {'ignore_nodata': 'bool'}
     
-    #return map_reduce(process)
+    return map_default(process, 'eo_min', 'reduce', param_dict)
     
     
 def map_mean(process):
@@ -72,7 +69,9 @@ def map_mean(process):
     
     """
     
-    return __map_default(process, 'eo_mean', 'reduce')
+    param_dict = {'ignore_nodata': 'bool'}
+    
+    return map_default(process, 'eo_mean', 'reduce', param_dict)
     
 
 def map_median(process):
@@ -80,7 +79,9 @@ def map_median(process):
     
     """
     
-    return __map_default(process, 'eo_median', 'reduce')
+    param_dict = {'ignore_nodata': 'bool'}
+    
+    return map_default(process, 'eo_median', 'reduce', param_dict)
     
     
 def map_mod(process):
@@ -88,10 +89,9 @@ def map_mod(process):
     
     """
     
-    process_params = {}
-    process_params['y'] = process['arguments']['y'] + ';float'
+    param_dict = {'y': 'float'}
     
-    return __map_default(process, 'eo_mod', 'apply', **process_params)
+    return map_default(process, 'eo_mod', 'apply', param_dict)
 
 
 def map_multiply(process):
@@ -99,10 +99,9 @@ def map_multiply(process):
     
     """
 
-    process_params = {}
-    process_params['y'] = str(process['arguments']['y']) + ';float'
+    param_dict = {'y': 'float'}
     
-    return __map_default(process, 'eo_multiply', 'apply', **process_params)
+    return map_default(process, 'eo_multiply', 'apply', param_dict)
     
     
 def map_power(process):
@@ -110,10 +109,9 @@ def map_power(process):
     
     """
     
-    process_params = {}
-    process_params['p'] = process['arguments']['p'] + ';float'
+    param_dict = {'p': 'float'}
     
-    return __map_default(process, 'eo_power', 'apply', **process_params)
+    return map_default(process, 'eo_power', 'apply', param_dict)
     
     
 def map_product(process):
@@ -121,10 +119,11 @@ def map_product(process):
     openEO process "product" is an alias for "multiply".
     
     """
+
+    process_params1 = set_extra_values(process['arguments'])
+    process_params2 = get_process_params(process['arguments'], {'ignore_nodata': 'bool'})
     
-    process_params = __set_extra_values(process)
-    
-    return __map_default(process, 'eo_multiply', 'reduce', **process_params)
+    return map_default(process, 'eo_product', 'reduce', {**process_params1, **process_params2})
     
     
 def map_quantiles(process):
@@ -132,20 +131,13 @@ def map_quantiles(process):
     
     """
     
-    if 'probabilities' in process['arguments'].keys():
-        probabilities = process['arguments']['probabilities']
-    else:
-        probabilities = None
-    if 'q' in process['arguments'].keys():
-        q = process['arguments']['q']
-    else:
-        q = None
-        
-    process_params = set_ignore_data(process)
-    process_params['probabilities'] =  probabilities + ';float'
-    process_params['q'] = q + ';float'
+    param_dict = {
+        'probabilities': 'list', # list of float
+        'q': 'int',
+        'ignore_nodata': 'bool'
+        }
     
-    return __map_default(process, 'eo_quantiles', 'apply', **process_params)
+    return map_default(process, 'eo_quantiles', 'apply', param_dict)
     
     
 def map_sd(process):
@@ -153,7 +145,9 @@ def map_sd(process):
     
     """
     
-    return __map_default(process, 'eo_sd', 'reduce')
+    param_dict = {'ignore_nodata': 'bool'}
+    
+    return map_default(process, 'eo_sd', 'reduce', param_dict)
     
     
 def map_sgn(process):
@@ -161,7 +155,7 @@ def map_sgn(process):
     
     """
     
-    return __simple_process(process)
+    return map_default(process, 'eo_sgn', 'apply')
     
     
 def map_sqrt(process):
@@ -169,7 +163,7 @@ def map_sqrt(process):
     
     """
     
-    return __simple_process(process)
+    return map_default(process, 'eo_sqrt', 'apply')
     
     
 def map_subtract(process):
@@ -177,9 +171,9 @@ def map_subtract(process):
     
     """
     
-    process_params = __set_extra_values(process, add_extra_idxs=True)
+    param_dict = {'ignore_nodata': 'bool'}
     
-    return __map_default(process, 'eo_subtract', 'reduce', **process_params)
+    return map_default(process, 'eo_subtract', 'reduce', param_dict)
     
     
 def map_sum(process):
@@ -187,9 +181,10 @@ def map_sum(process):
     
     """
     
-    process_params = __set_extra_values(process)
+    process_params1 = set_extra_values(process['arguments'])
+    process_params2 = get_process_params(process['arguments'], {'ignore_nodata': 'bool'})
         
-    return __map_default(process, 'eo_sum', 'reduce', **process_params)    
+    return map_default(process, 'eo_sum', 'reduce', {**process_params1, **process_params2})    
     
 
 def map_variance(process):
@@ -197,7 +192,9 @@ def map_variance(process):
     
     """
     
-    return __map_default(process, 'eo_variance', 'reduce')
+    param_dict = {'ignore_nodata': 'bool'}
+    
+    return map_default(process, 'eo_variance', 'reduce', param_dict)
     
     
 def map_e(process):
@@ -205,7 +202,7 @@ def map_e(process):
     
     """
     
-    return __simple_process(process)
+    return map_default(process, 'eo_e', 'apply')
     
     
 def map_pi(process):
@@ -213,7 +210,7 @@ def map_pi(process):
     
     """
     
-    return __simple_process(process)
+    return map_default(process, 'eo_pi', 'apply')
     
     
 # def map_cummax(process):
@@ -223,7 +220,7 @@ def map_pi(process):
 # 
 #     # needs apply_dimension
 # 
-#     return __map_default(process, 'eo_cummax')
+#     return map_default(process, 'eo_cummax')
 # 
 # 
 # def map_cumproduct(process):
@@ -231,7 +228,7 @@ def map_pi(process):
 # 
 #     """
 #     # needs apply_dimension
-#     return __map_default(process, 'eo_cumproduct')
+#     return map_default(process, 'eo_cumproduct')
 # 
 # 
 # def map_cumsum(process):
@@ -239,7 +236,7 @@ def map_pi(process):
 # 
 #     """
 #     # needs apply_dimension
-#     return __map_default(process, 'eo_cummsum')
+#     return map_default(process, 'eo_cummsum')
     
     
 def map_exp(process):
@@ -247,15 +244,9 @@ def map_exp(process):
     
     """
     
-    if 'p' in process['arguments'].keys():
-        p = str(process['arguments']['p'])
-    else:
-        p = None
+    param_dict = {'p': 'float'}
     
-    process_params = {}
-    process_params['p'] = p + ';float'
-    
-    return __map_default(process, 'eo_exp', 'apply', **process_params)
+    return map_default(process, 'eo_exp', 'apply', param_dict)
     
     
 def map_ln(process):
@@ -263,7 +254,7 @@ def map_ln(process):
     
     """
     
-    return __simple_process(process)
+    return map_default(process, 'eo_ln', 'apply')
     
     
 def map_log(process):
@@ -279,7 +270,7 @@ def map_log(process):
     process_params = {}
     process_params['base'] = ignore_nodata + ';float'
     
-    return __map_default(process, 'eo_log', 'apply', **process_params)
+    return map_default(process, 'eo_log', 'apply', process_params)
     
     
 def map_ceil(process):
@@ -287,7 +278,7 @@ def map_ceil(process):
     
     """
     
-    return __simple_process(process)
+    return map_default(process, 'eo_ceil', 'apply')
     
     
 def map_floor(process):
@@ -295,7 +286,7 @@ def map_floor(process):
     
     """
     
-    return __simple_process(process)
+    return map_default(process, 'eo_floor', 'apply')
     
     
 def map_int(process):
@@ -303,7 +294,7 @@ def map_int(process):
     
     """
     
-    return __simple_process(process)
+    return map_default(process, 'eo_int', 'apply')
     
     
 def map_round(process):
@@ -311,15 +302,9 @@ def map_round(process):
     
     """
     
-    if 'p' in process['arguments'].keys():
-        p = str(process['arguments']['p'])
-    else:
-        p = None
+    param_dict = {'p': 'int'}
     
-    process_params = {}
-    process_params['p'] = p + ';int'
-    
-    return __map_default(process, 'eo_round', 'apply', **process_params)
+    return map_default(process, 'eo_round', 'apply', process_params)
     
 
 def map_arccos(process):
@@ -327,14 +312,14 @@ def map_arccos(process):
     
     """
         
-    return __simple_process(process)
+    return map_default(process, 'eo_arccos', 'apply')
     
 def map_arcosh(process):
     """
     
     """
         
-    return __simple_process(process)
+    return map_default(process, 'eo_arcosh', 'apply')
     
 
 def map_arcsin(process):
@@ -342,7 +327,7 @@ def map_arcsin(process):
     
     """
         
-    return __simple_process(process)
+    return map_default(process, 'eo_arcsin', 'apply')
     
 
 def map_arsinh(process):
@@ -350,7 +335,7 @@ def map_arsinh(process):
     
     """
         
-    return __simple_process(process)
+    return map_default(process, 'eo_arsinh', 'apply')
     
     
 def map_arctan(process):
@@ -358,7 +343,7 @@ def map_arctan(process):
     
     """
         
-    return __simple_process(process)
+    return map_default(process, 'eo_arctan', 'apply')
     
     
 def map_arctan2(process):
@@ -366,7 +351,7 @@ def map_arctan2(process):
     
     """
         
-    return __simple_process(process)
+    return map_default(process, 'eo_arctan2', 'apply')
     
     
 def map_artanh(process):
@@ -374,7 +359,7 @@ def map_artanh(process):
     
     """
         
-    return __simple_process(process)
+    return map_default(process, 'eo_artanh', 'apply')
     
     
 def map_cos(process):
@@ -382,7 +367,7 @@ def map_cos(process):
     
     """
         
-    return __simple_process(process)
+    return map_default(process, 'eo_cos', 'apply')
     
 
 def map_cosh(process):
@@ -390,7 +375,7 @@ def map_cosh(process):
     
     """
     
-    return __simple_process(process)
+    return map_default(process, 'eo_cosh', 'apply')
     
     
 def map_sin(process):
@@ -398,7 +383,7 @@ def map_sin(process):
     
     """
     
-    return __simple_process(process)
+    return map_default(process, 'eo_sin', 'apply')
     
     
 def map_sinh(process):
@@ -406,7 +391,7 @@ def map_sinh(process):
     
     """
     
-    return __simple_process(process)
+    return map_default(process, 'eo_sinh', 'apply')
     
 
 def map_tan(process):
@@ -414,7 +399,7 @@ def map_tan(process):
     
     """
     
-    return __simple_process(process)
+    return map_default(process, 'eo_tan', 'apply')
     
     
 def map_tanh(process):
@@ -422,4 +407,4 @@ def map_tanh(process):
     
     """
     
-    return __simple_process(process)
+    return map_default(process, 'eo_tanh', 'apply')
