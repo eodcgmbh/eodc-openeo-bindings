@@ -79,6 +79,7 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
             params, filepaths = map_process(
                 cur_node.content,
                 cur_node.id,
+                cur_node.is_result,
                 job_data,
                 wrapper_name=wrapper_name,
                 wrapper_dimension=wrapper_dimension,

@@ -118,7 +118,7 @@ def map_apply(process):
         # Add saving to vrt, else no vrt file is generated
         dict_item = map_save_result(process, in_place=False, format_type='VRT')[0]
 
-    return dict_item
+    return [dict_item]
     
     
 def map_save_result(process, in_place=False, format_type = None, band_label=None):

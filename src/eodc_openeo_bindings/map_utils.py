@@ -69,7 +69,7 @@ def __set_extra_values(process, add_extra_idxs=False):
     return process_params
 
 
-def set_output_folder(root_folder, folder_name, options=[]):
+def set_output_folder(root_folder, folder_name):
     """
     Appends folder to options.
     """
@@ -79,7 +79,7 @@ def set_output_folder(root_folder, folder_name, options=[]):
                  'out_dirpath': root_folder + path.sep + folder_name + path.sep}
 
 
-    return options.append(dict_item)
+    return [dict_item]
     
 
 def get_mapped_processes():
