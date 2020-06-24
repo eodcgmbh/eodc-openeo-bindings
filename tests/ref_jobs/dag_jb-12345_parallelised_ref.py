@@ -35,7 +35,7 @@ blue_4 = eoDataReadersOp(task_id='blue_4',
 p2_7 = eoDataReadersOp(task_id='p2_7',
                         dag=dag,
                         input_filepaths=[['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/blue_4/00001-9befffaa_20180608T101021_20180608T101021_1_eo-array-element-3aacb5.vrt', '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/blue_4/00002-ec0c7512_20180611T102021_20180611T102021_2_eo-array-element-d21309.vrt', '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/blue_4/00003-5937e517_20180618T101021_20180618T101021_3_eo-array-element-c2677f.vrt', '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/blue_4/00004-a2803c08_20180621T102021_20180621T102021_4_eo-array-element-7070fe.vrt']],
-                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p2_7/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_multiply', 'extra_values': '[-7.5];list'}}],
+                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p2_7/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_product', 'extra_values': '[-7.5];list'}}],
                         queue='process'
                         )
 
@@ -49,7 +49,7 @@ red_3 = eoDataReadersOp(task_id='red_3',
 p1_6 = eoDataReadersOp(task_id='p1_6',
                         dag=dag,
                         input_filepaths=[['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/red_3/00001-cd9b5531_20180608T101021_20180608T101021_1_eo-array-element-831dab.vrt', '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/red_3/00002-22e93bda_20180611T102021_20180611T102021_2_eo-array-element-640441.vrt', '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/red_3/00003-fd285fdd_20180618T101021_20180618T101021_3_eo-array-element-ab036b.vrt', '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/red_3/00004-2c7a6ed6_20180621T102021_20180621T102021_4_eo-array-element-a648f1.vrt']],
-                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p1_6/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_multiply', 'extra_values': '[6];list'}}],
+                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p1_6/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_product', 'extra_values': '[6];list'}}],
                         queue='process'
                         )
 
@@ -147,7 +147,7 @@ div_9_4 = eoDataReadersOp(task_id='div_9_4',
 p3_10 = eoDataReadersOp(task_id='p3_10',
                         dag=dag,
                         input_filepaths=[['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/div_9/00001-555fe14d_20180608T101021_20180608T101021_1_eo-divide-fe138e.vrt', '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/div_9/00002-9c1fd252_20180611T102021_20180611T102021_2_eo-divide-2de01a.vrt', '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/div_9/00003-3f5f478a_20180618T101021_20180618T101021_3_eo-divide-181283.vrt', '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/div_9/00004-1f2bf8d7_20180621T102021_20180621T102021_4_eo-divide-7c4912.vrt']],
-                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p3_10/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_multiply', 'extra_values': '[2.5];list'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}],
+                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p3_10/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_product', 'extra_values': '[2.5];list'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}],
                         queue='process'
                         )
 

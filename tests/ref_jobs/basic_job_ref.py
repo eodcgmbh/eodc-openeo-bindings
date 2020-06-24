@@ -58,7 +58,7 @@ for path in input_filepaths:
     filepaths.extend(sorted(glob.glob(path + '/*')))
 
 # node input parameters
-params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/p1_6/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_multiply', 'extra_values': '[6];list'}}]
+params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/p1_6/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_product', 'extra_values': '[6];list'}}]
 
 # evaluate node
 p1_6 = eoDataReader(filepaths, params)
@@ -84,7 +84,7 @@ for path in input_filepaths:
     filepaths.extend(sorted(glob.glob(path + '/*')))
 
 # node input parameters
-params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/p2_7/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_multiply', 'extra_values': '[-7.5];list'}}]
+params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/p2_7/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_product', 'extra_values': '[-7.5];list'}}]
 
 # evaluate node
 p2_7 = eoDataReader(filepaths, params)
@@ -123,7 +123,7 @@ for path in input_filepaths:
     filepaths.extend(sorted(glob.glob(path + '/*')))
 
 # node input parameters
-params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/p3_10/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_multiply', 'extra_values': '[2.5];list'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}]
+params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/p3_10/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_product', 'extra_values': '[2.5];list'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}]
 
 # evaluate node
 p3_10 = eoDataReader(filepaths, params)

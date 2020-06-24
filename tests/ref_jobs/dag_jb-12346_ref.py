@@ -35,7 +35,7 @@ blue_4 = eoDataReadersOp(task_id='blue_4',
 p2_7 = eoDataReadersOp(task_id='p2_7',
                         dag=dag,
                         input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/blue_4/'],
-                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p2_7/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_multiply', 'extra_values': '[-7.5];list'}}],
+                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p2_7/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_product', 'extra_values': '[-7.5];list'}}],
                         queue='process'
                         )
 
@@ -49,7 +49,7 @@ red_3 = eoDataReadersOp(task_id='red_3',
 p1_6 = eoDataReadersOp(task_id='p1_6',
                         dag=dag,
                         input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/red_3/'],
-                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p1_6/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_multiply', 'extra_values': '[6];list'}}],
+                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p1_6/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_product', 'extra_values': '[6];list'}}],
                         queue='process'
                         )
 
@@ -84,7 +84,7 @@ div_9 = eoDataReadersOp(task_id='div_9',
 p3_10 = eoDataReadersOp(task_id='p3_10',
                         dag=dag,
                         input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/div_9/'],
-                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p3_10/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_multiply', 'extra_values': '[2.5];list'}}, {'name': 'save_raster', 'format_type': 'VRT'}],
+                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p3_10/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_product', 'extra_values': '[2.5];list'}}, {'name': 'save_raster', 'format_type': 'VRT'}],
                         queue='process'
                         )
 
