@@ -11,6 +11,9 @@ def map_array_element(process):
     """
     
     process_params = {}
-    process_params['index'] = str(process['arguments']['index']) + ';int'
+    if 'index' in process['arguments']:
+        process_params['index'] = str(process['arguments']['index']) + ';int'
+    if 'label' in process['arguments']:
+        process_params['label'] = str(process['arguments']['label']) + ';str'
     
     return __map_default(process, 'eo_array_element', 'reduce', **process_params)
