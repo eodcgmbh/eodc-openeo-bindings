@@ -28,7 +28,7 @@ def map_divide(process):
     
     """
     
-    param_dict = {'y': 'float'}
+    param_dict = {'ignore_nodata': 'bool'}
     
     return map_default(process, 'eo_divide', 'reduce', param_dict)
     
