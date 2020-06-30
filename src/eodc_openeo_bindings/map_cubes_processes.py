@@ -125,17 +125,27 @@ def map_save_result(process, in_place=False, format_type = None, band_label=None
 
     """
     
-    dict_item = {
-        'name': 'save_raster',
+    if 'options' in process['arguments']:
+        bands = []
+        for item in process['arguments']['options']:
+            bands.append(process['arguments']['options'][item])
+        dict_item = {
+            'name': 'create_composite',
+            'bands': bands,
+            'format_type': process['arguments']['format']
         }
-    #
-    if in_place:
-        dict_item['in_place'] = 'True;bool'
-    # Add format type
-    if 'format_type' in process.keys():
-        dict_item['format_type'] = process['arguments']['format']
-    elif format_type:
-        dict_item['format_type'] = format_type
+    else:
+        dict_item = {
+            'name': 'save_raster'
+            }
+        #
+        if in_place:
+            dict_item['in_place'] = 'True;bool'
+        # Add format type
+        if 'format_type' in process.keys():
+            dict_item['format_type'] = process['arguments']['format']
+        elif format_type:
+            dict_item['format_type'] = format_type
 
     return [dict_item]
 
@@ -150,6 +160,29 @@ def map_merge_cubes(process):
         map_save_result(process, in_place=False, format_type='VRT')[0]  # add saving to vrt, else no vrt file is generated
         ]
 
+    return dict_item_list
+
+
+def map_rename_labels(process):
+    """
+    
+    """
+    
+    # TODO this should be done once in openeo_to_eodatareaders for all processes dealing with dimensions 
+    if process['arguments']['dimension'] in ('spectral', 'spectral_bands', 'bands'):
+        process['arguments']['dimension'] = 'band'
+    if process['arguments']['dimension'] in ('temporal', 'time', 't'):
+        process['arguments']['dimension'] = 'time'
+        
+    dict_item_list = [
+        {
+            'name': 'rename_labels', 
+            'dimension': process['arguments']['dimension'], 
+            'labels': process['arguments']['target']
+        },
+        map_save_result(process, in_place=True, format_type='VRT')[0]  # add saving to vrt, else no vrt file is generated
+    ]
+    
     return dict_item_list
 
 
