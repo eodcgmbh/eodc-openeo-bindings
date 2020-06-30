@@ -34,6 +34,14 @@ def map_process(process, node_id, is_result, root_folder,
         # This should happen only for "load_collection"
         filepaths = process_params[1]
         process_params = process_params[0]
+        
+        if process['arguments']["id"][:2] in ('s1', 's3'):
+            # Workaround to use S1 and S3 Level-1 data, which are not georeferenced
+            # TODO for the moment this is a workaround (29.06.2020)
+            job_params = set_output_folder(root_folder, node_id + '_0')
+            # Add a 'quick_geocode' step before cropping/clipping
+            process_params.insert(-1, {'name': 'quick_geocode', 'scale_sampling': '1;int'})
+            process_params.insert(-1, set_output_folder(root_folder, node_id)[0])
     else:
         filepaths = None
     for param in process_params:
