@@ -65,7 +65,7 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
         if wrapper_dimension:
             if wrapper_dimension in ('spectral', 'spectral_bands', 'bands'):
                 wrapper_dimension = 'band'
-            if wrapper_dimension in ('temporal', 'time'):
+            if wrapper_dimension in ('temporal', 'time', 't'):
                 wrapper_dimension = 'time'
             
         if cur_node.content['process_id'] == 'run_udf':
