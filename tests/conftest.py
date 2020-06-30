@@ -36,6 +36,12 @@ def evi_file():
 
 
 @pytest.fixture()
+def uc1_file():
+    test_folder = get_test_folder()
+    return os.path.join(test_folder, 'process_graphs', 'UC1.json')
+
+
+@pytest.fixture()
 def evi_ref_node():
     refNode = namedtuple('RefNode', 'name input_filepaths')
     return [
