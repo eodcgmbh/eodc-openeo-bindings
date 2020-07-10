@@ -25,17 +25,10 @@ dc_0 = eoDataReadersOp(task_id='dc_0',
                         queue='process'
                         )
 
-blue_4 = eoDataReadersOp(task_id='blue_4',
+nir_2 = eoDataReadersOp(task_id='nir_2',
                         dag=dag,
                         input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/dc_0/'],
-                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/blue_4/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_array_element', 'index': '2;int'}}],
-                        queue='process'
-                        )
-
-p2_7 = eoDataReadersOp(task_id='p2_7',
-                        dag=dag,
-                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/blue_4/'],
-                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p2_7/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_product', 'extra_values': '[-7.5];list'}}],
+                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/nir_2/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_array_element', 'index': '0;int'}}],
                         queue='process'
                         )
 
@@ -46,24 +39,10 @@ red_3 = eoDataReadersOp(task_id='red_3',
                         queue='process'
                         )
 
-p1_6 = eoDataReadersOp(task_id='p1_6',
-                        dag=dag,
-                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/red_3/'],
-                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p1_6/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_product', 'extra_values': '[6];list'}}],
-                        queue='process'
-                        )
-
-nir_2 = eoDataReadersOp(task_id='nir_2',
+blue_4 = eoDataReadersOp(task_id='blue_4',
                         dag=dag,
                         input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/dc_0/'],
-                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/nir_2/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_array_element', 'index': '0;int'}}],
-                        queue='process'
-                        )
-
-sum_8 = eoDataReadersOp(task_id='sum_8',
-                        dag=dag,
-                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/nir_2/', '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p1_6/', '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p2_7/'],
-                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/sum_8/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_sum', 'extra_values': '[10000];list'}}],
+                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/blue_4/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_array_element', 'index': '2;int'}}],
                         queue='process'
                         )
 
@@ -71,6 +50,27 @@ sub_5 = eoDataReadersOp(task_id='sub_5',
                         dag=dag,
                         input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/nir_2/', '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/red_3/'],
                         input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/sub_5/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_subtract'}}],
+                        queue='process'
+                        )
+
+p1_6 = eoDataReadersOp(task_id='p1_6',
+                        dag=dag,
+                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/red_3/'],
+                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p1_6/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_product', 'extra_values': '[6];list'}}],
+                        queue='process'
+                        )
+
+p2_7 = eoDataReadersOp(task_id='p2_7',
+                        dag=dag,
+                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/blue_4/'],
+                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p2_7/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_product', 'extra_values': '[-7.5];list'}}],
+                        queue='process'
+                        )
+
+sum_8 = eoDataReadersOp(task_id='sum_8',
+                        dag=dag,
+                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/nir_2/', '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p1_6/', '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p2_7/'],
+                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/sum_8/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_sum', 'extra_values': '[10000];list'}}],
                         queue='process'
                         )
 
@@ -116,19 +116,19 @@ save_13 = eoDataReadersOp(task_id='save_13',
                         queue='process'
                         )
 
-blue_4.set_upstream([dc_0])
-
-p2_7.set_upstream([blue_4])
+nir_2.set_upstream([dc_0])
 
 red_3.set_upstream([dc_0])
 
-p1_6.set_upstream([red_3])
-
-nir_2.set_upstream([dc_0])
-
-sum_8.set_upstream([nir_2,p1_6,p2_7])
+blue_4.set_upstream([dc_0])
 
 sub_5.set_upstream([nir_2,red_3])
+
+p1_6.set_upstream([red_3])
+
+p2_7.set_upstream([blue_4])
+
+sum_8.set_upstream([nir_2,p1_6,p2_7])
 
 div_9.set_upstream([sub_5,sum_8])
 
