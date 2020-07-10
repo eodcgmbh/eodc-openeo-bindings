@@ -109,7 +109,3 @@ def get_mapped_processes():
                 processes.append(func_name.replace('map_', ''))
     
     return sorted(processes)
-        
-        
-        
-    
