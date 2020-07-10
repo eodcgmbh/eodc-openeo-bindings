@@ -4,7 +4,7 @@
 
 from os import environ
 from owslib.csw import CatalogueServiceWeb
-from owslib.fes import PropertyIsLike, BBox, PropertyIsLessThan, PropertyIsGreaterThan
+from owslib.fes import PropertyIsLike, BBox, PropertyIsLessThan, PropertyIsGreaterThan, PropertyIsEqualTo
 
 
 def map_load_collection(process):
@@ -169,10 +169,7 @@ def map_rename_labels(process):
     """
     
     # TODO this should be done once in openeo_to_eodatareaders for all processes dealing with dimensions 
-    if process['arguments']['dimension'] in ('spectral', 'spectral_bands', 'bands'):
-        process['arguments']['dimension'] = 'band'
-    if process['arguments']['dimension'] in ('temporal', 'time', 't'):
-        process['arguments']['dimension'] = 'time'
+    process['arguments']['dimension'] = check_dim_name(process['arguments']['dimension'])
         
     dict_item_list = [
         {
@@ -186,17 +183,41 @@ def map_rename_labels(process):
     return dict_item_list
 
 
+def map_add_dimension(process):
+    """
+    
+    """
+    
+    # TODO this is a workaround until eodatareaders' metadata functionality has been extended
+    
+    process['arguments']['name'] = check_dim_name(process['arguments']['name'])
+    if not process['arguments']['name']:
+        raise('The current implementation of "add_dimension" only support dimensions "band" and "time".')
+    
+    dict_item_list = [
+        map_save_result(process, format_type='VRT')[0]
+    ]
+    
+    return dict_item_list
+
+
 def csw_query(collection, spatial_extent, temporal_extent):
     """
     Retrieves a file list from the EODC CSW server according to the specified parameters.
 
     """
 
-    csw = CatalogueServiceWeb(environ.get('CSW_SERVER'), timeout=300)
+    if collection == 'SIG0':
+        csw = CatalogueServiceWeb(environ.get('ACUBE_CSW_SERVER'), timeout=300)
+    else:
+        csw = CatalogueServiceWeb(environ.get('CSW_SERVER'), timeout=300)
     constraints = []
 
     # Collection filter
-    constraints.append(PropertyIsLike('apiso:ParentIdentifier', collection))
+    if collection == 'SIG0':
+        constraints.append(PropertyIsEqualTo('eodc:variable_name', collection))
+    else:
+        constraints.append(PropertyIsLike('apiso:ParentIdentifier', collection))
     # Spatial filter
     constraints.append(BBox(spatial_extent))
     # Temporal filter
@@ -220,3 +241,16 @@ def csw_query(collection, spatial_extent, temporal_extent):
     records = sorted(records)
 
     return records
+
+
+def check_dim_name(dimension_name):
+    """
+    Map common dimension names for spectral and time to fieladnames used in eodatareaders.
+    """
+    
+    if dimension_name in ('spectral', 'spectral_bands', 'bands'):
+        dimension_out_name = 'band'
+    if dimension_name in ('temporal', 'time', 't'):
+        dimension_out_name = 'time'
+        
+    return dimension_out_name
