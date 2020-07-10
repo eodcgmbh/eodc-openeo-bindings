@@ -2,7 +2,7 @@
   "process_graph": {
     "march": {
       "arguments": {
-        "id": "s1%_csar_grdh_iw",
+        "id": "SIG0",
         "spatial_extent": {
           "west": 16.06,
           "south": 48.06,
@@ -21,7 +21,7 @@
     },
     "april": {
       "arguments": {
-        "id": "s1%_csar_grdh_iw",
+        "id": "SIG0",
         "spatial_extent": {
           "west": 16.06,
           "south": 48.06,
@@ -40,7 +40,7 @@
     },
     "may": {
       "arguments": {
-        "id": "s1%_csar_grdh_iw",
+        "id": "SIG0",
         "spatial_extent": {
           "west": 16.06,
           "south": 48.06,
@@ -123,10 +123,20 @@
       },
       "process_id": "reduce_dimension"
     },
-    "R_band": {
+    "add_dim_R": {
       "arguments": {
         "data": {
           "from_node": "mean_march"
+        },
+        "name": "bands",
+        "type": "bands"
+      },
+      "process_id": "add_dimension"
+    },
+    "R_band": {
+      "arguments": {
+        "data": {
+          "from_node": "add_dim_R"
         },
         "dimension": "bands",
         "target": [
@@ -135,10 +145,20 @@
       },
       "process_id": "rename_labels"
     },
-    "G_band": {
+    "add_dim_G": {
       "arguments": {
         "data": {
           "from_node": "mean_april"
+        },
+        "name": "bands",
+        "type": "bands"
+      },
+      "process_id": "add_dimension"
+    },
+    "G_band": {
+      "arguments": {
+        "data": {
+          "from_node": "add_dim_G"
         },
         "dimension": "bands",
         "target": [
@@ -147,10 +167,20 @@
       },
       "process_id": "rename_labels"
     },
-    "B_band": {
+    "add_dim_B": {
       "arguments": {
         "data": {
           "from_node": "mean_may"
+        },
+        "name": "bands",
+        "type": "bands"
+      },
+      "process_id": "add_dimension"
+    },
+    "B_band": {
+      "arguments": {
+        "data": {
+          "from_node": "add_dim_B"
         },
         "dimension": "bands",
         "target": [
