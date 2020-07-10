@@ -30,6 +30,11 @@ def csw_server():
 
 
 @pytest.fixture()
+def acube_csw_server():
+    os.environ['ACUBE_CSW_SERVER'] = 'https://csw-acube.eodc.eu/'
+
+
+@pytest.fixture()
 def evi_file():
     test_folder = get_test_folder()
     return os.path.join(test_folder, 'process_graphs', 'evi.json')
@@ -42,24 +47,9 @@ def uc1_file():
 
 
 @pytest.fixture()
-def evi_ref_node():
-    refNode = namedtuple('RefNode', 'name input_filepaths')
-    return [
-        refNode('dc', None),
-        refNode('nir', ['dc']),
-        refNode('red', ['dc']),
-        refNode('sub', ['nir', 'red']),
-        refNode('p1', ['red']),
-        refNode('blue', ['dc']),
-        refNode('p2', ['blue']),
-        refNode('sum', ['nir', 'p1', 'p2']),
-        refNode('div', ['sub', 'sum']),
-        refNode('p3', ['div']),
-        refNode('evi', ['p3']),
-        refNode('min', ['evi']),
-        refNode('mintime', ['min']),
-        refNode('save', ['mintime'])
-    ]
+def uc1_temporal_file():
+    test_folder = get_test_folder()
+    return os.path.join(test_folder, 'process_graphs', 'UC1_temporal.json')
 
 
 @pytest.fixture()

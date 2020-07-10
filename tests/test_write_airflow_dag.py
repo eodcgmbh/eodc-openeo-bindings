@@ -13,7 +13,7 @@ def get_ref_node_from_name(name, all_nodes):
     return all_nodes[cur_ref_index]
 
 
-def test_airflow_dag(csw_server, test_folder, evi_file, evi_ref_node, 
+def test_airflow_dag(csw_server, test_folder, evi_file, 
                      setup_airflow_dag_folder, setup_ref_job_folder, backend_processes):
 
     job_data = os.path.join(test_folder, 'openeo_job')
@@ -99,7 +99,7 @@ def test_airflow_dag_parallel(csw_server, test_folder, evi_file, setup_airflow_d
     rmtree(os.path.join(test_folder, 'openeo_job'))
 
 
-def test_airflow_dag_delete_sensor(csw_server, test_folder, evi_file, evi_ref_node, setup_airflow_dag_folder, 
+def test_airflow_dag_delete_sensor(csw_server, test_folder, evi_file, setup_airflow_dag_folder, 
                                    setup_ref_job_folder, backend_processes):
 
     job_data = os.path.join(test_folder, 'openeo_job')
