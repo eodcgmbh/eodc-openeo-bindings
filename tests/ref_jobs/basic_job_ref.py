@@ -11,58 +11,6 @@ params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/op
 # evaluate node
 dc_0 = eoDataReader(filepaths, params)
 
-### nir_2 ###
-# node input files
-input_filepaths = ['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/dc_0/']
-filepaths = []
-for path in input_filepaths:
-    filepaths.extend(sorted(glob.glob(path + '/*')))
-
-# node input parameters
-params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/nir_2/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_array_element', 'index': '0;int'}}]
-
-# evaluate node
-nir_2 = eoDataReader(filepaths, params)
-
-### red_3 ###
-# node input files
-input_filepaths = ['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/dc_0/']
-filepaths = []
-for path in input_filepaths:
-    filepaths.extend(sorted(glob.glob(path + '/*')))
-
-# node input parameters
-params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/red_3/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_array_element', 'index': '1;int'}}]
-
-# evaluate node
-red_3 = eoDataReader(filepaths, params)
-
-### sub_5 ###
-# node input files
-input_filepaths = ['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/nir_2/', '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/red_3/']
-filepaths = []
-for path in input_filepaths:
-    filepaths.extend(sorted(glob.glob(path + '/*')))
-
-# node input parameters
-params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/sub_5/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_subtract'}}]
-
-# evaluate node
-sub_5 = eoDataReader(filepaths, params)
-
-### p1_6 ###
-# node input files
-input_filepaths = ['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/red_3/']
-filepaths = []
-for path in input_filepaths:
-    filepaths.extend(sorted(glob.glob(path + '/*')))
-
-# node input parameters
-params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/p1_6/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_multiply', 'extra_values': '[6];list'}}]
-
-# evaluate node
-p1_6 = eoDataReader(filepaths, params)
-
 ### blue_4 ###
 # node input files
 input_filepaths = ['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/dc_0/']
@@ -84,10 +32,49 @@ for path in input_filepaths:
     filepaths.extend(sorted(glob.glob(path + '/*')))
 
 # node input parameters
-params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/p2_7/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_multiply', 'extra_values': '[-7.5];list'}}]
+params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/p2_7/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_product', 'extra_values': '[-7.5];list'}}]
 
 # evaluate node
 p2_7 = eoDataReader(filepaths, params)
+
+### red_3 ###
+# node input files
+input_filepaths = ['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/dc_0/']
+filepaths = []
+for path in input_filepaths:
+    filepaths.extend(sorted(glob.glob(path + '/*')))
+
+# node input parameters
+params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/red_3/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_array_element', 'index': '1;int'}}]
+
+# evaluate node
+red_3 = eoDataReader(filepaths, params)
+
+### p1_6 ###
+# node input files
+input_filepaths = ['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/red_3/']
+filepaths = []
+for path in input_filepaths:
+    filepaths.extend(sorted(glob.glob(path + '/*')))
+
+# node input parameters
+params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/p1_6/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_product', 'extra_values': '[6];list'}}]
+
+# evaluate node
+p1_6 = eoDataReader(filepaths, params)
+
+### nir_2 ###
+# node input files
+input_filepaths = ['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/dc_0/']
+filepaths = []
+for path in input_filepaths:
+    filepaths.extend(sorted(glob.glob(path + '/*')))
+
+# node input parameters
+params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/nir_2/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_array_element', 'index': '0;int'}}]
+
+# evaluate node
+nir_2 = eoDataReader(filepaths, params)
 
 ### sum_8 ###
 # node input files
@@ -101,6 +88,19 @@ params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/op
 
 # evaluate node
 sum_8 = eoDataReader(filepaths, params)
+
+### sub_5 ###
+# node input files
+input_filepaths = ['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/nir_2/', '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/red_3/']
+filepaths = []
+for path in input_filepaths:
+    filepaths.extend(sorted(glob.glob(path + '/*')))
+
+# node input parameters
+params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/sub_5/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_subtract'}}]
+
+# evaluate node
+sub_5 = eoDataReader(filepaths, params)
 
 ### div_9 ###
 # node input files
@@ -123,7 +123,7 @@ for path in input_filepaths:
     filepaths.extend(sorted(glob.glob(path + '/*')))
 
 # node input parameters
-params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/p3_10/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_multiply', 'extra_values': '[2.5];list'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}]
+params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/p3_10/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'eo_product', 'extra_values': '[2.5];list'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}]
 
 # evaluate node
 p3_10 = eoDataReader(filepaths, params)

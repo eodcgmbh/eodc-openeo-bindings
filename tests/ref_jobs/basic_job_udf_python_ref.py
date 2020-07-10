@@ -19,10 +19,10 @@ for path in input_filepaths:
     filepaths.extend(sorted(glob.glob(path + '/*')))
 
 # node input parameters
-params = {'udf': 'data2 = data.hypercube_list[0].get_array(); data2=data2*(-1); data.hypercube_list[0].set_array(data2)', 'runtime': 'python', 'output_folder': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/output_udf_python/udf_2'}
+params = {'udf': 'data2 = data.hypercube_list[0].get_array(); data2=data2*(-1); data.hypercube_list[0].set_array(data2)', 'runtime': 'Python', 'output_folder': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/output_udf_python/udf_2'}
 
 # evaluate node
-udf_2 = eoDataReader(filepaths, params)
+udf_2 = UdfExec(filepaths, params)
 
 ### udfnode_1 ###
 # node input files

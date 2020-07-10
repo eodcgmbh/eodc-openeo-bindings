@@ -9,15 +9,17 @@ from numbers import Number
 from eodc_openeo_bindings.map_cubes_processes import map_apply, map_reduce_dimension
 
 
-def __map_default(process, process_name, mapping, **kwargs):
+def map_default(process, process_name, mapping, param_dict):
     """
     Maps all processes which have only data input and ignore_nodata option.
     """
     
     f_input = {}
     f_input['f_name'] = process_name
-    for item in kwargs:
-        f_input[item] = kwargs[item]
+    
+    parameters = get_process_params(process['arguments'], param_dict)
+    for item in parameters:
+        f_input[item] = parameters[item]
         
     process['f_input'] = f_input        
         
@@ -26,39 +28,43 @@ def __map_default(process, process_name, mapping, **kwargs):
     elif mapping == 'reduce':
         return map_reduce_dimension(process)
     
-    
-def __simple_process(process):
-    """
-    
-    """
-    
-    process_params = __get_process_params(process, {'ignore_data': 'bool'})
-    
-    return __map_default(process, process['id'], 'apply', **process_params)
-    
 
-def __get_process_params(process, param_dict):
+def get_process_params(process_args, param_dict):
     """
-    params_list is a dict, e.g.: {'ignore_data': 'bool', 'p': 'int'}
-    """
+    Get parameters from a process, if they are in its definition.
     
+    Arguments:
+        process_args {dict} -- arguments sent by a process
+                 {'argument_name': value}
+            e.g. {'data': {'from_node': 'dc_0'}, 'index': 2}
+        param_dict {dict} -- parameters needed by a process
+                 {'parameter_name': 'parameter_type'}
+            e.g. {'ignore_data': 'bool', 'p': 'int'}
+    """
+        
     process_params = {}
     for param in param_dict:
-        if param in process['arguments'].keys():
-            process_params[param] = str(process['arguments'][param]) + ';' + param_dict[param]
+        if param in process_args:
+            process_params[param] = str(process_args[param]) + ';' + param_dict[param]
+        elif param == 'extra_values':
+            # Needed in "eo_sum" and "eo_product"
+            process_params[param] = param_dict[param]
     
     return process_params
     
 
-def __set_extra_values(process, add_extra_idxs=False):
+def set_extra_values(process_args, add_extra_idxs=False):
+    """
+    
+    """
     
     extra_values = []
     extra_idxs = []
-    for k, item in enumerate(process['arguments']['data']):
+    for k, item in enumerate(process_args['data']):
         if isinstance(item, Number):
             extra_values.append(item)
             if add_extra_idxs:
-                extra_idxs.append(k)            
+                extra_idxs.append(k)
     
     process_params = {}
     if extra_values:
@@ -69,7 +75,7 @@ def __set_extra_values(process, add_extra_idxs=False):
     return process_params
 
 
-def set_output_folder(root_folder, folder_name, options=[]):
+def set_output_folder(root_folder, folder_name):
     """
     Appends folder to options.
     """
@@ -79,7 +85,7 @@ def set_output_folder(root_folder, folder_name, options=[]):
                  'out_dirpath': root_folder + path.sep + folder_name + path.sep}
 
 
-    return options.append(dict_item)
+    return [dict_item]
     
 
 def get_mapped_processes():
@@ -103,7 +109,3 @@ def get_mapped_processes():
                 processes.append(func_name.replace('map_', ''))
     
     return sorted(processes)
-        
-        
-        
-    

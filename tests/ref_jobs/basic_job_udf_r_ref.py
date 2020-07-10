@@ -19,10 +19,10 @@ for path in input_filepaths:
     filepaths.extend(sorted(glob.glob(path + '/*')))
 
 # node input parameters
-params = {'udf': 'data2 = data*(-1); data2', 'runtime': 'r', 'output_folder': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/output_udf_r/udf_2'}
+params = {'udf': 'data2 = data*(-1); data2', 'runtime': 'R', 'output_folder': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/output_udf_r/udf_2'}
 
 # evaluate node
-udf_2 = eoDataReader(filepaths, params)
+udf_2 = UdfExec(filepaths, params)
 
 ### udfnode_1 ###
 # node input files

@@ -6,8 +6,9 @@ from typing import Union, List, Tuple, Optional
 
 from eodc_openeo_bindings.map_processes import map_process
 from eodc_openeo_bindings.map_udf import map_udf
-from openeo_pg_parser_python.graph import Graph
-from openeo_pg_parser_python.translate import translate_process_graph
+from eodc_openeo_bindings.map_cubes_processes import check_dim_name
+from openeo_pg_parser.graph import Graph
+from openeo_pg_parser.translate import translate_process_graph
 
 
 def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: str, 
@@ -20,17 +21,15 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
     Each openEO process is wrapped into an apply/reduce call using eoDataReaders methods.
 
     """
-    
-    # TODO make process_defs and job_data env variables
 
+    # Translate openEO PG to traversable object
     if isinstance(process_graph_json_in, dict):
         process_graph_json = deepcopy(process_graph_json_in)
     else:
         process_graph_json = process_graph_json_in
-    # TODO process_defs must be defined from the outer functions using openeo_to_eodatareaders
-    # this way an application can send a url, list or foldername
     graph = translate_process_graph(process_graph_json, process_defs=process_defs).sort(by='dependency')
     
+    # Get wrapper processes -> TODO: is this really needed?
     wrapper_processes = get_wrapper_processes()
     
     nodes = []
@@ -65,10 +64,7 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
         
         # NB find better solution
         if wrapper_dimension:
-            if wrapper_dimension in ('spectral', 'spectral_bands', 'bands'):
-                wrapper_dimension = 'band'
-            if wrapper_dimension in ('temporal', 'time'):
-                wrapper_dimension = 'time'
+            wrapper_dimension = check_dim_name(wrapper_dimension)
             
         if cur_node.content['process_id'] == 'run_udf':
             operator = "UdfExec"
@@ -79,6 +75,7 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
             params, filepaths = map_process(
                 cur_node.content,
                 cur_node.id,
+                cur_node.is_result,
                 job_data,
                 wrapper_name=wrapper_name,
                 wrapper_dimension=wrapper_dimension,
@@ -106,7 +103,7 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
 def get_wrapper_processes():
     """
     Return openEO processes which are wrappers around other processes.
-    Their dependencies are handles differently than for common processes.
+    Their dependencies are handled differently than for common processes.
     """
     
     

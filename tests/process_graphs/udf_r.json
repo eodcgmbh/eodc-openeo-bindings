@@ -28,7 +28,7 @@
               "arguments": {
                 "data": {"from_parameter": "data"},
                 "udf": "data2 = data*(-1); data2",
-                "runtime": "r"
+                "runtime": "R"
               },
               "result": true
             }

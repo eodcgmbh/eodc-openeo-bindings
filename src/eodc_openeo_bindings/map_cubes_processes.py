@@ -4,7 +4,7 @@
 
 from os import environ
 from owslib.csw import CatalogueServiceWeb
-from owslib.fes import PropertyIsLike, BBox, PropertyIsLessThan, PropertyIsGreaterThan
+from owslib.fes import PropertyIsLike, BBox, PropertyIsLessThan, PropertyIsGreaterThan, PropertyIsEqualTo
 
 
 def map_load_collection(process):
@@ -32,6 +32,7 @@ def map_load_collection(process):
 
     # Map bbox filter
     if 'spatial_extent' in process['arguments'].keys():
+        process['arguments']['extent'] = process['arguments']['spatial_extent']
         dict_item = map_filter_bbox(process)[0]
         dict_item_list.append(dict_item)
 
@@ -47,8 +48,6 @@ def map_filter_bands(process):
 
     if 'bands' in process['arguments'].keys():
         load_bands = process['arguments']['bands']
-    elif 'names' in process['arguments'].keys():
-        load_bands = process['arguments']['names']
     # elif 'wavelenghts' in process['args'].keys():
     #     # add this option
     else:
@@ -69,11 +68,11 @@ def map_filter_bbox(process):
 
     dict_item_list = []
 
-    if 'spatial_extent' in process['arguments'].keys():
-        bbox = (process['arguments']['spatial_extent']['west'], process['arguments']['spatial_extent']['south'],\
-                process['arguments']['spatial_extent']['east'], process['arguments']['spatial_extent']['north'])
-        if 'crs' in process['arguments']['spatial_extent'].keys():
-            crs_value = process['arguments']['spatial_extent']['crs']
+    if 'extent' in process['arguments'].keys():
+        bbox = (process['arguments']['extent']['west'], process['arguments']['extent']['south'],\
+                process['arguments']['extent']['east'], process['arguments']['extent']['north'])
+        if 'crs' in process['arguments']['extent'].keys():
+            crs_value = process['arguments']['extent']['crs']
         else:
             crs_value = 'EPSG:4326'
         dict_item = {'name': 'crop', 'extent': bbox, 'crs': crs_value}
@@ -118,7 +117,7 @@ def map_apply(process):
         # Add saving to vrt, else no vrt file is generated
         dict_item = map_save_result(process, in_place=False, format_type='VRT')[0]
 
-    return dict_item
+    return [dict_item]
     
     
 def map_save_result(process, in_place=False, format_type = None, band_label=None):
@@ -126,17 +125,27 @@ def map_save_result(process, in_place=False, format_type = None, band_label=None
 
     """
     
-    dict_item = {
-        'name': 'save_raster',
+    if 'options' in process['arguments']:
+        bands = []
+        for item in process['arguments']['options']:
+            bands.append(process['arguments']['options'][item])
+        dict_item = {
+            'name': 'create_composite',
+            'bands': bands,
+            'format_type': process['arguments']['format']
         }
-    #
-    if in_place:
-        dict_item['in_place'] = 'True;bool'
-    # Add format type
-    if 'format_type' in process.keys():
-        dict_item['format_type'] = process['arguments']['format']
-    elif format_type:
-        dict_item['format_type'] = format_type
+    else:
+        dict_item = {
+            'name': 'save_raster'
+            }
+        #
+        if in_place:
+            dict_item['in_place'] = 'True;bool'
+        # Add format type
+        if 'format_type' in process.keys():
+            dict_item['format_type'] = process['arguments']['format']
+        elif format_type:
+            dict_item['format_type'] = format_type
 
     return [dict_item]
 
@@ -154,17 +163,61 @@ def map_merge_cubes(process):
     return dict_item_list
 
 
+def map_rename_labels(process):
+    """
+    
+    """
+    
+    # TODO this should be done once in openeo_to_eodatareaders for all processes dealing with dimensions 
+    process['arguments']['dimension'] = check_dim_name(process['arguments']['dimension'])
+        
+    dict_item_list = [
+        {
+            'name': 'rename_labels', 
+            'dimension': process['arguments']['dimension'], 
+            'labels': process['arguments']['target']
+        },
+        map_save_result(process, in_place=True, format_type='VRT')[0]  # add saving to vrt, else no vrt file is generated
+    ]
+    
+    return dict_item_list
+
+
+def map_add_dimension(process):
+    """
+    
+    """
+    
+    # TODO this is a workaround until eodatareaders' metadata functionality has been extended
+    
+    process['arguments']['name'] = check_dim_name(process['arguments']['name'])
+    if not process['arguments']['name']:
+        raise('The current implementation of "add_dimension" only support dimensions "band" and "time".')
+    
+    dict_item_list = [
+        map_save_result(process, format_type='VRT')[0]
+    ]
+    
+    return dict_item_list
+
+
 def csw_query(collection, spatial_extent, temporal_extent):
     """
     Retrieves a file list from the EODC CSW server according to the specified parameters.
 
     """
 
-    csw = CatalogueServiceWeb(environ.get('CSW_SERVER'), timeout=300)
+    if collection == 'SIG0':
+        csw = CatalogueServiceWeb(environ.get('ACUBE_CSW_SERVER'), timeout=300)
+    else:
+        csw = CatalogueServiceWeb(environ.get('CSW_SERVER'), timeout=300)
     constraints = []
 
     # Collection filter
-    constraints.append(PropertyIsLike('apiso:ParentIdentifier', collection))
+    if collection == 'SIG0':
+        constraints.append(PropertyIsEqualTo('eodc:variable_name', collection))
+    else:
+        constraints.append(PropertyIsLike('apiso:ParentIdentifier', collection))
     # Spatial filter
     constraints.append(BBox(spatial_extent))
     # Temporal filter
@@ -188,3 +241,16 @@ def csw_query(collection, spatial_extent, temporal_extent):
     records = sorted(records)
 
     return records
+
+
+def check_dim_name(dimension_name):
+    """
+    Map common dimension names for spectral and time to fieladnames used in eodatareaders.
+    """
+    
+    if dimension_name in ('spectral', 'spectral_bands', 'bands'):
+        dimension_out_name = 'band'
+    if dimension_name in ('temporal', 'time', 't'):
+        dimension_out_name = 'time'
+        
+    return dimension_out_name
