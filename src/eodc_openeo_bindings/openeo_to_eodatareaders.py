@@ -6,6 +6,7 @@ from typing import Union, List, Tuple, Optional
 
 from eodc_openeo_bindings.map_processes import map_process
 from eodc_openeo_bindings.map_udf import map_udf
+from eodc_openeo_bindings.map_cubes_processes import check_dim_name
 from openeo_pg_parser.graph import Graph
 from openeo_pg_parser.translate import translate_process_graph
 
@@ -63,10 +64,7 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
         
         # NB find better solution
         if wrapper_dimension:
-            if wrapper_dimension in ('spectral', 'spectral_bands', 'bands'):
-                wrapper_dimension = 'band'
-            if wrapper_dimension in ('temporal', 'time', 't'):
-                wrapper_dimension = 'time'
+            wrapper_dimension = check_dim_name(wrapper_dimension)
             
         if cur_node.content['process_id'] == 'run_udf':
             operator = "UdfExec"
