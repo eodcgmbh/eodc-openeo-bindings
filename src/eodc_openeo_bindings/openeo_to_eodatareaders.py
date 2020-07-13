@@ -33,11 +33,16 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
     wrapper_processes = get_wrapper_processes()
     
     nodes = []
-    for node_id in graph.ids:
+    N_nodes = len(graph.ids)
+    last_node = False
+    for k, node_id in enumerate(graph.ids):
         cur_node = graph[node_id]
         wrapper_name = None
         wrapper_dimension = None
-        node_dependencies = None            
+        node_dependencies = None
+        
+        if k + 1 == N_nodes:
+            last_node = True
         
         if cur_node.is_reducer:
             # Current process is classified as "reducer" in its process definition
@@ -80,6 +85,7 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
                 wrapper_name=wrapper_name,
                 wrapper_dimension=wrapper_dimension,
                 vrt_only=vrt_only,
+                last_node=last_node
             )
         
         # Get dependencies
@@ -92,10 +98,6 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
         
         # Add to nodes list
         nodes.append((cur_node.id, params, filepaths, node_dependencies, operator))
-        
-    # Update the out_dirpath of the last node, to save data in a default "result" folder
-    # NB: this will need to be changed with the newer version of the v1.0 parser
-    nodes[-1][1][0]['out_dirpath'] = nodes[-1][1][0]['out_dirpath'].replace(nodes[-1][0], 'result')
     
     return nodes, graph
     

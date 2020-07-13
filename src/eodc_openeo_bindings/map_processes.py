@@ -11,9 +11,9 @@ from eodc_openeo_bindings.map_utils import set_output_folder
 
 def map_process(process, node_id, is_result, root_folder,
                 wrapper_name=None, wrapper_dimension=None,
-                vrt_only=False):
+                vrt_only=False, last_node=False):
     """
-    Entry point.
+    Map an openeo process to the eodatareaders syntax.
     """
     
     # Match multiple names for load_collection (for backward compatibility)
@@ -21,7 +21,11 @@ def map_process(process, node_id, is_result, root_folder,
         process['process_id'] = 'load_collection'
 
     # Add/set output folder
-    job_params = set_output_folder(root_folder, node_id)
+    if last_node:
+        folder_name = 'result'
+    else:
+        folder_name = node_id
+    job_params = set_output_folder(root_folder, folder_name)
     
     if wrapper_name:
         process['wrapper_name'] = wrapper_name
@@ -59,5 +63,9 @@ def map_process(process, node_id, is_result, root_folder,
         if vrt_only:
             index = -1 # "save_result" is usually the last item in the list
             job_params[index]['format_type'] = 'VRT'
+    
+    if last_node:
+        # Add call to save cube matadata as JSON
+        job_params.append({'name': 'get_cube_metadata'})
 
     return job_params, filepaths
