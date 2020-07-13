@@ -221,7 +221,7 @@ for path in input_filepaths:
     filepaths.extend(sorted(glob.glob(path + '/*')))
 
 # node input parameters
-params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/result/'}, {'name': 'create_composite', 'bands': ['R', 'G', 'B'], 'format_type': 'GTiff'}]
+params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/result/'}, {'name': 'create_composite', 'bands': ['R', 'G', 'B'], 'format_type': 'GTiff'}, {'name': 'get_cube_metadata'}]
 
 # evaluate node
 save_result_17 = eoDataReader(filepaths, params)

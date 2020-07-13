@@ -32,7 +32,7 @@ for path in input_filepaths:
     filepaths.extend(sorted(glob.glob(path + '/*')))
 
 # node input parameters
-params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/output_udf_r/result/'}, {'name': 'save_raster', 'format_type': 'VRT'}]
+params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/output_udf_r/result/'}, {'name': 'save_raster', 'format_type': 'VRT'}, {'name': 'get_cube_metadata'}]
 
 # evaluate node
 udfnode_1 = eoDataReader(filepaths, params)

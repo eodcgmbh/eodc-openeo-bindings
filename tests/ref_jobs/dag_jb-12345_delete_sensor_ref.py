@@ -112,7 +112,7 @@ mintime_11 = eoDataReadersOp(task_id='mintime_11',
 save_13 = eoDataReadersOp(task_id='save_13',
                         dag=dag,
                         input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/mintime_11/'],
-                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/result/'}, {'name': 'save_raster'}],
+                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/result/'}, {'name': 'save_raster'}, {'name': 'get_cube_metadata'}],
                         queue='process'
                         )
 
