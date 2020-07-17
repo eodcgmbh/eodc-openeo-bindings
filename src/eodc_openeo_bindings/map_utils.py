@@ -45,7 +45,10 @@ def get_process_params(process_args, param_dict):
     process_params = {}
     for param in param_dict:
         if param in process_args:
-            process_params[param] = str(process_args[param]) + ';' + param_dict[param]
+            if param == 'y' and 'from_node' in process_args[param]:
+                process_params[param] = 'set;str' # NB this is used in pixel_functions.py (geo_process)
+            else:
+                process_params[param] = str(process_args[param]) + ';' + param_dict[param]
         elif param == 'extra_values':
             # Needed in "eo_sum" and "eo_product"
             process_params[param] = param_dict[param]
