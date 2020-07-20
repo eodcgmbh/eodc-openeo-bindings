@@ -41,16 +41,18 @@ def get_process_params(process_args, param_dict):
                  {'parameter_name': 'parameter_type'}
             e.g. {'ignore_data': 'bool', 'p': 'int'}
     """
-        
+
     process_params = {}
     for param in param_dict:
         if param in process_args:
-            if param == 'y' and 'from_node' in process_args[param]:
-                process_params[param] = 'set;str' # NB this is used in pixel_functions.py (geo_process)
+            if param == 'y' and isinstance(process_args[param], dict) and 'from_node' in process_args[param]:
+                # Mapping for openeo processes which havs f(x, y) input rather than f(data)
+                # NB this is used in eodatareaders/pixel_functions/geo_process
+                process_params[param] = 'set;str'
             else:
                 process_params[param] = str(process_args[param]) + ';' + param_dict[param]
         elif param == 'extra_values':
-            # Needed in "eo_sum" and "eo_product"
+            # Needed in "sum" and "product"
             process_params[param] = param_dict[param]
     
     return process_params
