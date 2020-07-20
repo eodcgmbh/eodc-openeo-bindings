@@ -14,7 +14,7 @@ class AirflowDagWriter(JobWriter):
             'filter_bands',
             'filter_bbox',
             'filter_temporal',
-            'eo_array_element'
+            'array_element'
         )
 
     def get_domain(self, job_id: str, user_name: str, process_graph_json: Union[str, dict], job_data: str,

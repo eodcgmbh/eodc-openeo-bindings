@@ -19,7 +19,7 @@ for path in input_filepaths:
     filepaths.extend(sorted(glob.glob(path + '/*')))
 
 # node input parameters
-params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/mult_2/'}, {'name': 'apply', 'f_input': {'f_name': 'eo_multiply', 'y': '-1;float'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}]
+params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/mult_2/'}, {'name': 'apply', 'f_input': {'f_name': 'multiply', 'y': '-1;float'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}]
 
 # evaluate node
 mult_2 = eoDataReader(filepaths, params)

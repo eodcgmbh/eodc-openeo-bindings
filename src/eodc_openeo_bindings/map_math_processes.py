@@ -28,7 +28,7 @@ def map_divide(process):
     
     """
     
-    param_dict = {'ignore_nodata': 'bool'}
+    param_dict = {'y': 'float'}
     
     return map_default(process, 'divide', 'reduce', param_dict)
     
@@ -171,7 +171,7 @@ def map_subtract(process):
     
     """
     
-    param_dict = {'ignore_nodata': 'bool'}
+    param_dict = {'y': 'float'}
     
     return map_default(process, 'subtract', 'reduce', param_dict)
     
