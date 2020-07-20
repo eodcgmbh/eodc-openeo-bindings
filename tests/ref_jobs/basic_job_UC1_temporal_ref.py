@@ -19,7 +19,7 @@ for path in input_filepaths:
     filepaths.extend(sorted(glob.glob(path + '/*')))
 
 # node input parameters
-params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/mean_4/'}, {'name': 'reduce', 'dimension': 'time', 'f_input': {'f_name': 'eo_mean'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}]
+params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/mean_4/'}, {'name': 'reduce', 'dimension': 'time', 'f_input': {'f_name': 'mean'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}]
 
 # evaluate node
 mean_4 = eoDataReader(filepaths, params)
@@ -81,7 +81,7 @@ for path in input_filepaths:
     filepaths.extend(sorted(glob.glob(path + '/*')))
 
 # node input parameters
-params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/mean_6/'}, {'name': 'reduce', 'dimension': 'time', 'f_input': {'f_name': 'eo_mean'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}]
+params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/mean_6/'}, {'name': 'reduce', 'dimension': 'time', 'f_input': {'f_name': 'mean'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}]
 
 # evaluate node
 mean_6 = eoDataReader(filepaths, params)
@@ -156,7 +156,7 @@ for path in input_filepaths:
     filepaths.extend(sorted(glob.glob(path + '/*')))
 
 # node input parameters
-params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/mean_8/'}, {'name': 'reduce', 'dimension': 'time', 'f_input': {'f_name': 'eo_mean'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}]
+params = [{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/basic_job/mean_8/'}, {'name': 'reduce', 'dimension': 'time', 'f_input': {'f_name': 'mean'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}]
 
 # evaluate node
 mean_8 = eoDataReader(filepaths, params)
