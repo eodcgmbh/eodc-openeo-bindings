@@ -153,14 +153,12 @@ def map_save_result(process, in_place=False, format_type = None, band_label=None
 def map_merge_cubes(process):
     """
     
-    """    
+    """
     
-    dict_item_list = [
-        {'name': 'sort_cube'},
-        map_save_result(process, in_place=False, format_type='VRT')[0]  # add saving to vrt, else no vrt file is generated
-        ]
-
-    return dict_item_list
+    # intentionally empty, just for clarity
+    # the only thing needed for this process is to create a new pickled object from the input ones, already mapped by other functions in map_processes.py
+    
+    return []
 
 
 def map_rename_labels(process):
@@ -174,8 +172,9 @@ def map_rename_labels(process):
     dict_item_list = [
         {
             'name': 'rename_labels', 
-            'dimension': process['arguments']['dimension'], 
-            'labels': process['arguments']['target']
+            'dim_name': process['arguments']['dimension'] + ';str', 
+            'new_labels': str(process['arguments']['target']) + ';list',
+            'old_labels': str(process['arguments']['source']) + ';list' if 'source' in process['arguments'] else '[];list'
         },
         map_save_result(process, in_place=True, format_type='VRT')[0]  # add saving to vrt, else no vrt file is generated
     ]
@@ -188,14 +187,25 @@ def map_add_dimension(process):
     
     """
     
-    # TODO this is a workaround until eodatareaders' metadata functionality has been extended
-    
     process['arguments']['name'] = check_dim_name(process['arguments']['name'])
-    if not process['arguments']['name']:
-        raise('The current implementation of "add_dimension" only support dimensions "band" and "time".')
+    
+    # Check if label is str or float
+    if isinstance(process['arguments']['label'], str):
+        label = process['arguments']['label'] + ';str'
+    elif isinstance(process['arguments']['label'], int):
+        label = str(process['arguments']['label']) + ';int'
+    elif isinstance(process['arguments']['label'], float):
+        label = str(process['arguments']['label']) + ';float'
+    else:
+        raise f"Data type for variable {process['arguments']['label']} not understood."
     
     dict_item_list = [
-        map_save_result(process, format_type='VRT')[0]
+        {
+            'name': 'add_dimension', 
+            'dim_name': process['arguments']['name'] + ';str',
+            'label':  label,
+            'dim_type': process['arguments']['type'] + ';str' if 'type' in process['arguments'] else 'other;str',
+        }
     ]
     
     return dict_item_list
@@ -250,7 +260,9 @@ def check_dim_name(dimension_name):
     
     if dimension_name in ('spectral', 'spectral_bands', 'bands'):
         dimension_out_name = 'band'
-    if dimension_name in ('temporal', 'time', 't'):
+    elif dimension_name in ('temporal', 'time', 't'):
         dimension_out_name = 'time'
+    else:
+        dimension_out_name = dimension_name
         
     return dimension_out_name
