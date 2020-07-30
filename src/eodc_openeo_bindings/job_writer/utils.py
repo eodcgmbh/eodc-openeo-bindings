@@ -15,7 +15,7 @@ filepaths = sorted(glob.glob('{filepaths}' + '/*'))'''
 input_filepaths = {filepaths}
 filepaths = []
 for path in input_filepaths:
-    filepaths.extend(sorted(glob.glob(path + '/*')))'''
+    filepaths.extend(sorted(glob.glob(path + '/*[!.dc]')))'''
 
         else:
             raise Exception(f'Filepaths of type {type(filepaths)} are not supported!')

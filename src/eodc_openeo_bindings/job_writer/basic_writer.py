@@ -20,20 +20,22 @@ class BasicJobWriter(JobWriter):
     def get_imports(self, domain) -> str:
         return '''\
 import glob
-from eodatareaders.eo_data_reader import eoDataReader
+from eodatareaders.eo_data_reader import EODataProcessor
 '''
 
-    def get_node_txt(self, node_id, params, filepaths, filepaths0, node_operator):
+    def get_node_txt(self, node_id, params, dc_filepaths, filepaths, filepaths0, node_operator):
         return f'''\
 ### {node_id} ###
 # node input files
 {filepaths0}{filepaths}
+# node input pickled dc files
+dc_filepaths = {dc_filepaths}
 
 # node input parameters
 params = {params}
 
 # evaluate node
-{node_id} = {node_operator}(filepaths, params)
+{node_id} = {node_operator}(filepaths=filepaths, dc_filepaths=dc_filepaths, user_params=params)
 
 '''
 
@@ -51,18 +53,27 @@ params = {params}
 
             if filepaths:
                 filepaths0 = 'filepaths = '
+                dc_filepaths = None
             else:
                 if not node_dependencies:
                     raise Exception(f'No filepaths and no node dependencies for node: {node_id}')
 
-                filepaths0 = ''
-                filepaths = []
+                # filepaths0 = ''
+                # filepaths = []
+                # for dep in node_dependencies:
+                #     filepaths.append(domain.job_data + os.path.sep + dep + os.path.sep)
+                # filepaths = self.utils.get_file_list(filepaths)
+                # dc_filepaths = None
+                # Load datcube from pickled files
+                filepaths0 = 'filepaths = '
+                filepaths = None
+                dc_filepaths = []
                 for dep in node_dependencies:
-                    filepaths.append(domain.job_data + os.path.sep + dep + os.path.sep)
-                filepaths = self.utils.get_file_list(filepaths)
+                    dc_filepaths.append(os.path.join(domain.job_data, dep, dep + '.dc'))
+                
 
-            translated_nodes[node_id] = self.get_node_txt(node_id=node_id, params=params, filepaths=filepaths,
-                                                          filepaths0=filepaths0, node_operator=node_operator)
+            translated_nodes[node_id] = self.get_node_txt(node_id=node_id, params=params, dc_filepaths=dc_filepaths,
+                                                          filepaths=filepaths, filepaths0=filepaths0, node_operator=node_operator)
             translated_nodes_keys.append(node_id)
 
         for node in nodes:
