@@ -68,15 +68,28 @@ for path in input_filepaths:
 
         filepaths = []
         if parallelize:
-            paths_tmp = [sorted(glob.glob(os.path.join(cur_dep_path, '*')))
+            # Get list of files in node folder, excluding the "pickled" .dc file
+            paths_tmp = [sorted(glob.glob(cur_dep_path +  '/*[!.dc]'))
                          for k, cur_dep_path in enumerate(node_dependencies_path)]
             if paths_tmp:
                 filepaths.extend(paths_tmp)
         else:
-            for item in node_dependencies_path:
+            for k, item in enumerate(node_dependencies_path):
                 if os.path.isdir(item):
-                    filepaths.extend(glob.glob(item + '/*'))
-                else:
-                    filepaths.append(item)
+                    filepaths.extend(glob.glob(item + '/*.dc'))
+                else:                    
+                    filepaths.append(os.path.join(item, node_dependencies[k] + '.dc'))
 
         return filepaths
+        
+    def get_dc_filepaths_from_dependencies(self, node_dependencies, job_data):
+        """
+        
+        """
+        
+        dc_filepaths = self.get_filepaths_from_dependencies(node_dependencies, job_data, parallelize=False)
+        
+        if len(dc_filepaths) == 0:
+            dc_filepaths = None
+        
+        return dc_filepaths
