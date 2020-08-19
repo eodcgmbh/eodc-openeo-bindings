@@ -53,6 +53,12 @@ def uc1_temporal_file():
 
 
 @pytest.fixture()
+def uc1_spectral_file():
+    test_folder = get_test_folder()
+    return os.path.join(test_folder, 'process_graphs', 'UC1_spectral.json')
+
+
+@pytest.fixture()
 def apply_file():
     test_folder = get_test_folder()
     return os.path.join(test_folder, 'process_graphs', 'apply_job.json')
