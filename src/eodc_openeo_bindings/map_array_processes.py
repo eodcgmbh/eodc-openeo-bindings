@@ -23,9 +23,9 @@ def map_array_element(process):
     if 'index' in process['arguments']:
         process_params['index'] = 'int'
     elif 'label' in process['arguments']:
-        if isinstance(process['arguments'], int):
+        if isinstance(process['arguments']['label'], int):
             process_params['label'] = 'int'
-        elif isinstance(process['arguments'], str):
+        elif isinstance(process['arguments']['label'], str):
             process_params['label'] = 'str'
     process_params['return_nodata'] = 'bool'
 
