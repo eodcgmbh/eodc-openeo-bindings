@@ -26,12 +26,12 @@ def test_folder():
 
 @pytest.fixture()
 def csw_server():
-    os.environ['CSW_SERVER'] = 'http://pycsw:8000'
+    os.environ['OEO_CSW_SERVER'] = 'http://pycsw:8000'
 
 
 @pytest.fixture()
 def acube_csw_server():
-    os.environ['ACUBE_CSW_SERVER'] = 'https://csw-acube.eodc.eu/'
+    os.environ['OEO_CSW_SERVER_DC'] = 'https://csw-acube.eodc.eu/'
 
 
 @pytest.fixture()

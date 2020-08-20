@@ -218,9 +218,9 @@ def csw_query(collection, spatial_extent, temporal_extent):
     """
 
     if collection == 'SIG0':
-        csw = CatalogueServiceWeb(environ.get('ACUBE_CSW_SERVER'), timeout=300)
+        csw = CatalogueServiceWeb(environ.get('OEO_CSW_SERVER_DC'), timeout=300)
     else:
-        csw = CatalogueServiceWeb(environ.get('CSW_SERVER'), timeout=300)
+        csw = CatalogueServiceWeb(environ.get('OEO_CSW_SERVER'), timeout=300)
     constraints = []
 
     # Collection filter
