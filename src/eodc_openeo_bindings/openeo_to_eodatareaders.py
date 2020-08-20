@@ -16,9 +16,9 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
                             existing_node_ids: List[Tuple] = None) \
         -> Tuple[List[Tuple[str, List[str], Optional[str], List[str], str]], Graph]:
     """
-    This function translates an OpenEO process graph into a sequence of calls to eoDataReaders, 
+    This function translates an OpenEO process graph into a sequence of calls to EODataProcessor, 
     one for each node of the process graph.
-    Each openEO process is wrapped into an apply/reduce call using eoDataReaders methods.
+    Each openEO process is wrapped into an apply/reduce call using EODataProcessor methods.
 
     """
 
@@ -57,7 +57,7 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
                 wrapper_dimension = cur_node.dimension
         else:
             wrapper_name = cur_node.process_id
-            recuder_dimension = None # for clarity, this will be needed when also 'apply_dimension' is supported by eoDataReaders
+            recuder_dimension = None # for clarity, this will be needed when also 'apply_dimension' is supported by EODataProcessor
         
         # Workaround for process "array_element" until it has the category "reducer" set
         # TODO remove when the process definition is updated
@@ -76,7 +76,7 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
             params = map_udf(cur_node.content, job_data, cur_node.id)
             filepaths = None
         else:
-            operator = "eoDataReader"
+            operator = "EODataProcessor"
             params, filepaths = map_process(
                 cur_node.content,
                 cur_node.id,

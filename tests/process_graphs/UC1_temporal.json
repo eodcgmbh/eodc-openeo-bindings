@@ -129,21 +129,10 @@
           "from_node": "mean_march"
         },
         "name": "bands",
+        "label": "R",
         "type": "bands"
       },
       "process_id": "add_dimension"
-    },
-    "R_band": {
-      "arguments": {
-        "data": {
-          "from_node": "add_dim_R"
-        },
-        "dimension": "bands",
-        "target": [
-          "R"
-        ]
-      },
-      "process_id": "rename_labels"
     },
     "add_dim_G": {
       "arguments": {
@@ -151,21 +140,10 @@
           "from_node": "mean_april"
         },
         "name": "bands",
+        "label": "G",
         "type": "bands"
       },
       "process_id": "add_dimension"
-    },
-    "G_band": {
-      "arguments": {
-        "data": {
-          "from_node": "add_dim_G"
-        },
-        "dimension": "bands",
-        "target": [
-          "G"
-        ]
-      },
-      "process_id": "rename_labels"
     },
     "add_dim_B": {
       "arguments": {
@@ -173,29 +151,18 @@
           "from_node": "mean_may"
         },
         "name": "bands",
+        "label": "B",
         "type": "bands"
       },
       "process_id": "add_dimension"
     },
-    "B_band": {
-      "arguments": {
-        "data": {
-          "from_node": "add_dim_B"
-        },
-        "dimension": "bands",
-        "target": [
-          "B"
-        ]
-      },
-      "process_id": "rename_labels"
-    },
     "RG": {
       "arguments": {
         "cube1": {
-          "from_node": "R_band"
+          "from_node": "add_dim_R"
         },
         "cube2": {
-          "from_node": "G_band"
+          "from_node": "add_dim_G"
         }
       },
       "process_id": "merge_cubes"
@@ -206,7 +173,7 @@
           "from_node": "RG"
         },
         "cube2": {
-          "from_node": "B_band"
+          "from_node": "add_dim_B"
         }
       },
       "process_id": "merge_cubes"

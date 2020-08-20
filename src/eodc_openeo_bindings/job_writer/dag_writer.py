@@ -85,11 +85,12 @@ dag = DAG(dag_id="{domain.job_id}",
           default_args=default_args)
 '''
 
-    def get_eodatareaders_task_txt(self, task_id, filepaths, process_graph, quotes, queue: str = 'process'):
+    def get_eodatareaders_task_txt(self, task_id, filepaths, dc_filepaths, process_graph, quotes, queue: str = 'process'):
         return f'''\
 {task_id} = eoDataReadersOp(task_id='{task_id}',
                         dag=dag,
                         input_filepaths={quotes}{filepaths}{quotes},
+                        input_dc_filepaths={quotes}{dc_filepaths}{quotes},
                         input_params={process_graph},
                         queue='{queue}'
                         )
@@ -188,13 +189,9 @@ dag = DAG(dag_id="{domain.job_id}",
                 if not node_dependencies or filepaths:
                     parallel_node = False
 
-            if node_dependencies:
-                filepaths = self.utils.get_filepaths_from_dependencies(node_dependencies, domain.job_data,
-                                                                       parallelize=parallel_node)
-            if not filepaths or len(filepaths) <= 1:
-                parallel_node = False
-
             if parallel_node:
+                dc_filepaths = None
+                filepaths = self.utils.get_filepaths_from_dependencies(node_dependencies, domain.job_data, parallelize=parallel_node)
                 dep_subnodes[node_id] = []
                 N_deps = len(filepaths)
                 N_files = len(filepaths[0])
@@ -204,10 +201,11 @@ dag = DAG(dag_id="{domain.job_id}",
                         in_files.append(filepaths[counter_2][counter_1])
                     node_sub_id = node_id + '_' + str(counter_1 + 1)
                     quotes = "" if isinstance(in_files, list) else "'"
-                    translated_nodes[node_sub_id] = self.get_eodatareaders_task_txt(task_id=node_sub_id, filepaths=in_files, process_graph=params, quotes=quotes)
+                    translated_nodes[node_sub_id] = self.get_eodatareaders_task_txt(task_id=node_sub_id, filepaths=in_files, dc_filepaths=dc_filepaths, process_graph=params, quotes=quotes)
                     dep_subnodes[node_id].append(node_sub_id)
             else:
-                translated_nodes[node_id] = self.get_eodatareaders_task_txt(task_id=node_id, filepaths=filepaths,
+                dc_filepaths = self.utils.get_dc_filepaths_from_dependencies(node_dependencies, domain.job_data)
+                translated_nodes[node_id] = self.get_eodatareaders_task_txt(task_id=node_id, filepaths=filepaths, dc_filepaths=dc_filepaths,
                                                                             process_graph=params, quotes="")
             parallel_nodes[node_id] = parallel_node
 
