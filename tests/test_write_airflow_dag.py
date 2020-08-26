@@ -64,22 +64,24 @@ def test_airflow_dag_parallel(csw_server, test_folder, evi_file, setup_airflow_d
 
     job_data = os.path.join(test_folder, 'openeo_job')
 
-    job_id = "jb-12345_parallelised"
-    out_filepath = os.path.join(os.environ['AIRFLOW_DAGS'], 'dag_' + job_id + '.py')
+    job_id = "jb-12345"
     user_name = "jdoe_67890"
-
     writer = AirflowDagWriter()
     writer.write_and_move_job(job_id=job_id, user_name=user_name, process_graph_json=evi_file, job_data=job_data,
                               process_defs=backend_processes, vrt_only=True)
 
     # Simulate that job has ran (place vrt files in node folders)
-    domain = writer.get_domain(job_id, user_name, evi_file, job_data, process_defs=backend_processes, vrt_only=True)
     copytree(airflow_job_folder, job_data)
-
+    # Recreate (parallelised DAG)
+    writer = AirflowDagWriter()
+    domain = writer.get_domain(job_id, user_name, evi_file, job_data, process_defs=backend_processes, vrt_only=False, parallelize_tasks=True)
+    domain.job_id = domain.job_id + "_2"
     # (Re)write DAG, now parallelised
-    domain.vrt_only = False
-    domain.parallelize_task = True
     writer.rewrite_and_move_job(domain)
+    
+    rmtree(os.path.join(test_folder, 'openeo_job'))
+    
+    out_filepath = os.path.join(os.environ['AIRFLOW_DAGS'], 'dag_' + job_id + '_parallelize.py')
 
     with open(out_filepath) as outfile:
         out_content = outfile.read()
@@ -89,8 +91,6 @@ def test_airflow_dag_parallel(csw_server, test_folder, evi_file, setup_airflow_d
         ref_content = outfile.read()
 
     assert out_content == ref_content
-
-    rmtree(os.path.join(test_folder, 'openeo_job'))
 
 
 def test_airflow_dag_delete_sensor(csw_server, test_folder, evi_file, setup_airflow_dag_folder, 
