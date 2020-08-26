@@ -11,7 +11,7 @@ default_args = {
     'email_on_retry': False,
 }
 
-dag = DAG(dag_id="jb-12345_parallelised",
+dag = DAG(dag_id="jb-12345_2",
           description="No description provided",
           catchup=True,
           max_active_runs=1,
@@ -386,82 +386,82 @@ p3_10_7 = eoDataReadersOp(task_id='p3_10_7',
                         queue='process'
                         )
 
-evi_1 = eoDataReadersOp(task_id='evi_1',
+evi_1_1 = eoDataReadersOp(task_id='evi_1_1',
                         dag=dag,
-                        input_filepaths=None,
-                        input_dc_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p3_10/p3_10.dc'],
+                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p3_10/00000_1469e3f374b4_20180621T102021_20180621T102021_4_productdivide.tif'],
+                        input_dc_filepaths=None,
                         input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/'}, {'name': 'save_raster', 'format_type': 'VRT'}, {'name': 'to_pickle', 'filepath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/evi_1.dc;str'}],
                         queue='process'
                         )
 
-min_12_1 = eoDataReadersOp(task_id='min_12_1',
+evi_1_2 = eoDataReadersOp(task_id='evi_1_2',
                         dag=dag,
-                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/00000_477012afb166_20180613T101019_---------------_6_productdivide.vrt'],
+                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p3_10/00000_1934131d53d3_20180606T102019_20180606T102019_5_productdivide.tif'],
                         input_dc_filepaths=None,
-                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/min_12/'}, {'name': 'reduce', 'dimension': 'time', 'f_input': {'f_name': 'min'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}, {'name': 'to_pickle', 'filepath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/min_12/min_12.dc;str'}],
+                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/'}, {'name': 'save_raster', 'format_type': 'VRT'}, {'name': 'to_pickle', 'filepath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/evi_1.dc;str'}],
                         queue='process'
                         )
 
-min_12_2 = eoDataReadersOp(task_id='min_12_2',
+evi_1_3 = eoDataReadersOp(task_id='evi_1_3',
                         dag=dag,
-                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/00000_5852cc369190_20180611T102021_---------------_2_productdivide.vrt'],
+                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p3_10/00000_35e1ae6d20ab_20180611T102021_20180611T102021_2_productdivide.tif'],
                         input_dc_filepaths=None,
-                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/min_12/'}, {'name': 'reduce', 'dimension': 'time', 'f_input': {'f_name': 'min'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}, {'name': 'to_pickle', 'filepath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/min_12/min_12.dc;str'}],
+                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/'}, {'name': 'save_raster', 'format_type': 'VRT'}, {'name': 'to_pickle', 'filepath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/evi_1.dc;str'}],
                         queue='process'
                         )
 
-min_12_3 = eoDataReadersOp(task_id='min_12_3',
+evi_1_4 = eoDataReadersOp(task_id='evi_1_4',
                         dag=dag,
-                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/00000_7445343dee29_20180616T102019_---------------_7_productdivide.vrt'],
+                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p3_10/00000_463ff9e0d738_20180608T101021_20180608T101021_1_productdivide.tif'],
                         input_dc_filepaths=None,
-                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/min_12/'}, {'name': 'reduce', 'dimension': 'time', 'f_input': {'f_name': 'min'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}, {'name': 'to_pickle', 'filepath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/min_12/min_12.dc;str'}],
+                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/'}, {'name': 'save_raster', 'format_type': 'VRT'}, {'name': 'to_pickle', 'filepath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/evi_1.dc;str'}],
                         queue='process'
                         )
 
-min_12_4 = eoDataReadersOp(task_id='min_12_4',
+evi_1_5 = eoDataReadersOp(task_id='evi_1_5',
                         dag=dag,
-                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/00000_771a9e3b2df9_20180608T101021_---------------_1_productdivide.vrt'],
+                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p3_10/00000_8095a5b816ba_20180618T101021_20180618T101021_3_productdivide.tif'],
                         input_dc_filepaths=None,
-                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/min_12/'}, {'name': 'reduce', 'dimension': 'time', 'f_input': {'f_name': 'min'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}, {'name': 'to_pickle', 'filepath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/min_12/min_12.dc;str'}],
+                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/'}, {'name': 'save_raster', 'format_type': 'VRT'}, {'name': 'to_pickle', 'filepath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/evi_1.dc;str'}],
                         queue='process'
                         )
 
-min_12_5 = eoDataReadersOp(task_id='min_12_5',
+evi_1_6 = eoDataReadersOp(task_id='evi_1_6',
                         dag=dag,
-                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/00000_a49e6871783c_20180606T102019_---------------_5_productdivide.vrt'],
+                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p3_10/00000_969296f4318d_20180613T101019_20180613T101019_6_productdivide.tif'],
                         input_dc_filepaths=None,
-                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/min_12/'}, {'name': 'reduce', 'dimension': 'time', 'f_input': {'f_name': 'min'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}, {'name': 'to_pickle', 'filepath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/min_12/min_12.dc;str'}],
+                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/'}, {'name': 'save_raster', 'format_type': 'VRT'}, {'name': 'to_pickle', 'filepath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/evi_1.dc;str'}],
                         queue='process'
                         )
 
-min_12_6 = eoDataReadersOp(task_id='min_12_6',
+evi_1_7 = eoDataReadersOp(task_id='evi_1_7',
                         dag=dag,
-                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/00000_b98051a06c4b_20180621T102021_---------------_4_productdivide.vrt'],
+                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/p3_10/00000_ec70dd22a2ba_20180616T102019_20180616T102019_7_productdivide.tif'],
                         input_dc_filepaths=None,
-                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/min_12/'}, {'name': 'reduce', 'dimension': 'time', 'f_input': {'f_name': 'min'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}, {'name': 'to_pickle', 'filepath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/min_12/min_12.dc;str'}],
+                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/'}, {'name': 'save_raster', 'format_type': 'VRT'}, {'name': 'to_pickle', 'filepath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/evi_1.dc;str'}],
                         queue='process'
                         )
 
-min_12_7 = eoDataReadersOp(task_id='min_12_7',
-                        dag=dag,
-                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/00000_dd38c9eafbe1_20180618T101021_---------------_3_productdivide.vrt'],
-                        input_dc_filepaths=None,
-                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/min_12/'}, {'name': 'reduce', 'dimension': 'time', 'f_input': {'f_name': 'min'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}, {'name': 'to_pickle', 'filepath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/min_12/min_12.dc;str'}],
-                        queue='process'
-                        )
-
-mintime_11 = eoDataReadersOp(task_id='mintime_11',
+min_12 = eoDataReadersOp(task_id='min_12',
                         dag=dag,
                         input_filepaths=None,
-                        input_dc_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/min_12/min_12.dc'],
+                        input_dc_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/evi_1/evi_1.dc'],
+                        input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/min_12/'}, {'name': 'reduce', 'dimension': 'time', 'f_input': {'f_name': 'min'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}, {'name': 'to_pickle', 'filepath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/min_12/min_12.dc;str'}],
+                        queue='process'
+                        )
+
+mintime_11_1 = eoDataReadersOp(task_id='mintime_11_1',
+                        dag=dag,
+                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/min_12/00000_3ee1bc79269e_20180606T102019_20180621T102021_1_minproductdivide.tif'],
+                        input_dc_filepaths=None,
                         input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/mintime_11/'}, {'name': 'save_raster', 'format_type': 'VRT'}, {'name': 'to_pickle', 'filepath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/mintime_11/mintime_11.dc;str'}],
                         queue='process'
                         )
 
-save_13 = eoDataReadersOp(task_id='save_13',
+save_13_1 = eoDataReadersOp(task_id='save_13_1',
                         dag=dag,
-                        input_filepaths=None,
-                        input_dc_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/mintime_11/mintime_11.dc'],
+                        input_filepaths=['/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/mintime_11/00000_e95b1830aa89_20180606T102019_---------------_1_minproductdivide.vrt'],
+                        input_dc_filepaths=None,
                         input_params=[{'name': 'set_output_folder', 'out_dirpath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/result/'}, {'name': 'save_raster'}, {'name': 'get_cube_metadata'}, {'name': 'to_pickle', 'filepath': '/home/luca/eodc/repos/openeo/eodc-openeo-bindings/tests/openeo_job/result/save_13.dc;str'}],
                         queue='process'
                         )
@@ -556,22 +556,22 @@ p3_10_6.set_upstream([div_9_6])
 
 p3_10_7.set_upstream([div_9_7])
 
-evi_1.set_upstream([p3_10_1,p3_10_2,p3_10_3,p3_10_4,p3_10_5,p3_10_6,p3_10_7])
+evi_1_1.set_upstream([p3_10_1])
 
-min_12_1.set_upstream([evi_1])
+evi_1_2.set_upstream([p3_10_2])
 
-min_12_2.set_upstream([evi_1])
+evi_1_3.set_upstream([p3_10_3])
 
-min_12_3.set_upstream([evi_1])
+evi_1_4.set_upstream([p3_10_4])
 
-min_12_4.set_upstream([evi_1])
+evi_1_5.set_upstream([p3_10_5])
 
-min_12_5.set_upstream([evi_1])
+evi_1_6.set_upstream([p3_10_6])
 
-min_12_6.set_upstream([evi_1])
+evi_1_7.set_upstream([p3_10_7])
 
-min_12_7.set_upstream([evi_1])
+min_12.set_upstream([evi_1_1,evi_1_2,evi_1_3,evi_1_4,evi_1_5,evi_1_6,evi_1_7])
 
-mintime_11.set_upstream([min_12_1,min_12_2,min_12_3,min_12_4,min_12_5,min_12_6,min_12_7])
+mintime_11_1.set_upstream([min_12])
 
-save_13.set_upstream([mintime_11])
+save_13_1.set_upstream([mintime_11_1])
