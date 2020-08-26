@@ -115,12 +115,20 @@ dag = DAG(dag_id="{domain.job_id}",
         return node_id, params, filepaths, node_dependencies
 
     def _check_key_is_parallelizable(self, params: List[dict]):
-        parallelizable = False
+        """
+        Flag if current node can be parallelized.
+        """
+        # TODO we need better logic to decide when a node can be parallelised or not
         for item in params:
-            # TODO could there be multiple function?
-            if 'f_input' in item.keys():
-                if item['f_input']['f_name'] not in self.not_parallelizable_func:
-                    parallelizable = True
+            if item['name'] == 'reduce' and item['dimension'] == 'time':
+                return False
+            elif item['name'] in self.not_parallelizable_func:
+                return False
+            elif 'f_input' in item:
+                if item['f_input']['f_name'] in self.not_parallelizable_func:
+                    return False
+        
+        return True
 
         return parallelizable
 
@@ -183,11 +191,7 @@ dag = DAG(dag_id="{domain.job_id}",
             # Check node can be parallelized if requested
             parallel_node = False
             if domain.parallelize_task:
-                parallel_node = True
-                if not self._check_key_is_parallelizable(params):
-                    parallel_node = False
-                if not node_dependencies or filepaths:
-                    parallel_node = False
+                parallel_node = self._check_key_is_parallelizable(params)
 
             if parallel_node:
                 dc_filepaths = None
