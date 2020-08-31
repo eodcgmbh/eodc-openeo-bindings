@@ -38,8 +38,8 @@ class JobWriter(ABC):
 
         additional_nodes = self.get_additional_nodes(domain)
         if additional_nodes:
-            for node_id in additional_nodes[1]:
-                file_handler.append(additional_nodes[0][node_id])
+            for node_id in additional_nodes:
+                file_handler.append(additional_nodes[node_id])
 
         file_handler.close()
         return file_handler, domain
