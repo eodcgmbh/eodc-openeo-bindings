@@ -1,4 +1,5 @@
 import os
+import json
 from shutil import copyfile
 from typing import Tuple, List, Optional, Union
 
@@ -231,8 +232,17 @@ dag = DAG(dag_id="{domain.job_id}",
         return translated_nodes, list(translated_nodes.keys())
 
     def get_additional_nodes(self, domain: AirflowDagDomain, **kwargs) -> Optional[Tuple[dict, list]]:
+        
+        additional_nodes = {}
         if domain.add_delete_sensor:
-            return self.get_delete_sensor_txt(domain)
+            additional_nodes = self.get_delete_sensor_txt(domain)
+        if domain.parallelize_task:
+            parallel_nodes = self.get_parallel_dag_txt(domain)
+            if additional_nodes:
+                additional_nodes = {**additional_nodes, **parallel_nodes}
+            else:
+                additional_nodes = parallel_nodes
+        return additional_nodes
 
     def get_delete_sensor_txt(self, domain: AirflowDagDomain) -> Tuple[dict, list]:
         nodes = {
@@ -248,4 +258,51 @@ stop_dag = StopDagOp(task_id='stop_dag', dag=dag, queue='process')
 ''',
             "dep_cancel_action": self.get_dependencies_txt("stop_dag", ["cancel_sensor"]),
         }
-        return nodes, list(nodes.keys())
+        return nodes
+
+    def get_parallel_dag_txt(self, domain: AirflowDagDomain) -> Tuple[dict, list]:
+        
+        op_kwargs={
+            'job_id': domain.job_id,
+            'user_name': domain.user_name,
+            'process_graph_json': json.load(open(domain.process_graph_json)),
+            'job_data': domain.job_data,
+            'process_defs': domain.process_defs
+            }
+
+        nodes = {
+            "parallel_func": f'''
+def parallelise_dag(job_id, user_name, process_graph_json, job_data, process_defs):
+    """
+    
+    """
+    
+    writer = AirflowDagWriter()
+    domain = writer.get_domain(job_id=job_id,
+                               user_name=user_name,
+                               process_graph_json=process_graph_json,
+                               job_data=job_data,
+                               process_defs=process_defs,
+                               add_delete_sensor=True,
+                               vrt_only=False,
+                               parallelize_tasks=True)
+    domain.job_id = domain.job_id + "_2"
+    writer.rewrite_and_move_job(domain)
+''',
+            "parallel_op": f'''
+parallelise_dag = PythonOperator(task_id='parallelise_dag',
+                                 dag=dag,
+                                 python_callable=parallelise_dag,
+                                 op_kwargs = {op_kwargs},
+                                 queue='process')
+''',
+            "dep_parallel_op": self.get_dependencies_txt("parallelise_dag", [domain.nodes[-1][0]]),
+            "trigger_new_dag": f'''
+trigger_dag = TriggerDagRunOperator(task_id='trigger_dag',
+                                   dag=dag,
+                                   trigger_dag_id='{domain.job_id}',
+                                   queue='process')
+''',
+            "dep_trigger_new_dag": self.get_dependencies_txt("trigger_dag", ["parallelise_dag"]),            
+        }
+        return nodes
