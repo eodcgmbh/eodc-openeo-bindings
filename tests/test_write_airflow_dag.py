@@ -74,7 +74,8 @@ def test_airflow_dag_parallel(csw_server, test_folder, evi_file, setup_airflow_d
     copytree(airflow_job_folder, job_data)
     # Recreate (parallelised DAG)
     writer = AirflowDagWriter()
-    domain = writer.get_domain(job_id, user_name, evi_file, job_data, process_defs=backend_processes, vrt_only=False, parallelize_tasks=True)
+    domain = writer.get_domain(job_id, user_name, evi_file, job_data, process_defs=backend_processes,
+                               vrt_only=False, parallelize_tasks=True, add_delete_sensor=True)
     domain.job_id = domain.job_id + "_2"
     # (Re)write DAG, now parallelised
     writer.rewrite_and_move_job(domain)
