@@ -262,10 +262,13 @@ stop_dag = StopDagOp(task_id='stop_dag', dag=dag, queue='process')
 
     def get_parallel_dag_txt(self, domain: AirflowDagDomain) -> Tuple[dict, list]:
         
+        if isinstance(domain.process_graph_json, str):
+            domain.process_graph_json = json.load(open(domain.process_graph_json))
+        
         op_kwargs={
             'job_id': domain.job_id,
             'user_name': domain.user_name,
-            'process_graph_json': json.load(open(domain.process_graph_json)),
+            'process_graph_json': domain.process_graph_json,
             'job_data': domain.job_data,
             'process_defs': domain.process_defs
             }
