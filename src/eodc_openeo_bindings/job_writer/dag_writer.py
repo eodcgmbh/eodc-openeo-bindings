@@ -294,7 +294,7 @@ def parallelise_dag(job_id, user_name, process_graph_json, job_data, process_def
                                parallelize_tasks=True)
     domain.job_id = domain.job_id + "_2"
     writer.rewrite_and_move_job(domain)
-    sleep(5)  # give a few seconds to Airflow to add DAG to its internal DB
+    sleep(10)  # give a few seconds to Airflow to add DAG to its internal DB
 ''',
             "parallel_op": f'''
 parallelise_dag = PythonOperator(task_id='parallelise_dag',
