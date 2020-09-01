@@ -60,7 +60,7 @@ from airflow import DAG
         if domain.add_delete_sensor:
             imports2 += ', CancelOp, StopDagOp'
         if domain.add_parallel_sensor:
-            imports2 += ', Python Operator, TriggerDagRunOperator'
+            imports2 += ', PythonOperator, TriggerDagRunOperator'
         imports += imports2 + '\n'
         
         return imports
