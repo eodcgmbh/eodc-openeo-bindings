@@ -195,6 +195,6 @@ parallelise_dag.set_upstream([save_13])
 
 trigger_dag = TriggerDagRunOperator(task_id='trigger_dag',
                                    dag=dag,
-                                   trigger_dag_id='jb-12347',
+                                   trigger_dag_id='jb-12347_2',
                                    queue='process')
 trigger_dag.set_upstream([parallelise_dag])

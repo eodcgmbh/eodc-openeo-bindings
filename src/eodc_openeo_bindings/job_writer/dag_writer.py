@@ -305,7 +305,7 @@ parallelise_dag = PythonOperator(task_id='parallelise_dag',
             "trigger_new_dag": f'''
 trigger_dag = TriggerDagRunOperator(task_id='trigger_dag',
                                    dag=dag,
-                                   trigger_dag_id='{domain.job_id}',
+                                   trigger_dag_id='{domain.job_id}_2',
                                    queue='process')
 ''',
             "dep_trigger_new_dag": self.get_dependencies_txt("trigger_dag", ["parallelise_dag"]),            
