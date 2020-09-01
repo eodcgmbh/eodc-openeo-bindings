@@ -54,15 +54,15 @@ class AirflowDagWriter(JobWriter):
     def get_imports(self, domain: AirflowDagDomain) -> str:
         imports = '''\
 from datetime import datetime, timedelta
-from airflow import DAG'''
+from airflow import DAG
+'''
+        imports2 = 'from airflow.operators import eoDataReadersOp'
         if domain.add_delete_sensor:
-            imports += '''
-from airflow.operators import eoDataReadersOp, CancelOp, StopDagOp
-'''
-        else:
-            imports += '''
-from airflow.operators import eoDataReadersOp
-'''
+            imports2 += ', CancelOp, StopDagOp'
+        if domain.add_parallel_sensor:
+            imports2 += ', Python Operator, TriggerDagRunOperator'
+        imports += imports2 + '\n'
+        
         return imports
 
     def get_additional_header(self, domain: AirflowDagDomain):

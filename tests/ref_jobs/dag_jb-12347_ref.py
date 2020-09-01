@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from airflow import DAG
-from airflow.operators import eoDataReadersOp, CancelOp, StopDagOp
+from airflow.operators import eoDataReadersOp, CancelOp, StopDagOp, Python Operator, TriggerDagRunOperator
 
 default_args = {
     'owner': "jdoe_67890",
