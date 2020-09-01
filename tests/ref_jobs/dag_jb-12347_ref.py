@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators import eoDataReadersOp, CancelOp, StopDagOp, PythonOperator, TriggerDagRunOperator
+from eodc_openeo_bindings.job_writer.dag_writer import AirflowDagWriter
 
 default_args = {
     'owner': "jdoe_67890",

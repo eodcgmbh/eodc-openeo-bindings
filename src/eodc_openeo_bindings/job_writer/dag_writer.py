@@ -61,6 +61,8 @@ from airflow import DAG
             imports2 += ', CancelOp, StopDagOp'
         if domain.add_parallel_sensor:
             imports2 += ', PythonOperator, TriggerDagRunOperator'
+            imports2 += '\nfrom eodc_openeo_bindings.job_writer.dag_writer import AirflowDagWriter'
+        
         imports += imports2 + '\n'
         
         return imports
