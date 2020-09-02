@@ -1,4 +1,5 @@
 import os
+import json
 from shutil import copyfile
 from typing import Tuple, List, Optional, Union
 
@@ -20,18 +21,18 @@ class AirflowDagWriter(JobWriter):
     def get_domain(self, job_id: str, user_name: str, process_graph_json: Union[str, dict], job_data: str,
                    process_defs: Union[dict, list, str],
                    user_email: str = None, job_description: str = None, parallelize_tasks: bool = False,
-                   vrt_only: bool = False, add_delete_sensor: bool = False) -> AirflowDagDomain:
+                   vrt_only: bool = False, add_delete_sensor: bool = False, add_parallel_sensor: bool = False) -> AirflowDagDomain:
         return AirflowDagDomain(job_id, user_name, process_graph_json, job_data, process_defs, user_email, job_description,
-                                parallelize_tasks, vrt_only, add_delete_sensor)
+                                parallelize_tasks, vrt_only, add_delete_sensor, add_parallel_sensor)
 
     def write_job(self, job_id: str, user_name: str, process_graph_json: Union[str, dict], job_data: str, 
                   process_defs: Union[dict, list, str],
                   user_email: str = None, job_description: str = None, parallelize_tasks: bool = False,
-                  vrt_only: bool = False, add_delete_sensor: bool = False):
+                  vrt_only: bool = False, add_delete_sensor: bool = False, add_parallel_sensor: bool = False):
         return super().write_job(job_id=job_id, user_name=user_name, process_graph_json=process_graph_json,
                                  job_data=job_data, process_defs=process_defs, user_email=user_email, job_description=job_description,
                                  parallelize_tasks=parallelize_tasks, vrt_only=vrt_only,
-                                 add_delete_sensor=add_delete_sensor)
+                                 add_delete_sensor=add_delete_sensor, add_parallel_sensor=add_parallel_sensor)
 
     def move_dag(self, filepath: str):
         # Move file to DAGs folder (must copy/delete because of different volume mounts)
@@ -41,9 +42,9 @@ class AirflowDagWriter(JobWriter):
     def write_and_move_job(self, job_id: str, user_name: str, process_graph_json: Union[str, dict], job_data: str,
                            process_defs: Union[dict, list, str],
                            user_email: str = None, job_description: str = None, parallelize_tasks: bool = False,
-                           vrt_only: bool = False, add_delete_sensor: bool = False):
+                           vrt_only: bool = False, add_delete_sensor: bool = False, add_parallel_sensor: bool = False):
         _, domain = self.write_job(job_id, user_name, process_graph_json, job_data, process_defs, user_email, job_description,
-                                   parallelize_tasks, vrt_only, add_delete_sensor)
+                                   parallelize_tasks, vrt_only, add_delete_sensor, add_parallel_sensor)
         self.move_dag(domain.filepath)
 
     def rewrite_and_move_job(self, domain: AirflowDagDomain):
@@ -53,15 +54,18 @@ class AirflowDagWriter(JobWriter):
     def get_imports(self, domain: AirflowDagDomain) -> str:
         imports = '''\
 from datetime import datetime, timedelta
-from airflow import DAG'''
+from airflow import DAG
+'''
+        imports2 = 'from airflow.operators import eoDataReadersOp'
         if domain.add_delete_sensor:
-            imports += '''
-from airflow.operators import eoDataReadersOp, CancelOp, StopDagOp
-'''
-        else:
-            imports += '''
-from airflow.operators import eoDataReadersOp
-'''
+            imports2 += ', CancelOp, StopDagOp'
+        if domain.add_parallel_sensor:
+            imports2 += ', PythonOperator, TriggerDagRunOperator'
+            imports2 += '\nfrom eodc_openeo_bindings.job_writer.dag_writer import AirflowDagWriter'
+            imports2 += '\nfrom time import sleep'
+        
+        imports += imports2 + '\n'
+        
         return imports
 
     def get_additional_header(self, domain: AirflowDagDomain):
@@ -115,12 +119,20 @@ dag = DAG(dag_id="{domain.job_id}",
         return node_id, params, filepaths, node_dependencies
 
     def _check_key_is_parallelizable(self, params: List[dict]):
-        parallelizable = False
+        """
+        Flag if current node can be parallelized.
+        """
+        # TODO we need better logic to decide when a node can be parallelised or not
         for item in params:
-            # TODO could there be multiple function?
-            if 'f_input' in item.keys():
-                if item['f_input']['f_name'] not in self.not_parallelizable_func:
-                    parallelizable = True
+            if item['name'] == 'reduce' and item['dimension'] == 'time':
+                return False
+            elif item['name'] in self.not_parallelizable_func:
+                return False
+            elif 'f_input' in item:
+                if item['f_input']['f_name'] in self.not_parallelizable_func:
+                    return False
+        
+        return True
 
         return parallelizable
 
@@ -183,11 +195,7 @@ dag = DAG(dag_id="{domain.job_id}",
             # Check node can be parallelized if requested
             parallel_node = False
             if domain.parallelize_task:
-                parallel_node = True
-                if not self._check_key_is_parallelizable(params):
-                    parallel_node = False
-                if not node_dependencies or filepaths:
-                    parallel_node = False
+                parallel_node = self._check_key_is_parallelizable(params)
 
             if parallel_node:
                 dc_filepaths = None
@@ -227,8 +235,17 @@ dag = DAG(dag_id="{domain.job_id}",
         return translated_nodes, list(translated_nodes.keys())
 
     def get_additional_nodes(self, domain: AirflowDagDomain, **kwargs) -> Optional[Tuple[dict, list]]:
+        
+        additional_nodes = {}
         if domain.add_delete_sensor:
-            return self.get_delete_sensor_txt(domain)
+            additional_nodes = self.get_delete_sensor_txt(domain)
+        if domain.add_parallel_sensor:
+            parallel_nodes = self.get_parallel_dag_txt(domain)
+            if additional_nodes:
+                additional_nodes = {**additional_nodes, **parallel_nodes}
+            else:
+                additional_nodes = parallel_nodes
+        return additional_nodes
 
     def get_delete_sensor_txt(self, domain: AirflowDagDomain) -> Tuple[dict, list]:
         nodes = {
@@ -244,4 +261,55 @@ stop_dag = StopDagOp(task_id='stop_dag', dag=dag, queue='process')
 ''',
             "dep_cancel_action": self.get_dependencies_txt("stop_dag", ["cancel_sensor"]),
         }
-        return nodes, list(nodes.keys())
+        return nodes
+
+    def get_parallel_dag_txt(self, domain: AirflowDagDomain) -> Tuple[dict, list]:
+        
+        if isinstance(domain.process_graph_json, str):
+            domain.process_graph_json = json.load(open(domain.process_graph_json))
+        
+        op_kwargs={
+            'job_id': domain.job_id,
+            'user_name': domain.user_name,
+            'process_graph_json': domain.process_graph_json,
+            'job_data': domain.job_data,
+            'process_defs': domain.process_defs
+            }
+
+        nodes = {
+            "parallel_func": f'''
+def parallelise_dag(job_id, user_name, process_graph_json, job_data, process_defs):
+    """
+    
+    """
+    
+    writer = AirflowDagWriter()
+    domain = writer.get_domain(job_id=job_id,
+                               user_name=user_name,
+                               process_graph_json=process_graph_json,
+                               job_data=job_data,
+                               process_defs=process_defs,
+                               add_delete_sensor=True,
+                               vrt_only=False,
+                               parallelize_tasks=True)
+    domain.job_id = domain.job_id + "_2"
+    writer.rewrite_and_move_job(domain)
+    sleep(10)  # give a few seconds to Airflow to add DAG to its internal DB
+''',
+            "parallel_op": f'''
+parallelise_dag = PythonOperator(task_id='parallelise_dag',
+                                 dag=dag,
+                                 python_callable=parallelise_dag,
+                                 op_kwargs = {op_kwargs},
+                                 queue='process')
+''',
+            "dep_parallel_op": self.get_dependencies_txt("parallelise_dag", [domain.nodes[-1][0]]),
+            "trigger_new_dag": f'''
+trigger_dag = TriggerDagRunOperator(task_id='trigger_dag',
+                                   dag=dag,
+                                   trigger_dag_id='{domain.job_id}_2',
+                                   queue='process')
+''',
+            "dep_trigger_new_dag": self.get_dependencies_txt("trigger_dag", ["parallelise_dag"]),            
+        }
+        return nodes

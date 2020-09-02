@@ -15,4 +15,4 @@
 # numpy==1.13.3
 # scipy==1.0
 
-git+git://github.com/Open-EO/openeo-pg-parser-python.git@v2.0.0#egg=openeo-pg-parser
+git+git://github.com/Open-EO/openeo-pg-parser-python.git@v2.0.1#egg=openeo-pg-parser
