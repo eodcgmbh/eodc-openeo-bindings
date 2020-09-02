@@ -59,7 +59,7 @@ def map_process(process, node_id, is_result, root_folder,
         # Add save_result node
         if not vrt_only:
             process_params = map_save_result(process, format_type='Gtiff', in_place=True) 
-        job_params.extend(process_params)
+            job_params.extend(process_params)
     elif process['process_id'] == 'save_result':
         if vrt_only:
             index = -1 # "save_result" is usually the last item in the list
