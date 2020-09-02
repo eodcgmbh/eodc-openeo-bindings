@@ -57,9 +57,7 @@ def map_process(process, node_id, is_result, root_folder,
     # Check flags for saving output
     if is_result and process['process_id'] != 'save_result':
         # Add save_result node
-        if vrt_only:
-            process_params = map_save_result(process, format_type='VRT')
-        else:
+        if not vrt_only:
             process_params = map_save_result(process, format_type='Gtiff', in_place=True) 
         job_params.extend(process_params)
     elif process['process_id'] == 'save_result':
