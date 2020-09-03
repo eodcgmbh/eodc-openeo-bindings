@@ -90,18 +90,6 @@ dag = DAG(dag_id="{domain.job_id}",
           default_args=default_args)
 '''
 
-#     def get_eodatareaders_task_txt(self, task_id, filepaths, dc_filepaths, process_graph, quotes, queue: str = 'process'):
-#         return f'''\
-# {task_id} = eoDataReadersOp(task_id='{task_id}',
-#                         dag=dag,
-#                         input_filepaths={quotes}{filepaths}{quotes},
-#                         input_dc_filepaths={quotes}{dc_filepaths}{quotes},
-#                         input_params={process_graph},
-#                         queue='{queue}'
-#                         )
-# 
-# '''
-
     def get_eodatareaders_task_txt(self, task_id, filepaths, dc_filepaths, process_graph, quotes, queue: str = 'process'):
         
         op_kwargs = {
