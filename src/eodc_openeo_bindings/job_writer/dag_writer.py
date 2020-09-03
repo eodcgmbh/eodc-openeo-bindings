@@ -55,12 +55,13 @@ class AirflowDagWriter(JobWriter):
         imports = '''\
 from datetime import datetime, timedelta
 from airflow import DAG
+from eodatareaders.eo_data_reader import EODataProcessor
 '''
-        imports2 = 'from airflow.operators import eoDataReadersOp'
+        imports2 = 'from airflow.operators import PythonOperator'
         if domain.add_delete_sensor:
             imports2 += ', CancelOp, StopDagOp'
         if domain.add_parallel_sensor:
-            imports2 += ', PythonOperator, TriggerDagRunOperator'
+            imports2 += ', TriggerDagRunOperator'
             imports2 += '\nfrom eodc_openeo_bindings.job_writer.dag_writer import AirflowDagWriter'
             imports2 += '\nfrom time import sleep'
         
@@ -90,12 +91,18 @@ dag = DAG(dag_id="{domain.job_id}",
 '''
 
     def get_eodatareaders_task_txt(self, task_id, filepaths, dc_filepaths, process_graph, quotes, queue: str = 'process'):
+        
+        op_kwargs = {
+            'filepaths': filepaths,
+            'dc_filepaths': dc_filepaths,
+            'user_params': process_graph
+        }
+        
         return f'''\
-{task_id} = eoDataReadersOp(task_id='{task_id}',
+{task_id} = PythonOperator(task_id='{task_id}',
                         dag=dag,
-                        input_filepaths={quotes}{filepaths}{quotes},
-                        input_dc_filepaths={quotes}{dc_filepaths}{quotes},
-                        input_params={process_graph},
+                        python_callable=EODataProcessor,
+                        op_kwargs={op_kwargs},
                         queue='{queue}'
                         )
 
