@@ -25,11 +25,6 @@ def test_folder():
 
 
 @pytest.fixture()
-def csw_server():
-    os.environ['OEO_CSW_SERVER'] = 'http://pycsw:8000'
-
-
-@pytest.fixture()
 def acube_csw_server():
     os.environ['OEO_CSW_SERVER_DC'] = 'https://csw-acube.eodc.eu/'
 
@@ -73,7 +68,7 @@ def out_filepath_basic(request):
             os.remove(path)
     request.addfinalizer(fin)
     return path
-    
+
 
 @pytest.fixture()
 def out_filepath_basic_apply(request):
@@ -90,7 +85,6 @@ def out_filepath_basic_apply(request):
 def backend_processes():
     test_folder = get_test_folder()
     return json.load(open(os.path.join(test_folder, 'backend_processes.json')))['processes']
-
 
 
 @pytest.fixture()

@@ -1,6 +1,6 @@
 import glob
 import os
-from typing import Union, List
+from typing import Union, List, Optional, Dict
 
 
 class JobWriterUtils:
@@ -93,3 +93,21 @@ for path in input_filepaths:
             dc_filepaths = None
         
         return dc_filepaths
+
+
+class JobIdExtension:
+
+    def __init__(self, extensions: Optional[Dict[str, str]] = None) -> None:
+        self.preparation = "prep"
+        self.parallel = "parallel"
+        if isinstance(extensions, dict):
+            if "preparation" in extensions:
+                self.preparation = extensions["preparation"]
+            if "parallel" in extensions:
+                self.parallel = extensions["parallel"]
+
+    def get_preparation(self, job_id: str) -> str:
+        return f"{job_id}_{self.preparation}"
+
+    def get_parallel(self, job_id: str) -> str:
+        return f"{job_id}_{self.parallel}"
