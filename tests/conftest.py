@@ -108,11 +108,24 @@ def setup_airflow_dag_folder(request):
 
 
 @pytest.fixture()
-def setup_ref_job_folder(request):
-    test_folder = get_test_folder()
-    os.environ['REF_JOBS'] = os.path.join(test_folder, 'ref_jobs')
+def setup_ref_job_folder():
+    os.environ['REF_JOBS'] = os.path.join(get_test_folder(), 'ref_jobs')
 
 
 @pytest.fixture()
 def airflow_job_folder():
     return os.path.join(get_test_folder(), 'ref_airflow_job')
+
+
+@pytest.fixture()
+def csw_server_default(mocker):
+    csw_server_response = [
+        '/s2a_prd_msil1c/2018/06/08/S2A_MSIL1C_20180608T101021_N0206_R022_T32TPS_20180608T135059.zip',
+        '/s2a_prd_msil1c/2018/06/11/S2A_MSIL1C_20180611T102021_N0206_R065_T32TPS_20180611T123241.zip',
+        '/s2a_prd_msil1c/2018/06/18/S2A_MSIL1C_20180618T101021_N0206_R022_T32TPS_20180618T135619.zip',
+        '/s2a_prd_msil1c/2018/06/21/S2A_MSIL1C_20180621T102021_N0206_R065_T32TPS_20180621T140615.zip',
+        '/s2b_prd_msil1c/2018/06/06/S2B_MSIL1C_20180606T102019_N0206_R065_T32TPS_20180606T172808.zip',
+        '/s2b_prd_msil1c/2018/06/13/S2B_MSIL1C_20180613T101019_N0206_R022_T32TPS_20180613T122213.zip',
+        '/s2b_prd_msil1c/2018/06/16/S2B_MSIL1C_20180616T102019_N0206_R065_T32TPS_20180616T154713.zip',
+    ]
+    mocker.patch('eodc_openeo_bindings.map_cubes_processes.csw_query', return_value=csw_server_response)
