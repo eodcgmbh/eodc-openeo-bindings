@@ -1,16 +1,18 @@
 import os
 import json
 from shutil import copyfile
-from typing import Tuple, List, Optional, Union
+from typing import Tuple, List, Optional, Union, Dict
 
 from eodc_openeo_bindings.job_writer.job_domain import AirflowDagDomain
 from eodc_openeo_bindings.job_writer.job_writer import JobWriter
+from eodc_openeo_bindings.job_writer.utils import JobIdExtension
 from eodc_openeo_bindings.openeo_to_eodatareaders import openeo_to_eodatareaders
 
 
 class AirflowDagWriter(JobWriter):
 
-    def __init__(self):
+    def __init__(self, job_id_extensions: Optional[Dict[str, str]] = None):
+        self.job_id_extensions = JobIdExtension(job_id_extensions)
         self.not_parallelizable_func = (
             'filter_bands',
             'filter_bbox',
@@ -18,12 +20,32 @@ class AirflowDagWriter(JobWriter):
             'array_element'
         )
 
-    def get_domain(self, job_id: str, user_name: str, process_graph_json: Union[str, dict], job_data: str,
+    def get_domain(self,
+                   job_id: str,
+                   user_name: str,
+                   process_graph_json: Union[str, dict],
+                   job_data: str,
                    process_defs: Union[dict, list, str],
-                   user_email: str = None, job_description: str = None, parallelize_tasks: bool = False,
-                   vrt_only: bool = False, add_delete_sensor: bool = False, add_parallel_sensor: bool = False) -> AirflowDagDomain:
-        return AirflowDagDomain(job_id, user_name, process_graph_json, job_data, process_defs, user_email, job_description,
-                                parallelize_tasks, vrt_only, add_delete_sensor, add_parallel_sensor)
+                   user_email: str = None,
+                   job_description: str = None,
+                   parallelize_tasks: bool = False,
+                   vrt_only: bool = False,
+                   add_delete_sensor: bool = False,
+                   add_parallel_sensor: bool = False
+                   ) -> AirflowDagDomain:
+        return AirflowDagDomain(job_id=job_id,
+                                job_id_extension=self.job_id_extensions,
+                                user_name=user_name,
+                                process_graph_json=process_graph_json,
+                                job_data=job_data,
+                                process_defs=process_defs,
+                                user_email=user_email,
+                                job_description=job_description,
+                                parallelize_tasks=parallelize_tasks,
+                                vrt_only=vrt_only,
+                                add_delete_sensor=add_delete_sensor,
+                                add_parallel_sensor=add_parallel_sensor,
+                                )
 
     def write_job(self, job_id: str, user_name: str, process_graph_json: Union[str, dict], job_data: str, 
                   process_defs: Union[dict, list, str],
@@ -82,7 +104,7 @@ default_args = {{
     'email_on_retry': False,
 }}
 
-dag = DAG(dag_id="{domain.job_id}",
+dag = DAG(dag_id="{domain.dag_id}",
           description="{domain.job_description}",
           catchup=True,
           max_active_runs=1,
@@ -140,8 +162,6 @@ dag = DAG(dag_id="{domain.job_id}",
                     return False
         
         return True
-
-        return parallelizable
 
     def expand_node_dependencies(self, node_dependencies, dep_subnodes, split_dependencies=False):
         """
@@ -299,7 +319,7 @@ def parallelise_dag(job_id, user_name, process_graph_json, job_data, process_def
                                add_delete_sensor=True,
                                vrt_only=False,
                                parallelize_tasks=True)
-    domain.job_id = domain.job_id + "_2"
+    domain.job_id = "{self.job_id_extensions.get_parallel(domain.job_id)}"
     writer.rewrite_and_move_job(domain)
     sleep(10)  # give a few seconds to Airflow to add DAG to its internal DB
 ''',
@@ -314,7 +334,7 @@ parallelise_dag = PythonOperator(task_id='parallelise_dag',
             "trigger_new_dag": f'''
 trigger_dag = TriggerDagRunOperator(task_id='trigger_dag',
                                    dag=dag,
-                                   trigger_dag_id='{domain.job_id}_2',
+                                   trigger_dag_id='{self.job_id_extensions.get_parallel(domain.job_id)}',
                                    queue='process')
 ''',
             "dep_trigger_new_dag": self.get_dependencies_txt("trigger_dag", ["parallelise_dag"]),            
