@@ -26,7 +26,7 @@ def test_basic(csw_server_default, test_folder, evi_file, out_filepath_basic, ba
     assert out_content == ref_content
 
 
-def test_UC1_temporal_basic(acube_csw_server, test_folder, uc1_temporal_file, out_filepath_basic, setup_ref_job_folder):
+def test_UC1_temporal_basic(acube_csw_server_default, test_folder, uc1_temporal_file, out_filepath_basic, setup_ref_job_folder):
     job_data = os.path.join(test_folder, 'basic_job')
     backend_processes = 'https://openeo.eodc.eu/v1.0/processes'
 
@@ -46,7 +46,7 @@ def test_UC1_temporal_basic(acube_csw_server, test_folder, uc1_temporal_file, ou
     assert out_content == ref_content
 
 
-def test_UC1_spectral_basic(acube_csw_server, test_folder, uc1_spectral_file, out_filepath_basic, setup_ref_job_folder):
+def test_UC1_spectral_basic(acube_csw_server_default, test_folder, uc1_spectral_file, out_filepath_basic, setup_ref_job_folder):
     job_data = os.path.join(test_folder, 'basic_job')
     backend_processes = 'https://openeo.eodc.eu/v1.0/processes'
 
