@@ -42,8 +42,8 @@ def map_process(process, node_id, is_result, root_folder,
         filepaths = process_params[1]
         process_params = process_params[0]
         
-        if process['arguments']["id"][:2] in ('s1', 's3'):
-            # Workaround to use S1 and S3 Level-1 data, which are not georeferenced
+        if process['arguments']["id"][:2] in ('s1', 's3', 's5'):
+            # Workaround to use S1 and S3 Level-1 data, or S5p Level-2 data, which are not georeferenced
             # TODO for the moment this is a workaround (29.06.2020)
             job_params = set_output_folder(root_folder, node_id + '_0')
             # Add a 'quick_geocode' step before cropping/clipping
