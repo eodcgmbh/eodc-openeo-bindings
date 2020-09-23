@@ -12,17 +12,6 @@ def map_load_collection(process):
     Retrieves a file list and maps bbox and band filters to eoDataReaders.
     """
 
-    # Get list of filepaths fro csw server
-    filepaths = csw_query(collection=process['arguments']["id"],
-                          spatial_extent=(
-                              process['arguments']['spatial_extent']['south'],
-                              process['arguments']['spatial_extent']['west'],
-                              process['arguments']['spatial_extent']['north'],
-                              process['arguments']['spatial_extent']['east']
-                              ),
-                          temporal_extent=process['arguments']["temporal_extent"]
-                         )
-
     dict_item_list = []
 
     # Map band filter
@@ -36,7 +25,8 @@ def map_load_collection(process):
         dict_item = map_filter_bbox(process)[0]
         dict_item_list.append(dict_item)
 
-    return dict_item_list, filepaths
+    # return dict_item_list, filepaths
+    return dict_item_list
     
 
 def map_filter_bands(process):
