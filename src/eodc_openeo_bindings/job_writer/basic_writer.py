@@ -1,5 +1,5 @@
 import os
-from typing import Union, Tuple
+from typing import List, Union, Tuple
 
 from eodc_openeo_bindings.job_writer.job_domain import BasicJobDomain
 from eodc_openeo_bindings.job_writer.job_writer import JobWriter
@@ -9,13 +9,16 @@ from eodc_openeo_bindings.openeo_to_eodatareaders import openeo_to_eodatareaders
 class BasicJobWriter(JobWriter):
 
     def write_job(self, process_graph_json: Union[str, dict], job_data: str, 
-                  process_defs: Union[dict, list, str], output_filepath: str = None):
+                  process_defs: Union[dict, list, str],  filepaths: List[str],
+                  output_filepath: str = None):
         return super().write_job(process_graph_json=process_graph_json, job_data=job_data,
-                                 process_defs=process_defs, output_filepath=output_filepath)
+                                 process_defs=process_defs, filepaths=filepaths,
+                                 output_filepath=output_filepath)
 
     def get_domain(self, process_graph_json: Union[str, dict], job_data: str, 
-                   process_defs: Union[dict, list, str], output_filepath: str = None):
-        return BasicJobDomain(process_graph_json, job_data, process_defs, output_filepath)
+                   process_defs: Union[dict, list, str], filepaths: List[str],
+                   output_filepath: str = None):
+        return BasicJobDomain(process_graph_json, job_data, process_defs, filepaths, output_filepath)
 
     def get_imports(self, domain) -> str:
         return '''\
@@ -47,9 +50,13 @@ params = {params}
         for node in nodes:
             node_id = node[0]
             params = node[1]
-            filepaths = node[2]
-            node_dependencies = node[3]
-            node_operator = node[4]
+            node_dependencies = node[2]
+            node_operator = node[3]
+            
+            if not node_dependencies:
+                filepaths = domain.filepaths
+            else:
+                filepaths = None
 
             if filepaths:
                 filepaths0 = 'filepaths = '
@@ -78,7 +85,7 @@ params = {params}
 
         for node in nodes:
             node_id = node[0]
-            node_dependencies = node[3]
+            node_dependencies = node[2]
 
             current_index = translated_nodes_keys.index(node_id)
             dep_indices = []

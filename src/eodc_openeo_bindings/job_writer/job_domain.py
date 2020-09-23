@@ -15,10 +15,12 @@ class JobDomain:
 class BasicJobDomain(JobDomain):
 
     def __init__(self, process_graph_json: Union[str, dict], job_data: str, 
-                 process_defs: Union[dict, list, str], output_filepath: str = None):
+                 process_defs: Union[dict, list, str], filepaths: List[str],
+                 output_filepath: str = None):
         self.process_graph_json = process_graph_json
         self.job_data = job_data
         self.process_defs= process_defs
+        self.filepaths = filepaths
         self.output_filepath = output_filepath
         super(BasicJobDomain, self).__init__()
 
