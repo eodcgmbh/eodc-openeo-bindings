@@ -1,4 +1,4 @@
-from typing import Union
+from typing import List, Union
 
 from eodc_openeo_bindings.job_writer.utils import JobIdExtension
 
@@ -35,6 +35,7 @@ class AirflowDagDomain(JobDomain):
                  process_graph_json: Union[str, dict],
                  job_data: str,
                  process_defs: Union[dict, list, str],
+                 filepaths: List[str],
                  user_email: str = None,
                  job_description: str = None,
                  parallelize_tasks: bool = False,
@@ -61,7 +62,8 @@ class AirflowDagDomain(JobDomain):
         """
         self.process_graph_json = process_graph_json
         self.job_data = job_data
-        self.process_defs= process_defs
+        self.process_defs = process_defs
+        self.filepaths = filepaths
         self.job_id = job_id
         self.job_id_extension = job_id_extension
         self.user_name = user_name

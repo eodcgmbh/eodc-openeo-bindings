@@ -26,6 +26,7 @@ class AirflowDagWriter(JobWriter):
                    process_graph_json: Union[str, dict],
                    job_data: str,
                    process_defs: Union[dict, list, str],
+                   filepaths: List[str],
                    user_email: str = None,
                    job_description: str = None,
                    parallelize_tasks: bool = False,
@@ -39,6 +40,7 @@ class AirflowDagWriter(JobWriter):
                                 process_graph_json=process_graph_json,
                                 job_data=job_data,
                                 process_defs=process_defs,
+                                filepaths=filepaths,
                                 user_email=user_email,
                                 job_description=job_description,
                                 parallelize_tasks=parallelize_tasks,
@@ -48,11 +50,11 @@ class AirflowDagWriter(JobWriter):
                                 )
 
     def write_job(self, job_id: str, user_name: str, process_graph_json: Union[str, dict], job_data: str, 
-                  process_defs: Union[dict, list, str],
+                  process_defs: Union[dict, list, str], filepaths: List[str],
                   user_email: str = None, job_description: str = None, parallelize_tasks: bool = False,
                   vrt_only: bool = False, add_delete_sensor: bool = False, add_parallel_sensor: bool = False):
         return super().write_job(job_id=job_id, user_name=user_name, process_graph_json=process_graph_json,
-                                 job_data=job_data, process_defs=process_defs, user_email=user_email, job_description=job_description,
+                                 job_data=job_data, process_defs=process_defs, filepaths=filepaths, user_email=user_email, job_description=job_description,
                                  parallelize_tasks=parallelize_tasks, vrt_only=vrt_only,
                                  add_delete_sensor=add_delete_sensor, add_parallel_sensor=add_parallel_sensor)
 
@@ -62,10 +64,10 @@ class AirflowDagWriter(JobWriter):
         os.remove(filepath)
 
     def write_and_move_job(self, job_id: str, user_name: str, process_graph_json: Union[str, dict], job_data: str,
-                           process_defs: Union[dict, list, str],
+                           process_defs: Union[dict, list, str], filepaths: List[str],
                            user_email: str = None, job_description: str = None, parallelize_tasks: bool = False,
                            vrt_only: bool = False, add_delete_sensor: bool = False, add_parallel_sensor: bool = False):
-        _, domain = self.write_job(job_id, user_name, process_graph_json, job_data, process_defs, user_email, job_description,
+        _, domain = self.write_job(job_id, user_name, process_graph_json, job_data, process_defs, filepaths, user_email, job_description,
                                    parallelize_tasks, vrt_only, add_delete_sensor, add_parallel_sensor)
         self.move_dag(domain.filepath)
 
@@ -139,11 +141,15 @@ dag = DAG(dag_id="{domain.dag_id}",
     def _get_node_info(self, node, domain):
         node_id = node[0]
         params = node[1]
-        filepaths = node[2]
-        node_dependencies = node[3]
+        node_dependencies = node[2]
 
         if node_dependencies:
             node_dependencies = self.utils.get_existing_node(domain.job_data, node_dependencies)
+            # Assumption: dependency means that this is *not* a 'load_collection' node, hence do not write input filepaths into its mapping
+            filepaths = None
+        else:
+            # Assumption: no dependency means that this is a 'load_collection' node
+            filepaths = domain.filepaths
 
         return node_id, params, filepaths, node_dependencies
 
