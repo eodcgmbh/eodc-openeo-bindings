@@ -14,7 +14,7 @@ def get_ref_node_from_name(name, all_nodes):
     return all_nodes[cur_ref_index]
 
 
-def test_airflow_dag(evi_file, csw_server_default,
+def test_airflow_dag(evi_file,
                      setup_airflow_dag_folder, setup_ref_job_folder,
                      backend_processes, S2_filepaths):
 
@@ -36,7 +36,7 @@ def test_airflow_dag(evi_file, csw_server_default,
     assert out_content == ref_content
 
 
-def test_airflow_dag_vrt_only(evi_file, csw_server_default,
+def test_airflow_dag_vrt_only(evi_file,
                               setup_airflow_dag_folder, setup_ref_job_folder,
                               backend_processes, S2_filepaths):
 
@@ -59,7 +59,7 @@ def test_airflow_dag_vrt_only(evi_file, csw_server_default,
 
 
 def test_airflow_dag_parallel(evi_file, setup_airflow_dag_folder, airflow_job_folder,
-                              setup_ref_job_folder, backend_processes, S2_filepaths, csw_server_default):
+                              setup_ref_job_folder, backend_processes, S2_filepaths):
 
     job_data = './openeo_job'
 
@@ -108,7 +108,7 @@ def test_airflow_dag_parallel(evi_file, setup_airflow_dag_folder, airflow_job_fo
 
 
 def test_airflow_dag_delete_sensor(evi_file, setup_airflow_dag_folder, setup_ref_job_folder,
-                                   backend_processes, S2_filepaths, csw_server_default,):
+                                   backend_processes, S2_filepaths):
 
     job_id = "jb-12345_delete_sensor"
     out_filepath = os.path.join(os.environ['AIRFLOW_DAGS'], f'dag_{job_id}_prep.py')
