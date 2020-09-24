@@ -83,17 +83,19 @@ def backend_processes():
 
 
 @pytest.fixture()
-def setup_airflow_dag_folder(request):
+def airflow_dag_folder(request):
     test_folder = get_test_folder()
-    os.environ['AIRFLOW_DAGS'] = os.path.join(test_folder, 'airflow_dag')
-    if os.path.isdir(os.environ['AIRFLOW_DAGS']):
-        shutil.rmtree(os.environ['AIRFLOW_DAGS'])
-    os.makedirs(os.environ['AIRFLOW_DAGS'])
+    dags_folder = os.path.join(test_folder, 'airflow_dag')
+    if os.path.isdir(dags_folder):
+        shutil.rmtree(dags_folder)
+    os.makedirs(dags_folder)
 
     def fin():
-        shutil.rmtree(os.environ['AIRFLOW_DAGS'])
+        shutil.rmtree(dags_folder)
 
     request.addfinalizer(fin)
+
+    return dags_folder
 
 
 @pytest.fixture()

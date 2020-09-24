@@ -23,6 +23,7 @@ class AirflowDagWriter(JobWriter):
     def get_domain(self,
                    job_id: str,
                    user_name: str,
+                   dags_folder: str,
                    process_graph_json: Union[str, dict],
                    job_data: str,
                    process_defs: Union[dict, list, str],
@@ -37,6 +38,7 @@ class AirflowDagWriter(JobWriter):
         return AirflowDagDomain(job_id=job_id,
                                 job_id_extension=self.job_id_extensions,
                                 user_name=user_name,
+                                dags_folder=dags_folder,
                                 process_graph_json=process_graph_json,
                                 job_data=job_data,
                                 process_defs=process_defs,
@@ -49,31 +51,32 @@ class AirflowDagWriter(JobWriter):
                                 add_parallel_sensor=add_parallel_sensor,
                                 )
 
-    def write_job(self, job_id: str, user_name: str, process_graph_json: Union[str, dict], job_data: str, 
+    def write_job(self, job_id: str, user_name: str, dags_folder: str, process_graph_json: Union[str, dict], job_data: str, 
                   process_defs: Union[dict, list, str], in_filepaths: List[str],
                   user_email: str = None, job_description: str = None, parallelize_tasks: bool = False,
                   vrt_only: bool = False, add_delete_sensor: bool = False, add_parallel_sensor: bool = False):
-        return super().write_job(job_id=job_id, user_name=user_name, process_graph_json=process_graph_json,
+        return super().write_job(job_id=job_id, user_name=user_name, dags_folder=dags_folder, process_graph_json=process_graph_json,
                                  job_data=job_data, process_defs=process_defs, in_filepaths=in_filepaths, user_email=user_email, job_description=job_description,
                                  parallelize_tasks=parallelize_tasks, vrt_only=vrt_only,
                                  add_delete_sensor=add_delete_sensor, add_parallel_sensor=add_parallel_sensor)
 
-    def move_dag(self, filepath: str):
+    def move_dag(self, filepath: str, dags_folder: str):
         # Move file to DAGs folder (must copy/delete because of different volume mounts)
-        copyfile(filepath, os.environ.get('AIRFLOW_DAGS') + "/" + filepath)
+        #copyfile(filepath, os.environ.get('AIRFLOW_DAGS') + "/" + filepath)
+        copyfile(filepath, dags_folder + "/" + filepath)
         os.remove(filepath)
 
-    def write_and_move_job(self, job_id: str, user_name: str, process_graph_json: Union[str, dict], job_data: str,
+    def write_and_move_job(self, job_id: str, user_name: str, dags_folder: str, process_graph_json: Union[str, dict], job_data: str,
                            process_defs: Union[dict, list, str], in_filepaths: List[str],
                            user_email: str = None, job_description: str = None, parallelize_tasks: bool = False,
                            vrt_only: bool = False, add_delete_sensor: bool = False, add_parallel_sensor: bool = False):
-        _, domain = self.write_job(job_id, user_name, process_graph_json, job_data, process_defs, in_filepaths, user_email, job_description,
+        _, domain = self.write_job(job_id, user_name, dags_folder, process_graph_json, job_data, process_defs, in_filepaths, user_email, job_description,
                                    parallelize_tasks, vrt_only, add_delete_sensor, add_parallel_sensor)
-        self.move_dag(domain.filepath)
+        self.move_dag(domain.filepath, domain.dags_folder)
 
     def rewrite_and_move_job(self, domain: AirflowDagDomain):
         _, domain = self.rewrite_job(domain)
-        self.move_dag(domain.filepath)
+        self.move_dag(domain.filepath, domain.dags_folder)
 
     def get_imports(self, domain: AirflowDagDomain) -> str:
         imports = '''\

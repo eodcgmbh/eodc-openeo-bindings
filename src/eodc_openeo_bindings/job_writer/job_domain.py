@@ -33,6 +33,7 @@ class AirflowDagDomain(JobDomain):
     def __init__(self,
                  job_id: str,
                  job_id_extension: JobIdExtension,
+                 dags_folder: str,
                  user_name: str,
                  process_graph_json: Union[str, dict],
                  job_data: str,
@@ -68,6 +69,7 @@ class AirflowDagDomain(JobDomain):
         self.in_filepaths = in_filepaths
         self.job_id = job_id
         self.job_id_extension = job_id_extension
+        self.dags_folder = dags_folder
         self.user_name = user_name
         self.user_email = user_email
         self.job_description = job_description if job_description else 'No description provided'
