@@ -24,7 +24,7 @@ def test_airflow_dag(evi_file,
 
     writer = AirflowDagWriter()
     writer.write_and_move_job(job_id=job_id, user_name=user_name, process_graph_json=evi_file, job_data='./openeo_job',
-                              process_defs=backend_processes, filepaths=S2_filepaths)
+                              process_defs=backend_processes, in_filepaths=S2_filepaths)
 
     with open(out_filepath) as outfile:
         out_content = outfile.read()
@@ -46,7 +46,7 @@ def test_airflow_dag_vrt_only(evi_file,
 
     writer = AirflowDagWriter()
     writer.write_and_move_job(job_id=job_id, user_name=user_name, process_graph_json=evi_file, job_data='./openeo_job',
-                              process_defs=backend_processes, filepaths=S2_filepaths, vrt_only=True)
+                              process_defs=backend_processes, in_filepaths=S2_filepaths, vrt_only=True)
 
     with open(out_filepath) as outfile:
         out_content = outfile.read()
@@ -67,7 +67,7 @@ def test_airflow_dag_parallel(evi_file, setup_airflow_dag_folder, airflow_job_fo
     user_name = "jdoe_67890"
     writer = AirflowDagWriter()
     writer.write_and_move_job(job_id=job_id, user_name=user_name, process_graph_json=evi_file, job_data=job_data,
-                              process_defs=backend_processes, filepaths=S2_filepaths,
+                              process_defs=backend_processes, in_filepaths=S2_filepaths,
                               vrt_only=True, add_delete_sensor=True, add_parallel_sensor=True)
 
     # Check DAG before parallelisation
@@ -88,7 +88,7 @@ def test_airflow_dag_parallel(evi_file, setup_airflow_dag_folder, airflow_job_fo
     # Recreate (parallelised DAG)
     writer = AirflowDagWriter()
     domain = writer.get_domain(job_id, user_name, evi_file, job_data,
-                               process_defs=backend_processes, filepaths=S2_filepaths,
+                               process_defs=backend_processes, in_filepaths=S2_filepaths,
                                vrt_only=False, parallelize_tasks=True, add_delete_sensor=True)
     # domain.job_id = domain.job_id + "_2"
     # (Re)write DAG, now parallelised
@@ -116,7 +116,7 @@ def test_airflow_dag_delete_sensor(evi_file, setup_airflow_dag_folder, setup_ref
 
     writer = AirflowDagWriter()
     writer.write_and_move_job(job_id=job_id, user_name=user_name, process_graph_json=evi_file, job_data='./openeo_job',
-                              process_defs=backend_processes, filepaths=S2_filepaths, add_delete_sensor=True)
+                              process_defs=backend_processes, in_filepaths=S2_filepaths, add_delete_sensor=True)
 
     with open(out_filepath) as outfile:
         out_content = outfile.read()

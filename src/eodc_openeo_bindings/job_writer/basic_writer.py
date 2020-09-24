@@ -9,16 +9,16 @@ from eodc_openeo_bindings.openeo_to_eodatareaders import openeo_to_eodatareaders
 class BasicJobWriter(JobWriter):
 
     def write_job(self, process_graph_json: Union[str, dict], job_data: str, 
-                  process_defs: Union[dict, list, str],  filepaths: List[str],
+                  process_defs: Union[dict, list, str],  in_filepaths: List[str],
                   output_filepath: str = None):
         return super().write_job(process_graph_json=process_graph_json, job_data=job_data,
-                                 process_defs=process_defs, filepaths=filepaths,
+                                 process_defs=process_defs, in_filepaths=in_filepaths,
                                  output_filepath=output_filepath)
 
     def get_domain(self, process_graph_json: Union[str, dict], job_data: str, 
-                   process_defs: Union[dict, list, str], filepaths: List[str],
+                   process_defs: Union[dict, list, str], in_filepaths: List[str],
                    output_filepath: str = None):
-        return BasicJobDomain(process_graph_json, job_data, process_defs, filepaths, output_filepath)
+        return BasicJobDomain(process_graph_json, job_data, process_defs, in_filepaths, output_filepath)
 
     def get_imports(self, domain) -> str:
         return '''\
@@ -54,7 +54,7 @@ params = {params}
             node_operator = node[3]
             
             if not node_dependencies:
-                filepaths = domain.filepaths
+                filepaths = domain.in_filepaths
             else:
                 filepaths = None
 

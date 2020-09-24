@@ -11,7 +11,7 @@ def test_basic(test_folder, evi_file, out_filepath_basic,
                backend_processes, S2_filepaths, setup_ref_job_folder):
 
     BasicJobWriter().write_job(process_graph_json=evi_file, job_data='./basic_job',
-                               process_defs=backend_processes, filepaths=S2_filepaths, output_filepath=out_filepath_basic)
+                               process_defs=backend_processes, in_filepaths=S2_filepaths, output_filepath=out_filepath_basic)
 
     with open(out_filepath_basic) as outfile:
         out_content = outfile.read()
@@ -30,7 +30,7 @@ def test_UC1_temporal_basic(ACube_filepaths, test_folder, uc1_temporal_file, out
     backend_processes = 'https://openeo.eodc.eu/v1.0/processes'
 
     BasicJobWriter().write_job(process_graph_json=uc1_temporal_file, job_data='./basic_job',
-                               process_defs=backend_processes, filepaths=ACube_filepaths, output_filepath=out_filepath_basic)
+                               process_defs=backend_processes, in_filepaths=ACube_filepaths, output_filepath=out_filepath_basic)
 
     with open(out_filepath_basic) as outfile:
         out_content = outfile.read()
@@ -49,7 +49,7 @@ def test_UC1_spectral_basic(ACube_filepaths, test_folder, uc1_spectral_file, out
     backend_processes = 'https://openeo.eodc.eu/v1.0/processes'
 
     BasicJobWriter().write_job(process_graph_json=uc1_spectral_file, job_data='./basic_job',
-                               process_defs=backend_processes, filepaths=ACube_filepaths, output_filepath=out_filepath_basic)
+                               process_defs=backend_processes, in_filepaths=ACube_filepaths, output_filepath=out_filepath_basic)
 
     with open(out_filepath_basic) as outfile:
         out_content = outfile.read()

@@ -25,7 +25,6 @@ def map_load_collection(process):
         dict_item = map_filter_bbox(process)[0]
         dict_item_list.append(dict_item)
 
-    # return dict_item_list, filepaths
     return dict_item_list
     
 

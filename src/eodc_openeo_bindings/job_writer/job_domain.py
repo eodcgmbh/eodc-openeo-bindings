@@ -15,12 +15,12 @@ class JobDomain:
 class BasicJobDomain(JobDomain):
 
     def __init__(self, process_graph_json: Union[str, dict], job_data: str, 
-                 process_defs: Union[dict, list, str], filepaths: List[str],
+                 process_defs: Union[dict, list, str], in_filepaths: List[str],
                  output_filepath: str = None):
         self.process_graph_json = process_graph_json
         self.job_data = job_data
         self.process_defs= process_defs
-        self.filepaths = filepaths
+        self.in_filepaths = in_filepaths
         self.output_filepath = output_filepath
         super(BasicJobDomain, self).__init__()
 
@@ -37,7 +37,7 @@ class AirflowDagDomain(JobDomain):
                  process_graph_json: Union[str, dict],
                  job_data: str,
                  process_defs: Union[dict, list, str],
-                 filepaths: List[str],
+                 in_filepaths: List[str],
                  user_email: str = None,
                  job_description: str = None,
                  parallelize_tasks: bool = False,
@@ -65,7 +65,7 @@ class AirflowDagDomain(JobDomain):
         self.process_graph_json = process_graph_json
         self.job_data = job_data
         self.process_defs = process_defs
-        self.filepaths = filepaths
+        self.in_filepaths = in_filepaths
         self.job_id = job_id
         self.job_id_extension = job_id_extension
         self.user_name = user_name
