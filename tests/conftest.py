@@ -83,17 +83,19 @@ def backend_processes():
 
 
 @pytest.fixture()
-def setup_airflow_dag_folder(request):
+def airflow_dag_folder(request):
     test_folder = get_test_folder()
-    os.environ['AIRFLOW_DAGS'] = os.path.join(test_folder, 'airflow_dag')
-    if os.path.isdir(os.environ['AIRFLOW_DAGS']):
-        shutil.rmtree(os.environ['AIRFLOW_DAGS'])
-    os.makedirs(os.environ['AIRFLOW_DAGS'])
+    dags_folder = os.path.join(test_folder, 'airflow_dag')
+    if os.path.isdir(dags_folder):
+        shutil.rmtree(dags_folder)
+    os.makedirs(dags_folder)
 
     def fin():
-        shutil.rmtree(os.environ['AIRFLOW_DAGS'])
+        shutil.rmtree(dags_folder)
 
     request.addfinalizer(fin)
+
+    return dags_folder
 
 
 @pytest.fixture()
@@ -107,8 +109,8 @@ def airflow_job_folder():
 
 
 @pytest.fixture()
-def csw_server_default(mocker):
-    csw_server_response = [
+def S2_filepaths():
+    return [
         '/s2a_prd_msil1c/2018/06/08/S2A_MSIL1C_20180608T101021_N0206_R022_T32TPS_20180608T135059.zip',
         '/s2a_prd_msil1c/2018/06/11/S2A_MSIL1C_20180611T102021_N0206_R065_T32TPS_20180611T123241.zip',
         '/s2a_prd_msil1c/2018/06/18/S2A_MSIL1C_20180618T101021_N0206_R022_T32TPS_20180618T135619.zip',
@@ -117,12 +119,11 @@ def csw_server_default(mocker):
         '/s2b_prd_msil1c/2018/06/13/S2B_MSIL1C_20180613T101019_N0206_R022_T32TPS_20180613T122213.zip',
         '/s2b_prd_msil1c/2018/06/16/S2B_MSIL1C_20180616T102019_N0206_R065_T32TPS_20180616T154713.zip',
     ]
-    mocker.patch('eodc_openeo_bindings.map_cubes_processes.csw_query', return_value=csw_server_response)
 
 
 @pytest.fixture()
-def acube_csw_server_default(mocker):
-    csw_server_response = [
+def ACube_filepaths():
+    return [
         'sig0/SIG0-----_SGRTA01_S1A_IWGRDH1VHD_20170301_050935--_EU010M_E052N015T1.tif',
         'sig0/SIG0-----_SGRTA01_S1A_IWGRDH1VHD_20170301_051000--_EU010M_E052N015T1.tif',
         'sig0/SIG0-----_SGRTA01_S1A_IWGRDH1VVD_20170301_050935--_EU010M_E052N015T1.tif',
@@ -140,4 +141,4 @@ def acube_csw_server_default(mocker):
         'sig0/SIG0-----_SGRTA01_S1B_IWGRDH1VVD_20170302_050028--_EU010M_E052N016T1.tif',
         'sig0/SIG0-----_SGRTA01_S1B_IWGRDH1VVD_20170302_050053--_EU010M_E052N016T1.tif',
     ]
-    mocker.patch('eodc_openeo_bindings.map_cubes_processes.csw_query', return_value=csw_server_response)
+ 

@@ -74,10 +74,9 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
         if cur_node.content['process_id'] == 'run_udf':
             operator = "UdfExec"
             params = map_udf(cur_node.content, job_data, cur_node.id)
-            filepaths = None
         else:
             operator = "EODataProcessor"
-            params, filepaths = map_process(
+            params = map_process(
                 cur_node.content,
                 cur_node.id,
                 cur_node.is_result,
@@ -97,7 +96,7 @@ def openeo_to_eodatareaders(process_graph_json_in: Union[dict, str], job_data: s
             node_dependencies = list(cur_node.dependencies.ids)
         
         # Add to nodes list
-        nodes.append((cur_node.id, params, filepaths, node_dependencies, operator))
+        nodes.append((cur_node.id, params, node_dependencies, operator))
     
     return nodes, graph
     

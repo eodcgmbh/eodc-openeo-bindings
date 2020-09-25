@@ -12,17 +12,6 @@ def map_load_collection(process):
     Retrieves a file list and maps bbox and band filters to eoDataReaders.
     """
 
-    # Get list of filepaths fro csw server
-    filepaths = csw_query(collection=process['arguments']["id"],
-                          spatial_extent=(
-                              process['arguments']['spatial_extent']['south'],
-                              process['arguments']['spatial_extent']['west'],
-                              process['arguments']['spatial_extent']['north'],
-                              process['arguments']['spatial_extent']['east']
-                              ),
-                          temporal_extent=process['arguments']["temporal_extent"]
-                         )
-
     dict_item_list = []
 
     # Map band filter
@@ -36,7 +25,7 @@ def map_load_collection(process):
         dict_item = map_filter_bbox(process)[0]
         dict_item_list.append(dict_item)
 
-    return dict_item_list, filepaths
+    return dict_item_list
     
 
 def map_filter_bands(process):
@@ -209,48 +198,6 @@ def map_add_dimension(process):
     ]
     
     return dict_item_list
-
-
-def csw_query(collection, spatial_extent, temporal_extent):
-    """
-    Retrieves a file list from the EODC CSW server according to the specified parameters.
-
-    """
-
-    if collection == 'SIG0':
-        csw = CatalogueServiceWeb(environ.get('OEO_CSW_SERVER_DC'), timeout=300)
-    else:
-        csw = CatalogueServiceWeb(environ.get('OEO_CSW_SERVER'), timeout=300)
-    constraints = []
-
-    # Collection filter
-    if collection == 'SIG0':
-        constraints.append(PropertyIsEqualTo('eodc:variable_name', collection))
-    else:
-        constraints.append(PropertyIsLike('apiso:ParentIdentifier', collection))
-    # Spatial filter
-    constraints.append(BBox(spatial_extent))
-    # Temporal filter
-    constraints.append(PropertyIsGreaterThan('apiso:TempExtent_begin', temporal_extent[0]))
-    constraints.append(PropertyIsLessThan('apiso:TempExtent_end', temporal_extent[1]))
-
-    # Run the query
-    constraints = [constraints]
-    csw.getrecords2(constraints=constraints, maxrecords=100)
-
-    # Put found records in a variable (dictionary)
-    records0 = csw.records
-
-    # Put statistics about results in a variable
-    #results = csw.results
-
-    # Sort records
-    records = []
-    for record in records0:
-        records.append(records0[record].references[0]['url'])
-    records = sorted(records)
-
-    return records
 
 
 def check_dim_name(dimension_name):

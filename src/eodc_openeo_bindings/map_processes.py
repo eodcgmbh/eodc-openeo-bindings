@@ -37,20 +37,14 @@ def map_process(process, node_id, is_result, root_folder,
         
     process_params = eval("map_" + process['process_id'] + "(process)")
     
-    if isinstance(process_params, tuple):
-        # This should happen only for "load_collection"
-        filepaths = process_params[1]
-        process_params = process_params[0]
-        
-        if process['arguments']["id"][:2] in ('s1', 's3', 's5'):
-            # Workaround to use S1 and S3 Level-1 data, or S5p Level-2 data, which are not georeferenced
-            # TODO for the moment this is a workaround (29.06.2020)
-            job_params = set_output_folder(root_folder, node_id + '_0')
-            # Add a 'quick_geocode' step before cropping/clipping
-            process_params.insert(-1, {'name': 'quick_geocode', 'scale_sampling': '1;int'})
-            process_params.insert(-1, set_output_folder(root_folder, node_id)[0])
-    else:
-        filepaths = None
+    if process['process_id'] == 'load_collection' and process['arguments']["id"][:2] in ('s1', 's3', 's5'):
+        # Workaround to use S1 and S3 Level-1 data, or S5p Level-2 data, which are not georeferenced
+        # TODO for the moment this is a workaround (29.06.2020)
+        job_params = set_output_folder(root_folder, node_id + '_0')
+        # Add a 'quick_geocode' step before cropping/clipping
+        process_params.insert(-1, {'name': 'quick_geocode', 'scale_sampling': '1;int'})
+        process_params.insert(-1, set_output_folder(root_folder, node_id)[0])
+
     for param in process_params:
         job_params.append(param)
     
@@ -73,4 +67,4 @@ def map_process(process, node_id, is_result, root_folder,
     pickled_filepath = job_params[0]['out_dirpath'] + node_id + '.dc'
     job_params.append({'name': 'to_pickle', 'filepath': f'{pickled_filepath};str'})
 
-    return job_params, filepaths
+    return job_params
