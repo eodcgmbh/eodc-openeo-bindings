@@ -27,7 +27,7 @@ class AirflowDagWriter(JobWriter):
                    process_graph_json: Union[str, dict],
                    job_data: str,
                    process_defs: Union[dict, list, str],
-                   in_filepaths: List[str],
+                   in_filepaths: Dict,
                    user_email: str = None,
                    job_description: str = None,
                    parallelize_tasks: bool = False,
@@ -52,7 +52,7 @@ class AirflowDagWriter(JobWriter):
                                 )
 
     def write_job(self, job_id: str, user_name: str, dags_folder: str, process_graph_json: Union[str, dict], job_data: str, 
-                  process_defs: Union[dict, list, str], in_filepaths: List[str],
+                  process_defs: Union[dict, list, str], in_filepaths: Dict,
                   user_email: str = None, job_description: str = None, parallelize_tasks: bool = False,
                   vrt_only: bool = False, add_delete_sensor: bool = False, add_parallel_sensor: bool = False):
         return super().write_job(job_id=job_id, user_name=user_name, dags_folder=dags_folder, process_graph_json=process_graph_json,
@@ -67,7 +67,7 @@ class AirflowDagWriter(JobWriter):
         os.remove(filepath)
 
     def write_and_move_job(self, job_id: str, user_name: str, dags_folder: str, process_graph_json: Union[str, dict], job_data: str,
-                           process_defs: Union[dict, list, str], in_filepaths: List[str],
+                           process_defs: Union[dict, list, str], in_filepaths: Dict,
                            user_email: str = None, job_description: str = None, parallelize_tasks: bool = False,
                            vrt_only: bool = False, add_delete_sensor: bool = False, add_parallel_sensor: bool = False):
         _, domain = self.write_job(job_id, user_name, dags_folder, process_graph_json, job_data, process_defs, in_filepaths, user_email, job_description,
@@ -146,13 +146,13 @@ dag = DAG(dag_id="{domain.dag_id}",
         params = node[1]
         node_dependencies = node[2]
 
-        if node_dependencies:
-            node_dependencies = self.utils.get_existing_node(domain.job_data, node_dependencies)
-            # Assumption: dependency means that this is *not* a 'load_collection' node, hence do not write input filepaths into its mapping
-            filepaths = None
-        else:
-            # Assumption: no dependency means that this is a 'load_collection' node
-            filepaths = domain.in_filepaths
+        filepaths = None
+        n_id = node_id[:node_id.rfind('_')]
+        if n_id in domain.in_filepaths:
+            # TODO update to: "if node_id in domain.in_filepaths:"
+            # when this issue is solved:
+            # https://github.com/Open-EO/openeo-pg-parser-python/issues/26
+            filepaths = domain.in_filepaths[n_id]
 
         return node_id, params, filepaths, node_dependencies
 
