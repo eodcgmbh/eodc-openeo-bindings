@@ -82,6 +82,7 @@ class AirflowDagWriter(JobWriter):
         imports = '''\
 from datetime import datetime, timedelta
 from airflow import DAG
+from airflow.hooks.base_hook import BaseHook
 from eodatareaders.eo_data_reader import EODataProcessor
 '''
         imports2 = 'from airflow.operators import PythonOperator'
@@ -271,7 +272,7 @@ dag = DAG(dag_id="{domain.dag_id}",
         return translated_nodes, list(translated_nodes.keys())
 
     def get_additional_nodes(self, domain: AirflowDagDomain, **kwargs) -> Optional[Tuple[dict, list]]:
-        
+
         additional_nodes = {}
         if domain.add_delete_sensor:
             additional_nodes = self.get_delete_sensor_txt(domain)
@@ -281,6 +282,11 @@ dag = DAG(dag_id="{domain.dag_id}",
                 additional_nodes = {**additional_nodes, **parallel_nodes}
             else:
                 additional_nodes = parallel_nodes
+        wekeo_nodes = self.get_wekeo_text(domain)
+        if wekeo_nodes:
+            additional_nodes = {**additional_nodes, **wekeo_nodes}
+        else:
+            additional_nodes = wekeo_nodes
         return additional_nodes
 
     def get_delete_sensor_txt(self, domain: AirflowDagDomain) -> Tuple[dict, list]:
@@ -346,6 +352,80 @@ trigger_dag = TriggerDagRunOperator(task_id='trigger_dag',
                                    trigger_dag_id='{self.job_id_extensions.get_parallel(domain.job_id)}',
                                    queue='process')
 ''',
-            "dep_trigger_new_dag": self.get_dependencies_txt("trigger_dag", ["parallelise_dag"]),            
+            "dep_trigger_new_dag": self.get_dependencies_txt("trigger_dag", ["parallelise_dag"]),
         }
         return nodes
+    
+    def get_wekeo_text(self, domain: AirflowDagDomain) -> Tuple[dict, list]:
+        """ """
+
+        wekeo_storage = os.getcwd()
+
+        order_id = '{order_id}'
+        headers = {
+                "Authorization": "Bearer {access_token}",
+                "Accept": "application/json"
+            }
+        job_id_dict = {"jobId": "wekeo_job_id", "uri": "item_url"}
+        nodes = {
+            "wekeo_func": f'''
+def download_wekeo_data(wekeo_job_id, item_url, output_filepath):
+
+    import os
+    import requests
+    # Get token
+    response = requests.get(BaseHook.get_connection('wekeo_hda').host + "/gettoken",
+                            auth=(BaseHook.get_connection("wekeo_hda").login,
+                                  BaseHook.get_connection("wekeo_hda").password
+                            )
+                )
+    if not response.ok:
+        raise Exception(response.text)
+    access_token = response.json()["access_token"]
+    service_headers = {headers}
+    # Create a WEkEO dataorder
+    response2 = requests.post(BaseHook.get_connection('wekeo_hda').host + "/dataorder",
+                              json={job_id_dict},
+                              headers=service_headers)
+    if not response2.ok:
+        raise Exception(response2.text)
+    # check dataorder status
+    order_id = response2.json()["orderId"]
+    while not response2.json()["message"]:
+        response2 = requests.get(BaseHook.get_connection('wekeo_hda').host + "/dataorder/status/{order_id}",
+                                 headers=service_headers)
+    # Download file
+    response3 = requests.get(BaseHook.get_connection('wekeo_hda').host + "/dataorder/download/{order_id}",
+                             headers=service_headers, stream=True)
+    if not response3.ok:
+        raise Exception(response3.text)
+    with open(output_filepath, "wb") as f:
+        for chunk in response3.iter_content(chunk_size=1024):
+            if chunk:
+                f.write(chunk)
+'''
+        }
+
+        return_nodes = False
+        for item in domain.in_filepaths:
+            if 'wekeo_job_id' in domain.in_filepaths[item]:
+                for k, item_url in enumerate(domain.in_filepaths[item]['filepaths']):
+                    return_nodes = True
+                    op_kwargs = {
+                        'wekeo_job_id': domain.in_filepaths[item]['wekeo_job_id'],
+                        'item_url': item_url,
+                        'output_filepath': os.path.join(wekeo_storage, item_url.split('/')[1] + ".zip")
+                        }
+                    nodes[f"wekeo_{k}"] = f'''
+wekeo_{k} = PythonOperator(task_id='wekeo_download_{k}',
+                                 dag=dag,
+                                 python_callable=download_wekeo_data,
+                                 op_kwargs = {op_kwargs},
+                                 queue='process')
+wekeo_{k}.set_downstream([{item}])
+    '''
+
+        if return_nodes:
+            return nodes
+        else:
+            return ({})
