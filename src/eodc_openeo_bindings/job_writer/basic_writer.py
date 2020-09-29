@@ -1,5 +1,5 @@
 import os
-from typing import List, Union, Tuple
+from typing import Dict, List, Union, Tuple
 
 from eodc_openeo_bindings.job_writer.job_domain import BasicJobDomain
 from eodc_openeo_bindings.job_writer.job_writer import JobWriter
