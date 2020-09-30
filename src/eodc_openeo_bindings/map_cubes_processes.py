@@ -3,9 +3,6 @@
 """
 
 from os import environ
-from owslib.csw import CatalogueServiceWeb
-from owslib.fes import PropertyIsLike, BBox, PropertyIsLessThan, PropertyIsGreaterThan, PropertyIsEqualTo
-
 
 def map_load_collection(process):
     """
