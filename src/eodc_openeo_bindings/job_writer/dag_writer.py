@@ -1,4 +1,5 @@
 import os
+from copy import deepcopy
 import json
 from shutil import copyfile
 from typing import Tuple, List, Optional, Union, Dict
@@ -157,7 +158,11 @@ dag = DAG(dag_id="{domain.dag_id}",
             # TODO update to: "if node_id in domain.in_filepaths:"
             # when this issue is solved:
             # https://github.com/Open-EO/openeo-pg-parser-python/issues/26
-            filepaths = domain.in_filepaths[n_id]
+            filepaths = deepcopy(domain.in_filepaths[n_id]['filepaths'])
+            if 'wekeo_job_id' in domain.in_filepaths[n_id]:
+                # Modify path to file
+                for k, item in enumerate(filepaths):
+                    filepaths[k] = os.path.join(domain.wekeo_storage, item.split('/')[-1] + ".nc")
 
         return node_id, params, filepaths, node_dependencies
 
@@ -408,6 +413,8 @@ def download_wekeo_data(wekeo_job_id, item_url, output_filepath):
         for chunk in response3.iter_content(chunk_size=1024):
             if chunk:
                 f.write(chunk)
+    # Unzip file
+    # TODO add unzipping step here (and delete zip file)
 '''
         }
 
