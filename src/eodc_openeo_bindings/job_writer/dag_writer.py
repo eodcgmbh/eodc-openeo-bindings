@@ -319,7 +319,7 @@ stop_dag = StopDagOp(task_id='stop_dag', dag=dag, queue='process')
         if isinstance(domain.process_graph_json, str):
             domain.process_graph_json = json.load(open(domain.process_graph_json))
         
-        op_kwargs={
+        op_kwargs = {
             'job_id': domain.job_id,
             'user_name': domain.user_name,
             'dags_folder': domain.dags_folder,
@@ -332,7 +332,8 @@ stop_dag = StopDagOp(task_id='stop_dag', dag=dag, queue='process')
 
         nodes = {
             "parallel_func": f'''
-def parallelise_dag(job_id, user_name, process_graph_json, job_data, process_defs):
+def parallelise_dag(job_id, user_name, dags_folder, wekeo_storage,
+                    process_graph_json, job_data, process_defs, in_filepaths):
     """
     
     """
@@ -340,9 +341,12 @@ def parallelise_dag(job_id, user_name, process_graph_json, job_data, process_def
     writer = AirflowDagWriter()
     domain = writer.get_domain(job_id=job_id,
                                user_name=user_name,
+                               dags_folder=dags_folder,
+                               wekeo_storage=wekeo_storage,
                                process_graph_json=process_graph_json,
                                job_data=job_data,
                                process_defs=process_defs,
+                               in_filepaths=in_filepaths,
                                add_delete_sensor=True,
                                vrt_only=False,
                                parallelize_tasks=True)
