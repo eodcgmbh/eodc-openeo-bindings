@@ -322,7 +322,7 @@ stop_dag = StopDagOp(task_id='stop_dag', dag=dag, queue='process')
         op_kwargs = {
             'job_id': domain.job_id,
             'user_name': domain.user_name,
-            'dags_folder': domain.dags_folder,
+            'dags_folder': "/usr/local/airflow/dags",
             'wekeo_storage': domain.wekeo_storage,
             'process_graph_json': domain.process_graph_json,
             'job_data': domain.job_data,
@@ -331,13 +331,13 @@ stop_dag = StopDagOp(task_id='stop_dag', dag=dag, queue='process')
             }
 
         nodes = {
-            "parallel_func": f'''
+            "parallel_func": '''
 def parallelise_dag(job_id, user_name, dags_folder, wekeo_storage,
                     process_graph_json, job_data, process_defs, in_filepaths):
     """
-    
+
     """
-    
+
     writer = AirflowDagWriter()
     domain = writer.get_domain(job_id=job_id,
                                user_name=user_name,
@@ -350,7 +350,6 @@ def parallelise_dag(job_id, user_name, dags_folder, wekeo_storage,
                                add_delete_sensor=True,
                                vrt_only=False,
                                parallelize_tasks=True)
-    domain.job_id = "{self.job_id_extensions.get_parallel(domain.job_id)}"
     writer.rewrite_and_move_job(domain)
     sleep(10)  # give a few seconds to Airflow to add DAG to its internal DB
 ''',
