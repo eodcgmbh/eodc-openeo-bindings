@@ -87,9 +87,11 @@ class AirflowDagWriter(JobWriter):
         imports = '''\
 from datetime import datetime, timedelta
 from airflow import DAG
-from airflow.hooks.base_hook import BaseHook
-from eodatareaders.eo_data_reader import EODataProcessor
 '''
+        if domain.wekeo_storage:
+            imports += 'from airflow.hooks.base_hook import BaseHook\n'
+        imports += 'from eodatareaders.eo_data_reader import EODataProcessor\n'
+
         imports2 = 'from airflow.operators import PythonOperator'
         if domain.add_delete_sensor:
             imports2 += ', CancelOp, StopDagOp'
@@ -294,8 +296,6 @@ dag = DAG(dag_id="{domain.dag_id}",
         wekeo_nodes = self.get_wekeo_text(domain, nodes)
         if wekeo_nodes:
             additional_nodes = {**additional_nodes, **wekeo_nodes}
-        else:
-            additional_nodes = wekeo_nodes
         return additional_nodes
 
     def get_delete_sensor_txt(self, domain: AirflowDagDomain) -> Tuple[dict, list]:
@@ -322,9 +322,12 @@ stop_dag = StopDagOp(task_id='stop_dag', dag=dag, queue='process')
         op_kwargs={
             'job_id': domain.job_id,
             'user_name': domain.user_name,
+            'dags_folder': domain.dags_folder,
+            'wekeo_storage': domain.wekeo_storage,
             'process_graph_json': domain.process_graph_json,
             'job_data': domain.job_data,
-            'process_defs': domain.process_defs
+            'process_defs': domain.process_defs,
+            'in_filepaths': domain.in_filepaths
             }
 
         nodes = {
@@ -380,6 +383,13 @@ def download_wekeo_data(wekeo_job_id, item_url, output_filepath):
 
     import os
     import requests
+    import zipfile
+
+    output_filepath_zip = output_filepath + ".zip"
+    output_filepath_nc = output_filepath + ".nc"
+    f_name = os.path.basename(output_filepath)
+    f_dir = os.path.dirname(output_filepath)
+
     # Get token
     response = requests.get(BaseHook.get_connection('wekeo_hda').host + "/gettoken",
                             auth=(BaseHook.get_connection("wekeo_hda").login,
@@ -404,17 +414,25 @@ def download_wekeo_data(wekeo_job_id, item_url, output_filepath):
     while not response2.json()["message"]:
         response2 = requests.get(BaseHook.get_connection('wekeo_hda').host + "/dataorder/status/" + order_id,
                                  headers=service_headers)
-    # Download file
-    response3 = requests.get(BaseHook.get_connection('wekeo_hda').host + "/dataorder/download/" + order_id,
-                             headers=service_headers, stream=True)
-    if not response3.ok:
-        raise Exception(response3.text)
-    with open(output_filepath, "wb") as f:
-        for chunk in response3.iter_content(chunk_size=1024):
-            if chunk:
-                f.write(chunk)
-    # Unzip file
-    # TODO add unzipping step here (and delete zip file)
+    if not os.path.isfile(output_filepath_nc):
+        # Download file
+        response3 = requests.get(BaseHook.get_connection('wekeo_hda').host + "/dataorder/download/" + order_id,
+                                 headers=service_headers, stream=True)
+        if not response3.ok:
+            raise Exception(response3.text)
+        with open(output_filepath_zip, "wb") as f:
+            for chunk in response3.iter_content(chunk_size=1024):
+                if chunk:
+                    f.write(chunk)
+        # Unzip file
+        with zipfile.ZipFile(output_filepath_zip,"r") as zip_ref:
+            zip_ref.extractall(f_dir)
+        # Move extracted files 'one folder up'
+        os.rename(os.path.join(output_filepath, f_name + ".nc"), os.path.join(f_dir, f_name + ".nc"))
+        os.rename(os.path.join(output_filepath, f_name + ".cdl"), os.path.join(f_dir, f_name + ".cdl"))
+        # Remove zip file and empty folder
+        os.remove(output_filepath_zip)
+        os.rmdir(output_filepath)
 '''
         }
 
@@ -426,7 +444,7 @@ def download_wekeo_data(wekeo_job_id, item_url, output_filepath):
                     op_kwargs = {
                         'wekeo_job_id': domain.in_filepaths[item]['wekeo_job_id'],
                         'item_url': item_url,
-                        'output_filepath': os.path.join(domain.wekeo_storage, item_url.split('/')[1] + ".zip")
+                        'output_filepath': os.path.join(domain.wekeo_storage, item_url.split('/')[1])
                         }
                     # TODO remove when this issue with pg-parser is fixed:
                     # https://github.com/Open-EO/openeo-pg-parser-python/issues/26
