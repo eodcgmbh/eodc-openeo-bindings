@@ -59,7 +59,7 @@ params = {params}
                 # TODO update to: "if node_id in domain.in_filepaths:"
                 # when this issue is solved:
                 # https://github.com/Open-EO/openeo-pg-parser-python/issues/26
-                filepaths = domain.in_filepaths[n_id]
+                filepaths = domain.in_filepaths[n_id]['filepaths']
 
             if filepaths:
                 filepaths0 = 'filepaths = '
