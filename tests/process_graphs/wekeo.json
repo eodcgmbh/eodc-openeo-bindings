@@ -4,10 +4,10 @@
       "arguments": {
         "id": "EO:ESA:DAT:SENTINEL-5P:TROPOMI:L2__NO2___",
         "spatial_extent": {
-          "west": 16.06,
-          "south": 48.06,
-          "east": 16.65,
-          "north": 48.35
+          "west": 16.0,
+          "south": 48.0,
+          "east": 20.0,
+          "north": 52.0
         },
         "bands": [
           "NO2"
