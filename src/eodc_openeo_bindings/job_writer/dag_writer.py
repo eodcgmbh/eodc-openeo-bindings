@@ -436,6 +436,7 @@ def download_wekeo_data(wekeo_job_id, item_url, output_filepath):
         # Remove zip file and empty folder
         os.remove(output_filepath_zip)
         os.rmdir(output_filepath)
+
 '''
         }
 
@@ -455,14 +456,15 @@ def download_wekeo_data(wekeo_job_id, item_url, output_filepath):
                         if item in node_id:
                             child_node_id = node_id
                     ###
-                    dag_nodes[f"wekeo_{k}"] = f'''
+                    dag_nodes[f"wekeo_{k}"] = f'''\
 wekeo_{k} = PythonOperator(task_id='wekeo_download_{k}',
                                  dag=dag,
                                  python_callable=download_wekeo_data,
                                  op_kwargs = {op_kwargs},
                                  queue='process')
 wekeo_{k}.set_downstream([{child_node_id}])
-    '''
+
+'''
 
         if return_nodes:
             return dag_nodes
