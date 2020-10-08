@@ -1,4 +1,5 @@
 import os
+from copy import deepcopy
 import json
 from shutil import copyfile
 from typing import Tuple, List, Optional, Union, Dict
@@ -28,6 +29,7 @@ class AirflowDagWriter(JobWriter):
                    job_data: str,
                    process_defs: Union[dict, list, str],
                    in_filepaths: Dict,
+                   wekeo_storage: str = "",
                    user_email: str = None,
                    job_description: str = None,
                    parallelize_tasks: bool = False,
@@ -43,6 +45,7 @@ class AirflowDagWriter(JobWriter):
                                 job_data=job_data,
                                 process_defs=process_defs,
                                 in_filepaths=in_filepaths,
+                                wekeo_storage=wekeo_storage,
                                 user_email=user_email,
                                 job_description=job_description,
                                 parallelize_tasks=parallelize_tasks,
@@ -51,12 +54,13 @@ class AirflowDagWriter(JobWriter):
                                 add_parallel_sensor=add_parallel_sensor,
                                 )
 
-    def write_job(self, job_id: str, user_name: str, dags_folder: str, process_graph_json: Union[str, dict], job_data: str, 
-                  process_defs: Union[dict, list, str], in_filepaths: Dict,
+    def write_job(self, job_id: str, user_name: str, dags_folder: str, process_graph_json: Union[str, dict], job_data: str,
+                  process_defs: Union[dict, list, str], in_filepaths: Dict, wekeo_storage: str = "",
                   user_email: str = None, job_description: str = None, parallelize_tasks: bool = False,
                   vrt_only: bool = False, add_delete_sensor: bool = False, add_parallel_sensor: bool = False):
         return super().write_job(job_id=job_id, user_name=user_name, dags_folder=dags_folder, process_graph_json=process_graph_json,
-                                 job_data=job_data, process_defs=process_defs, in_filepaths=in_filepaths, user_email=user_email, job_description=job_description,
+                                 job_data=job_data, process_defs=process_defs, in_filepaths=in_filepaths,
+                                 wekeo_storage=wekeo_storage, user_email=user_email, job_description=job_description,
                                  parallelize_tasks=parallelize_tasks, vrt_only=vrt_only,
                                  add_delete_sensor=add_delete_sensor, add_parallel_sensor=add_parallel_sensor)
 
@@ -67,10 +71,11 @@ class AirflowDagWriter(JobWriter):
         os.remove(filepath)
 
     def write_and_move_job(self, job_id: str, user_name: str, dags_folder: str, process_graph_json: Union[str, dict], job_data: str,
-                           process_defs: Union[dict, list, str], in_filepaths: Dict,
+                           process_defs: Union[dict, list, str], in_filepaths: Dict, wekeo_storage: str = "",
                            user_email: str = None, job_description: str = None, parallelize_tasks: bool = False,
                            vrt_only: bool = False, add_delete_sensor: bool = False, add_parallel_sensor: bool = False):
-        _, domain = self.write_job(job_id, user_name, dags_folder, process_graph_json, job_data, process_defs, in_filepaths, user_email, job_description,
+        _, domain = self.write_job(job_id, user_name, dags_folder, process_graph_json, job_data, process_defs, in_filepaths,
+                                   wekeo_storage, user_email, job_description,
                                    parallelize_tasks, vrt_only, add_delete_sensor, add_parallel_sensor)
         self.move_dag(domain.filepath, domain.dags_folder)
 
@@ -82,8 +87,11 @@ class AirflowDagWriter(JobWriter):
         imports = '''\
 from datetime import datetime, timedelta
 from airflow import DAG
-from eodatareaders.eo_data_reader import EODataProcessor
 '''
+        if domain.wekeo_storage:
+            imports += 'from airflow.hooks.base_hook import BaseHook\n'
+        imports += 'from eodatareaders.eo_data_reader import EODataProcessor\n'
+
         imports2 = 'from airflow.operators import PythonOperator'
         if domain.add_delete_sensor:
             imports2 += ', CancelOp, StopDagOp'
@@ -152,7 +160,11 @@ dag = DAG(dag_id="{domain.dag_id}",
             # TODO update to: "if node_id in domain.in_filepaths:"
             # when this issue is solved:
             # https://github.com/Open-EO/openeo-pg-parser-python/issues/26
-            filepaths = domain.in_filepaths[n_id]
+            filepaths = deepcopy(domain.in_filepaths[n_id]['filepaths'])
+            if 'wekeo_job_id' in domain.in_filepaths[n_id]:
+                # Modify path to file
+                for k, item in enumerate(filepaths):
+                    filepaths[k] = os.path.join(domain.wekeo_storage, item.split('/')[-1] + ".nc")
 
         return node_id, params, filepaths, node_dependencies
 
@@ -270,8 +282,8 @@ dag = DAG(dag_id="{domain.dag_id}",
         # 2nd output needed for compatibility with main JobWriter
         return translated_nodes, list(translated_nodes.keys())
 
-    def get_additional_nodes(self, domain: AirflowDagDomain, **kwargs) -> Optional[Tuple[dict, list]]:
-        
+    def get_additional_nodes(self, domain: AirflowDagDomain, nodes: List = []) -> Optional[Tuple[dict, list]]:
+
         additional_nodes = {}
         if domain.add_delete_sensor:
             additional_nodes = self.get_delete_sensor_txt(domain)
@@ -281,6 +293,9 @@ dag = DAG(dag_id="{domain.dag_id}",
                 additional_nodes = {**additional_nodes, **parallel_nodes}
             else:
                 additional_nodes = parallel_nodes
+        wekeo_nodes = self.get_wekeo_text(domain, nodes)
+        if wekeo_nodes:
+            additional_nodes = {**additional_nodes, **wekeo_nodes}
         return additional_nodes
 
     def get_delete_sensor_txt(self, domain: AirflowDagDomain) -> Tuple[dict, list]:
@@ -304,31 +319,37 @@ stop_dag = StopDagOp(task_id='stop_dag', dag=dag, queue='process')
         if isinstance(domain.process_graph_json, str):
             domain.process_graph_json = json.load(open(domain.process_graph_json))
         
-        op_kwargs={
+        op_kwargs = {
             'job_id': domain.job_id,
             'user_name': domain.user_name,
+            'dags_folder': "/usr/local/airflow/dags",
+            'wekeo_storage': domain.wekeo_storage,
             'process_graph_json': domain.process_graph_json,
             'job_data': domain.job_data,
-            'process_defs': domain.process_defs
+            'process_defs': domain.process_defs,
+            'in_filepaths': domain.in_filepaths
             }
 
         nodes = {
-            "parallel_func": f'''
-def parallelise_dag(job_id, user_name, process_graph_json, job_data, process_defs):
+            "parallel_func": '''
+def parallelise_dag(job_id, user_name, dags_folder, wekeo_storage,
+                    process_graph_json, job_data, process_defs, in_filepaths):
     """
-    
+
     """
-    
+
     writer = AirflowDagWriter()
     domain = writer.get_domain(job_id=job_id,
                                user_name=user_name,
+                               dags_folder=dags_folder,
+                               wekeo_storage=wekeo_storage,
                                process_graph_json=process_graph_json,
                                job_data=job_data,
                                process_defs=process_defs,
+                               in_filepaths=in_filepaths,
                                add_delete_sensor=True,
                                vrt_only=False,
                                parallelize_tasks=True)
-    domain.job_id = "{self.job_id_extensions.get_parallel(domain.job_id)}"
     writer.rewrite_and_move_job(domain)
     sleep(10)  # give a few seconds to Airflow to add DAG to its internal DB
 ''',
@@ -346,6 +367,106 @@ trigger_dag = TriggerDagRunOperator(task_id='trigger_dag',
                                    trigger_dag_id='{self.job_id_extensions.get_parallel(domain.job_id)}',
                                    queue='process')
 ''',
-            "dep_trigger_new_dag": self.get_dependencies_txt("trigger_dag", ["parallelise_dag"]),            
+            "dep_trigger_new_dag": self.get_dependencies_txt("trigger_dag", ["parallelise_dag"]),
         }
         return nodes
+    
+    def get_wekeo_text(self, domain: AirflowDagDomain, nodes: List) -> Tuple[dict, list]:
+        """ """
+
+        # order_id = '{order_id}'
+        # headers = {
+        #         "Authorization": '"Bearer " + access_token',
+        #         "Accept": "application/json"
+        #     }
+        # job_id_dict = {"jobId": "wekeo_job_id", "uri": "item_url"}
+        dag_nodes = {
+            "wekeo_func": f'''
+def download_wekeo_data(wekeo_job_id, item_url, output_filepath):
+
+    import os
+    import requests
+    import zipfile
+
+    output_filepath_zip = output_filepath + ".zip"
+    output_filepath_nc = output_filepath + ".nc"
+    f_name = os.path.basename(output_filepath)
+    f_dir = os.path.dirname(output_filepath)
+
+    # Get token
+    response = requests.get(BaseHook.get_connection('wekeo_hda').host + "/gettoken",
+                            auth=(BaseHook.get_connection("wekeo_hda").login,
+                                  BaseHook.get_connection("wekeo_hda").password
+                            )
+                )
+    if not response.ok:
+        raise Exception(response.text)
+    access_token = response.json()["access_token"]
+    service_headers = {{
+            "Authorization": "Bearer " + access_token,
+            "Accept": "application/json"
+        }}
+    # Create a WEkEO dataorder
+    response2 = requests.post(BaseHook.get_connection('wekeo_hda').host + "/dataorder",
+                              json={{"jobId": wekeo_job_id, "uri": item_url}},
+                              headers=service_headers)
+    if not response2.ok:
+        raise Exception(response2.text)
+    # check dataorder status
+    order_id = response2.json()["orderId"]
+    while not response2.json()["message"]:
+        response2 = requests.get(BaseHook.get_connection('wekeo_hda').host + "/dataorder/status/" + order_id,
+                                 headers=service_headers)
+    if not os.path.isfile(output_filepath_nc):
+        # Download file
+        response3 = requests.get(BaseHook.get_connection('wekeo_hda').host + "/dataorder/download/" + order_id,
+                                 headers=service_headers, stream=True)
+        if not response3.ok:
+            raise Exception(response3.text)
+        with open(output_filepath_zip, "wb") as f:
+            for chunk in response3.iter_content(chunk_size=1024):
+                if chunk:
+                    f.write(chunk)
+        # Unzip file
+        with zipfile.ZipFile(output_filepath_zip,"r") as zip_ref:
+            zip_ref.extractall(f_dir)
+        # Move extracted files 'one folder up'
+        os.rename(os.path.join(output_filepath, f_name + ".nc"), os.path.join(f_dir, f_name + ".nc"))
+        os.rename(os.path.join(output_filepath, f_name + ".cdl"), os.path.join(f_dir, f_name + ".cdl"))
+        # Remove zip file and empty folder
+        os.remove(output_filepath_zip)
+        os.rmdir(output_filepath)
+
+'''
+        }
+
+        return_nodes = False
+        for item in domain.in_filepaths:
+            if 'wekeo_job_id' in domain.in_filepaths[item]:
+                for k, item_url in enumerate(domain.in_filepaths[item]['filepaths']):
+                    return_nodes = True
+                    op_kwargs = {
+                        'wekeo_job_id': domain.in_filepaths[item]['wekeo_job_id'],
+                        'item_url': item_url,
+                        'output_filepath': os.path.join(domain.wekeo_storage, item_url.split('/')[1])
+                        }
+                    # TODO remove when this issue with pg-parser is fixed:
+                    # https://github.com/Open-EO/openeo-pg-parser-python/issues/26
+                    for node_id in nodes:
+                        if item in node_id:
+                            child_node_id = node_id
+                    ###
+                    dag_nodes[f"wekeo_{k}"] = f'''\
+wekeo_{k} = PythonOperator(task_id='wekeo_download_{k}',
+                                 dag=dag,
+                                 python_callable=download_wekeo_data,
+                                 op_kwargs = {op_kwargs},
+                                 queue='process')
+wekeo_{k}.set_downstream([{child_node_id}])
+
+'''
+
+        if return_nodes:
+            return dag_nodes
+        else:
+            return ({})

@@ -26,6 +26,7 @@ def map_process(process, node_id, is_result, root_folder,
     else:
         folder_name = node_id
     job_params = set_output_folder(root_folder, folder_name)
+    pickled_filepath = job_params[0]['out_dirpath'] + node_id + '.dc'
     
     if wrapper_name:
         process['wrapper_name'] = wrapper_name
@@ -33,17 +34,20 @@ def map_process(process, node_id, is_result, root_folder,
         process['wrapper_dimension'] = wrapper_dimension
     
     if process['process_id'] == 'merge_cubes':
-        process['arguments']['cube2']['from_node'] = root_folder + '/' +  process['arguments']['cube2']['from_node'] + '/' + process['arguments']['cube2']['from_node'] + '.dc'
+        process['arguments']['cube2']['from_node'] = root_folder + '/' + process['arguments']['cube2']['from_node'] + '/' + process['arguments']['cube2']['from_node'] + '.dc'
         
     process_params = eval("map_" + process['process_id'] + "(process)")
-    
-    if process['process_id'] == 'load_collection' and process['arguments']["id"][:2] in ('s1', 's3', 's5'):
+    if process['process_id'] == 'load_collection' and (
+        (process['arguments']["id"][:2] in ('s1', 's3')) or
+        ('SENTINEL-5P' in process['arguments']['id'])
+        ):
         # Workaround to use S1 and S3 Level-1 data, or S5p Level-2 data, which are not georeferenced
         # TODO for the moment this is a workaround (29.06.2020)
-        job_params = set_output_folder(root_folder, node_id + '_0')
         # Add a 'quick_geocode' step before cropping/clipping
-        process_params.insert(-1, {'name': 'quick_geocode', 'scale_sampling': '1;int'})
-        process_params.insert(-1, set_output_folder(root_folder, node_id)[0])
+        for k, item in enumerate(process_params):
+            if item['name'] == 'crop':
+                index = k
+        process_params.insert(index, {'name': 'quick_geocode', 'scale_sampling': '1;int'})
 
     for param in process_params:
         job_params.append(param)
@@ -64,7 +68,6 @@ def map_process(process, node_id, is_result, root_folder,
         job_params.append({'name': 'get_cube_metadata'})
         
     # Add step to create pickled datacube
-    pickled_filepath = job_params[0]['out_dirpath'] + node_id + '.dc'
     job_params.append({'name': 'to_pickle', 'filepath': f'{pickled_filepath};str'})
 
     return job_params

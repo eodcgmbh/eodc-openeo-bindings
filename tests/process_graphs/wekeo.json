@@ -1,0 +1,55 @@
+{
+  "process_graph": {
+    "load_collection": {
+      "arguments": {
+        "id": "EO:ESA:DAT:SENTINEL-5P:TROPOMI:L2__NO2___",
+        "spatial_extent": {
+          "west": 16.0,
+          "south": 48.0,
+          "east": 20.0,
+          "north": 52.0
+        },
+        "bands": [
+          "NO2"
+        ],
+        "temporal_extent": [
+          "2018-05-01T00:00:00.000Z",
+          "2018-05-04T00:00:00.000Z"
+        ]
+      },
+      "process_id": "load_collection"
+    },
+    "t_mean": {
+      "arguments": {
+        "data": {
+          "from_node": "load_collection"
+        },
+        "dimension": "t",
+        "reducer": {
+          "process_graph": {
+            "mean": {
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                }
+              },
+              "process_id": "mean",
+              "result": true
+            }
+          }
+        }
+      },
+      "process_id": "reduce_dimension"
+    },
+    "save_result": {
+      "arguments": {
+        "data": {
+          "from_node": "t_mean"
+        },
+        "format": "GTiff"
+      },
+      "process_id": "save_result",
+      "result": true
+    }
+  }
+}

@@ -36,7 +36,7 @@ class JobWriter(ABC):
         for node_id in ordered_keys:
             file_handler.append(nodes[node_id])
 
-        additional_nodes = self.get_additional_nodes(domain)
+        additional_nodes = self.get_additional_nodes(domain, nodes)
         if additional_nodes:
             for node_id in additional_nodes:
                 file_handler.append(additional_nodes[node_id])
@@ -51,7 +51,7 @@ class JobWriter(ABC):
     def get_additional_header(self, domain: JobDomain) -> Optional[str]:
         return
 
-    def get_additional_nodes(self, domain: JobDomain, **kwargs) -> Optional[Tuple[dict, list]]:
+    def get_additional_nodes(self, domain: JobDomain, nodes: List = []) -> Optional[Tuple[dict, list]]:
         return
 
     @abstractmethod

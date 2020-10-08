@@ -125,3 +125,28 @@ def test_airflow_dag_delete_sensor(evi_file, airflow_dag_folder, setup_ref_job_f
     with open(ref_filepath) as outfile:
         ref_content = outfile.read()
     assert out_content == ref_content
+
+
+def test_airflow_dag_wekeo(wekeo_file, airflow_dag_folder, setup_ref_job_folder,
+                           backend_processes, wekeo_filepaths):
+
+    job_id = "jb-12348"
+    out_filepath = os.path.join(airflow_dag_folder, f'dag_{job_id}_prep.py')
+    user_name = "jdoe_67890"
+
+    writer = AirflowDagWriter()
+    writer.write_and_move_job(
+        job_id=job_id, user_name=user_name,
+        dags_folder=airflow_dag_folder, process_graph_json=wekeo_file,
+        job_data='./openeo_job', wekeo_storage='./wekeo_data_storage',
+        process_defs=backend_processes, in_filepaths=wekeo_filepaths,
+        add_delete_sensor=True) #, add_parallel_sensor=True)
+
+    with open(out_filepath) as outfile:
+        out_content = outfile.read()
+    
+    ref_filepath = out_filepath.replace('.py', '_ref.py').replace(airflow_dag_folder, os.environ['REF_JOBS'])
+    with open(ref_filepath) as ref_file:
+        ref_content = ref_file.read()
+    
+    assert out_content == ref_content

@@ -39,6 +39,7 @@ class AirflowDagDomain(JobDomain):
                  job_data: str,
                  process_defs: Union[dict, list, str],
                  in_filepaths: List[str],
+                 wekeo_storage: str = "",
                  user_email: str = None,
                  job_description: str = None,
                  parallelize_tasks: bool = False,
@@ -71,6 +72,7 @@ class AirflowDagDomain(JobDomain):
         self.job_id_extension = job_id_extension
         self.dags_folder = dags_folder
         self.user_name = user_name
+        self.wekeo_storage = wekeo_storage
         self.user_email = user_email
         self.job_description = job_description if job_description else 'No description provided'
         self.parallelize_task = parallelize_tasks

@@ -1,5 +1,5 @@
 import os
-from typing import List, Union, Tuple
+from typing import Dict, List, Union, Tuple
 
 from eodc_openeo_bindings.job_writer.job_domain import BasicJobDomain
 from eodc_openeo_bindings.job_writer.job_writer import JobWriter
@@ -59,7 +59,7 @@ params = {params}
                 # TODO update to: "if node_id in domain.in_filepaths:"
                 # when this issue is solved:
                 # https://github.com/Open-EO/openeo-pg-parser-python/issues/26
-                filepaths = domain.in_filepaths[n_id]
+                filepaths = domain.in_filepaths[n_id]['filepaths']
 
             if filepaths:
                 filepaths0 = 'filepaths = '
