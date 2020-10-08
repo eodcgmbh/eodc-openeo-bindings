@@ -23,7 +23,7 @@ dag = DAG(dag_id="jb-12348_prep",
 load_collection_0 = PythonOperator(task_id='load_collection_0',
                         dag=dag,
                         python_callable=EODataProcessor,
-                        op_kwargs={'filepaths': ['./wekeo_data_storage/S5P_RPRO_L2__NO2____20180503T093059_20180503T111427_02866_01_010202_20190202T034117.nc', './wekeo_data_storage/S5P_RPRO_L2__NO2____20180502T094957_20180502T113325_02852_01_010202_20190201T215849.nc', './wekeo_data_storage/S5P_RPRO_L2__NO2____20180501T082724_20180501T101003_02837_01_010202_20190201T175639.nc'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/load_collection_0/'}, {'name': 'filter_bands', 'bands': ['NO2']}, {'name': 'quick_geocode', 'scale_sampling': '1;int'}, {'name': 'crop', 'extent': (16.06, 48.06, 16.65, 48.35), 'crs': 'EPSG:4326'}, {'name': 'to_pickle', 'filepath': './openeo_job/load_collection_0/load_collection_0.dc;str'}]},
+                        op_kwargs={'filepaths': ['./wekeo_data_storage/S5P_RPRO_L2__NO2____20180503T093059_20180503T111427_02866_01_010202_20190202T034117.nc', './wekeo_data_storage/S5P_RPRO_L2__NO2____20180502T094957_20180502T113325_02852_01_010202_20190201T215849.nc', './wekeo_data_storage/S5P_RPRO_L2__NO2____20180501T082724_20180501T101003_02837_01_010202_20190201T175639.nc'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/load_collection_0/'}, {'name': 'filter_bands', 'bands': ['NO2']}, {'name': 'quick_geocode', 'scale_sampling': '1;int'}, {'name': 'crop', 'extent': (16.0, 48.0, 20.0, 52.0), 'crs': 'EPSG:4326'}, {'name': 'to_pickle', 'filepath': './openeo_job/load_collection_0/load_collection_0.dc;str'}]},
                         queue='process'
                         )
 
@@ -126,18 +126,17 @@ wekeo_0 = PythonOperator(task_id='wekeo_download_0',
                                  op_kwargs = {'wekeo_job_id': 'EGUIBC37kepM90lTGVNTHpIdfuA', 'item_url': '6a143583-a6a4-53e6-9e6d-8d4edc60a702/S5P_RPRO_L2__NO2____20180503T093059_20180503T111427_02866_01_010202_20190202T034117', 'output_filepath': './wekeo_data_storage/S5P_RPRO_L2__NO2____20180503T093059_20180503T111427_02866_01_010202_20190202T034117'},
                                  queue='process')
 wekeo_0.set_downstream([load_collection_0])
-    
+
 wekeo_1 = PythonOperator(task_id='wekeo_download_1',
                                  dag=dag,
                                  python_callable=download_wekeo_data,
                                  op_kwargs = {'wekeo_job_id': 'EGUIBC37kepM90lTGVNTHpIdfuA', 'item_url': '08ef0029-4d75-5821-8cf8-b4def8b89306/S5P_RPRO_L2__NO2____20180502T094957_20180502T113325_02852_01_010202_20190201T215849', 'output_filepath': './wekeo_data_storage/S5P_RPRO_L2__NO2____20180502T094957_20180502T113325_02852_01_010202_20190201T215849'},
                                  queue='process')
 wekeo_1.set_downstream([load_collection_0])
-    
+
 wekeo_2 = PythonOperator(task_id='wekeo_download_2',
                                  dag=dag,
                                  python_callable=download_wekeo_data,
                                  op_kwargs = {'wekeo_job_id': 'EGUIBC37kepM90lTGVNTHpIdfuA', 'item_url': '7e0e3654-5447-5f5d-be1d-5bf61dd72be8/S5P_RPRO_L2__NO2____20180501T082724_20180501T101003_02837_01_010202_20190201T175639', 'output_filepath': './wekeo_data_storage/S5P_RPRO_L2__NO2____20180501T082724_20180501T101003_02837_01_010202_20190201T175639'},
                                  queue='process')
 wekeo_2.set_downstream([load_collection_0])
-   
