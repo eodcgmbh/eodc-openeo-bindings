@@ -384,14 +384,9 @@ trigger_dag = TriggerDagRunOperator(task_id='trigger_dag',
             if 'wekeo_job_id' in domain.in_filepaths[item]:
                 for k, item_url in enumerate(domain.in_filepaths[item]['filepaths']):
                     return_nodes = True
-                    op_kwargs = {
-                        'wekeo_url': BaseHook.get_connection('wekeo_hda').host,
-                        'username': BaseHook.get_connection('wekeo_hda').login,
-                        'password': BaseHook.get_connection('wekeo_hda').password,
-                        'wekeo_job_id': domain.in_filepaths[item]['wekeo_job_id'],
-                        'item_url': item_url,
-                        'output_filepath': os.path.join(domain.wekeo_storage, item_url.split('/')[1])
-                        }
+                    wekeo_url = 'BaseHook.get_connection("wekeo_hda").host'
+                    username = 'BaseHook.get_connection("wekeo_hda").login'
+                    password = 'BaseHook.get_connection("wekeo_hda").password'
                     # TODO remove when this issue with pg-parser is fixed:
                     # https://github.com/Open-EO/openeo-pg-parser-python/issues/26
                     for node_id in nodes:
@@ -402,7 +397,14 @@ trigger_dag = TriggerDagRunOperator(task_id='trigger_dag',
 wekeo_{k} = PythonOperator(task_id='wekeo_download_{k}',
                                  dag=dag,
                                  python_callable=download_wekeo_data,
-                                 op_kwargs = {op_kwargs},
+                                 op_kwargs = {{
+                                    'wekeo_url': {wekeo_url},
+                                    'username': {username},
+                                    'password': {password},
+                                    'wekeo_job_id': '{domain.in_filepaths[item]['wekeo_job_id']}',
+                                    'item_url': '{item_url}',
+                                    'output_filepath': '{os.path.join(domain.wekeo_storage, item_url.split('/')[1])}'
+                                 }},
                                  queue='process')
 wekeo_{k}.set_downstream([{child_node_id}])
 
