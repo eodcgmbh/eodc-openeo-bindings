@@ -7,16 +7,15 @@ import zipfile
 
 def wrap_request(func):
     def wrapper_func(*args, **kwargs):
-        kwargs['headers'] = request_wekeo_token()
-        response = func(*args, **kwargs)
+        credentials = kwargs.pop('credentials')
+        kwargs['headers'] = request_wekeo_token(**credentials)
+        response = func(**kwargs)
         if response.status_code == 403:
             # Token has expired, get new one and repeat request
-            kwargs['headers'] = request_wekeo_token()
-            response = func(*args, **kwargs)
+            kwargs['headers'] = request_wekeo_token(*kwargs)
+            response = func(**kwargs)
         if not response.ok:
             raise Exception(response.text)
-
-        response = func(*args, **kwargs)
 
         return response
     return wrapper_func
@@ -37,28 +36,18 @@ def request_wekeo_token(wekeo_url, username, password):
 def request_wekeo_dataorder(wekeo_url, wekeo_job_id, item_url, headers):
 
     response = requests.post(wekeo_url + "/dataorder",
-                              json={{"jobId": wekeo_job_id, "uri": item_url}},
+                              json={"jobId": wekeo_job_id, "uri": item_url},
                               headers=headers)
-    if not response.ok:
-        raise Exception(response.text)
 
-    order_id_url = wekeo_url + "/dataorder/status/" + response.json()["orderId"]
-
-    return order_id_url
+    return response
 
 
 @wrap_request
 def request_check_order_status(order_id_url, headers):
 
     response = requests.get(order_id_url, headers=headers)
-    if not response.ok:
-        raise Exception(response.text)
-    while not response.json()["message"]:
-        response = requests.get(order_id_url, headers=headers)
-        if not response.ok:
-            raise Exception(response.text)
 
-    # no need to return as long as "message" is present in response
+    return response
 
 
 @wrap_request
@@ -80,19 +69,28 @@ def download_wekeo_data(wekeo_url, username, password,
     f_name = os.path.basename(output_filepath)
     f_dir = os.path.dirname(output_filepath)
 
-    # Get token
-    headers = request_wekeo_token(wekeo_url, username, password)
+    credentials = {
+        'wekeo_url': wekeo_url,
+        'username': username,
+        'password': password
+    }
 
     # Create a WEkEO dataorder
-    order_id_url = request_wekeo_dataorder(wekeo_url, wekeo_job_id,
-                                           item_url, headers)
+    response = request_wekeo_dataorder(credentials=credentials,
+                                       wekeo_url=credentials['wekeo_url'],
+                                       wekeo_job_id=wekeo_job_id,
+                                       item_url=item_url)
+    order_id_url = credentials['wekeo_url'] + "/dataorder/status/" + \
+        response.json()["orderId"]
 
     # Check dataorder status
-    _ = request_check_order_status(order_id_url, headers)
+    response = request_check_order_status(credentials=credentials, order_id_url=order_id_url)
+    while not response.json()["message"]:
+        response = request_check_order_status(credentials=credentials, order_id_url=order_id_url)
 
     # Download file
     if not os.path.isfile(output_filepath_nc):
-        response = request_download(order_id_url, headers)
+        response = request_download(credentials=credentials, order_id_url=order_id_url)
 
         with open(output_filepath_zip, "wb") as f:
             for chunk in response.iter_content(chunk_size=1024):
