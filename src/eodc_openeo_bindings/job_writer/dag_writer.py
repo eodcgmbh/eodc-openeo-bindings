@@ -89,7 +89,10 @@ from datetime import datetime, timedelta
 from airflow import DAG
 '''
         if domain.wekeo_storage:
-            imports += 'from airflow.hooks.base_hook import BaseHook\n'
+            imports += '''
+from airflow.hooks.base_hook import BaseHook
+from eodc_openeo_bindings.wekeo_utils import download_wekeo_data
+'''
         imports += 'from eodatareaders.eo_data_reader import EODataProcessor\n'
 
         imports2 = 'from airflow.operators import PythonOperator'
@@ -374,71 +377,7 @@ trigger_dag = TriggerDagRunOperator(task_id='trigger_dag',
     def get_wekeo_text(self, domain: AirflowDagDomain, nodes: List) -> Tuple[dict, list]:
         """ """
 
-        # order_id = '{order_id}'
-        # headers = {
-        #         "Authorization": '"Bearer " + access_token',
-        #         "Accept": "application/json"
-        #     }
-        # job_id_dict = {"jobId": "wekeo_job_id", "uri": "item_url"}
-        dag_nodes = {
-            "wekeo_func": f'''
-def download_wekeo_data(wekeo_job_id, item_url, output_filepath):
-
-    import os
-    import requests
-    import zipfile
-
-    output_filepath_zip = output_filepath + ".zip"
-    output_filepath_nc = output_filepath + ".nc"
-    f_name = os.path.basename(output_filepath)
-    f_dir = os.path.dirname(output_filepath)
-
-    # Get token
-    response = requests.get(BaseHook.get_connection('wekeo_hda').host + "/gettoken",
-                            auth=(BaseHook.get_connection("wekeo_hda").login,
-                                  BaseHook.get_connection("wekeo_hda").password
-                            )
-                )
-    if not response.ok:
-        raise Exception(response.text)
-    access_token = response.json()["access_token"]
-    service_headers = {{
-            "Authorization": "Bearer " + access_token,
-            "Accept": "application/json"
-        }}
-    # Create a WEkEO dataorder
-    response2 = requests.post(BaseHook.get_connection('wekeo_hda').host + "/dataorder",
-                              json={{"jobId": wekeo_job_id, "uri": item_url}},
-                              headers=service_headers)
-    if not response2.ok:
-        raise Exception(response2.text)
-    # check dataorder status
-    order_id = response2.json()["orderId"]
-    while not response2.json()["message"]:
-        response2 = requests.get(BaseHook.get_connection('wekeo_hda').host + "/dataorder/status/" + order_id,
-                                 headers=service_headers)
-    if not os.path.isfile(output_filepath_nc):
-        # Download file
-        response3 = requests.get(BaseHook.get_connection('wekeo_hda').host + "/dataorder/download/" + order_id,
-                                 headers=service_headers, stream=True)
-        if not response3.ok:
-            raise Exception(response3.text)
-        with open(output_filepath_zip, "wb") as f:
-            for chunk in response3.iter_content(chunk_size=1024):
-                if chunk:
-                    f.write(chunk)
-        # Unzip file
-        with zipfile.ZipFile(output_filepath_zip,"r") as zip_ref:
-            zip_ref.extractall(f_dir)
-        # Move extracted files 'one folder up'
-        os.rename(os.path.join(output_filepath, f_name + ".nc"), os.path.join(f_dir, f_name + ".nc"))
-        os.rename(os.path.join(output_filepath, f_name + ".cdl"), os.path.join(f_dir, f_name + ".cdl"))
-        # Remove zip file and empty folder
-        os.remove(output_filepath_zip)
-        os.rmdir(output_filepath)
-
-'''
-        }
+        dag_nodes = {}
 
         return_nodes = False
         for item in domain.in_filepaths:
