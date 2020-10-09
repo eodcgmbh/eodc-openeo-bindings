@@ -33,13 +33,85 @@ def request_wekeo_token(wekeo_url, username, password):
 
 
 @wrap_request
+def request_collection_metadata(wekeo_url: str, collection_id: str, headers: dict):
+
+    response = requests.get(f"{wekeo_url}/querymetadata/{collection_id}",
+                            headers=headers)
+    return response
+
+
+def create_data_descriptor(collection_id: str, var_id: str, spatial_extent: dict, temporal_extent: list) -> dict:
+    """ """
+
+    # Create WEkEO 'data descriptor'
+    data_descriptor = {
+        "datasetId": collection_id,
+        "boundingBoxValues": [
+            {
+                "name": "bbox",
+                "bbox": spatial_extent
+            }
+        ],
+        "dateRangeSelectValues": [
+            {
+                "name": "position",
+                "start": temporal_extent[0],
+                "end": temporal_extent[1]
+            }
+        ],
+        "stringChoiceValues": [
+            {
+                "name": "processingLevel",
+                "value": "LEVEL2"
+            },
+            {
+                "name": "productType",
+                "value": var_id
+            }
+        ]
+    }
+
+    return data_descriptor
+
+
+@wrap_request
+def create_datarequest(wekeo_url: str, data_descriptor: dict, headers: dict) -> str:
+    """ """
+
+    # Create a WEkEO 'datarequest'
+    response = requests.post(f"{wekeo_url}/datarequest",
+                             json=data_descriptor,
+                             headers=headers)
+    return response
+
+
+@wrap_request
 def request_wekeo_dataorder(wekeo_url, wekeo_job_id, item_url, headers):
 
     response = requests.post(wekeo_url + "/dataorder",
-                              json={"jobId": wekeo_job_id, "uri": item_url},
-                              headers=headers)
+                             json={"jobId": wekeo_job_id, "uri": item_url},
+                             headers=headers)
 
     return response
+
+
+@wrap_request
+def get_download_urls(download_url: str, header: dict):
+    """ """
+
+    response = requests.get(download_url, headers=headers)
+
+    return response
+
+
+def _get_download_urls(response):
+
+    download_urls = []
+    next_page_url = response.json()['nextPage']
+    for item in response.json()['content']:
+        download_urls.append(item['url'])
+
+    return download_urls, next_page_url
 
 
 @wrap_request
@@ -106,3 +178,57 @@ def download_wekeo_data(wekeo_url, username, password,
         # Remove zip file and empty folder
         os.remove(output_filepath_zip)
         os.rmdir(output_filepath)
+
+
+def get_filepaths(wekeo_url: str, username: str, password: str,
+                  wekeo_data_id: str, wekeo_var_id: str, spatial_extent: dict, temporal_extent: list):
+    """Retrieves a URL list from the WEkEO HDA according to the specified parameters.
+
+    Arguments:
+        collecion_id {str} -- identifier of the collection
+        spatial_extent {List[float]} -- bounding box [ymin, xmin, ymax, ymax]
+        temporal_extent {List[str]} -- e.g. ["2018-06-04", "2018-06-23"]
+
+    Returns:
+        list -- list of URLs / filepaths
+    """
+
+    credentials = {
+        'wekeo_url': wekeo_url,
+        'username': username,
+        'password': password
+    }
+
+    # Create Data Descriptor
+    data_descriptor = create_data_descriptor(wekeo_data_id, wekeo_var_id, spatial_extent, temporal_extent)
+
+    # Create a Data Request job
+    response = create_datarequest(credentials=credentials, data_descriptor=data_descriptor)
+    while not response.json()['message']:
+        response = create_datarequest(data_descriptor)
+    job_id = response.json()['jobId']
+    download_url = credentials['wekeo_url'] + f"/datarequest/jobs/{job_id}/result"
+
+    # Get URLs for individual files
+    response = get_download_urls(download_url=download_url)
+    filepaths, next_page_url = _get_download_urls(response)
+    while next_page_url:
+        response = get_download_urls(download_url=next_page_url)
+        tmp_filepaths, next_page_url = _get_download_urls(response)
+        filepaths.extend(tmp_filepaths)
+
+    return filepaths, job_id
+
+
+def get_collection_metadata(wekeo_url: str, username: str, password: str,
+                            collection_id: str):
+
+    credentials = {
+        'wekeo_url': wekeo_url,
+        'username': username,
+        'password': password
+    }
+
+    return request_collection_metadata(credentials=credentials,
+                                       wekeo_url=credentials['wekeo_url'],
+                                       collection_id=collection_id)
