@@ -5,52 +5,6 @@ import requests
 import zipfile
 
 
-def request_wekeo_token(wekeo_url, username, password):
-
-    response = requests.get(wekeo_url + "/gettoken", auth=(username, password))
-    if not response.ok:
-        raise Exception(response.text)
-    return {
-            "Authorization": "Bearer " + response.json()["access_token"],
-            "Accept": "application/json"
-        }
-
-
-def request_wekeo_dataorder(wekeo_url, wekeo_job_id, item_url, headers):
-
-    response = requests.post(wekeo_url + "/dataorder",
-                              json={{"jobId": wekeo_job_id, "uri": item_url}},
-                              headers=headers)
-    if not response.ok:
-        raise Exception(response.text)
-
-    order_id_url = wekeo_url + "/dataorder/status/" + response.json()["orderId"]
-
-    return order_id_url
-
-
-def request_check_order_status(order_id_url, headers):
-
-    response = requests.get(order_id_url, headers=headers)
-    if not response.ok:
-        raise Exception(response.text)
-    while not response.json()["message"]:
-        response = requests.get(order_id_url, headers=headers)
-        if not response.ok:
-            raise Exception(response.text)
-
-    # no need to return as long as "message" is present in response
-
-
-def request_download(order_id_url, headers):
-
-    response = requests.get(order_id_url, headers=headers, stream=True)
-    if not response.ok:
-        raise Exception(response.text)
-
-    return response
-
-
 def wrap_request(func):
     def wrapper_func(*args, **kwargs):
         kwargs['headers'] = request_wekeo_token()
@@ -68,13 +22,57 @@ def wrap_request(func):
     return wrapper_func
 
 
+def request_wekeo_token(wekeo_url, username, password):
+
+    response = requests.get(wekeo_url + "/gettoken", auth=(username, password))
+    if not response.ok:
+        raise Exception(response.text)
+    return {
+            "Authorization": "Bearer " + response.json()["access_token"],
+            "Accept": "application/json"
+        }
+
+
+@wrap_request
+def request_wekeo_dataorder(wekeo_url, wekeo_job_id, item_url, headers):
+
+    response = requests.post(wekeo_url + "/dataorder",
+                              json={{"jobId": wekeo_job_id, "uri": item_url}},
+                              headers=headers)
+    if not response.ok:
+        raise Exception(response.text)
+
+    order_id_url = wekeo_url + "/dataorder/status/" + response.json()["orderId"]
+
+    return order_id_url
+
+
+@wrap_request
+def request_check_order_status(order_id_url, headers):
+
+    response = requests.get(order_id_url, headers=headers)
+    if not response.ok:
+        raise Exception(response.text)
+    while not response.json()["message"]:
+        response = requests.get(order_id_url, headers=headers)
+        if not response.ok:
+            raise Exception(response.text)
+
+    # no need to return as long as "message" is present in response
+
+
+@wrap_request
+def request_download(order_id_url, headers):
+
+    response = requests.get(order_id_url, headers=headers, stream=True)
+    if not response.ok:
+        raise Exception(response.text)
+
+    return response
+
+
 def download_wekeo_data(wekeo_url, username, password,
                         wekeo_job_id, item_url, output_filepath):
-
-    # Decorate functions (because of WEkEO tokens lasting 1hour)
-    request_wekeo_dataorder = wrap_request(request_wekeo_dataorder)
-    request_check_order_status = wrap_request(request_check_order_status)
-    request_download = wrap_request(request_download)
 
     # Setup filenames
     output_filepath_zip = output_filepath + ".zip"
