@@ -43,17 +43,17 @@ def request_wekeo_dataorder(wekeo_url, wekeo_job_id, item_url, headers):
 
 
 @wrap_request
-def request_check_order_status(order_id_url, headers):
+def request_check_order_status(order_id_status_url, headers):
 
-    response = requests.get(order_id_url, headers=headers)
+    response = requests.get(order_id_status_url, headers=headers)
 
     return response
 
 
 @wrap_request
-def request_download(order_id_url, headers):
+def request_download(order_id_download_url, headers):
 
-    response = requests.get(order_id_url, headers=headers, stream=True)
+    response = requests.get(order_id_download_url, headers=headers, stream=True)
     if not response.ok:
         raise Exception(response.text)
 
@@ -80,17 +80,18 @@ def download_wekeo_data(wekeo_url, username, password,
                                        wekeo_url=credentials['wekeo_url'],
                                        wekeo_job_id=wekeo_job_id,
                                        item_url=item_url)
-    order_id_url = credentials['wekeo_url'] + "/dataorder/status/" + \
-        response.json()["orderId"]
+    order_id = response.json()["orderId"]
+    order_id_status_url = credentials['wekeo_url'] + "/dataorder/status/" + order_id
+    order_id_download_url = credentials['wekeo_url'] + "/dataorder/download/" + order_id
 
     # Check dataorder status
-    response = request_check_order_status(credentials=credentials, order_id_url=order_id_url)
+    response = request_check_order_status(credentials=credentials, order_id_status_url=order_id_status_url)
     while not response.json()["message"]:
-        response = request_check_order_status(credentials=credentials, order_id_url=order_id_url)
+        response = request_check_order_status(credentials=credentials, order_id_status_url=order_id_status_url)
 
     # Download file
     if not os.path.isfile(output_filepath_nc):
-        response = request_download(credentials=credentials, order_id_url=order_id_url)
+        response = request_download(credentials=credentials, order_id_download_url=order_id_download_url)
 
         with open(output_filepath_zip, "wb") as f:
             for chunk in response.iter_content(chunk_size=1024):
