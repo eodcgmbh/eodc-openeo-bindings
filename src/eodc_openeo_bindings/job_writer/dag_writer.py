@@ -385,6 +385,9 @@ trigger_dag = TriggerDagRunOperator(task_id='trigger_dag',
                 for k, item_url in enumerate(domain.in_filepaths[item]['filepaths']):
                     return_nodes = True
                     op_kwargs = {
+                        'wekeo_url': BaseHook.get_connection('wekeo_hda').host,
+                        'username': BaseHook.get_connection('wekeo_hda').login,
+                        'password': BaseHook.get_connection('wekeo_hda').password,
                         'wekeo_job_id': domain.in_filepaths[item]['wekeo_job_id'],
                         'item_url': item_url,
                         'output_filepath': os.path.join(domain.wekeo_storage, item_url.split('/')[1])
