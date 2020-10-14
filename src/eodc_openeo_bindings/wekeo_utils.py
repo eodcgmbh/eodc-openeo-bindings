@@ -203,9 +203,13 @@ def get_filepaths(wekeo_url: str, username: str, password: str,
     data_descriptor = create_data_descriptor(wekeo_data_id, wekeo_var_id, spatial_extent, temporal_extent)
 
     # Create a Data Request job
-    response = create_datarequest(credentials=credentials, data_descriptor=data_descriptor)
+    response = create_datarequest(credentials=credentials,
+                                  wekeo_url=credentials['wekeo_url'],
+                                  data_descriptor=data_descriptor)
     while not response.json()['message']:
-        response = create_datarequest(data_descriptor)
+        response = create_datarequest(credentials=credentials,
+                                      wekeo_url=credentials['wekeo_url'],
+                                      data_descriptor=data_descriptor)
     job_id = response.json()['jobId']
     download_url = credentials['wekeo_url'] + f"/datarequest/jobs/{job_id}/result"
 
