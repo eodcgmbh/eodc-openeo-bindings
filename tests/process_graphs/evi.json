@@ -4,7 +4,7 @@
       "process_id": "load_collection",
       "description": "Loading the data; The order of the specified bands is important for the following reduce operation.",
       "arguments": {
-        "id": "s2%_prd_msil1c",
+        "id": "s2a_prd_msil1c",
         "spatial_extent": {
           "west": 11.279182434082033,
           "east": 11.406898498535158,
