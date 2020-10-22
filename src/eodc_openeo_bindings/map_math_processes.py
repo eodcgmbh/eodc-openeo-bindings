@@ -43,8 +43,8 @@ def map_linear_scale_range(process):
     
     """
     
-    param_dict = {'input_min': 'float', 'input_max': 'float',
-                  'output_min': 'float', 'output_max': 'float'}
+    param_dict = {'inputMin': ['input_min', 'float'], 'inputMax': ['input_max', 'float'],
+                  'outputMin': ['output_min', 'float'], 'outputMax': ['output_max', 'float']}
     
     return map_default(process, 'linear_scale_range', 'apply', param_dict)
     
