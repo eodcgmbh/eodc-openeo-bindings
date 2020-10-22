@@ -110,9 +110,9 @@ def map_save_result(process, in_place=False, format_type = None, band_label=None
     """
 
     """
-    
+
+    bands = []
     if 'options' in process['arguments']:
-        bands = []
         for item in process['arguments']['options']:
             bands.append(process['arguments']['options'][item])
     if bands:
