@@ -10,7 +10,7 @@ def map_absolute(process):
     
     """
     
-    return map_default(process, 'clip', 'apply')
+    return map_default(process, 'absolute', 'apply')
 
 
 def map_clip(process):
@@ -18,7 +18,12 @@ def map_clip(process):
     
     """
     
-    param_dict = {'min': 'float', 'max': 'float'}
+    param_dict = {'min': ['min_x', 'float'],
+                  'max': ['max_x', 'float']}
+    # NOTE some python processes have different param names compared to the openEO process
+    # see e.g. "clip"
+    # https://github.com/Open-EO/openeo-processes-python/blob/master/src/openeo_processes/math.py
+    # https://processes.openeo.org/#clip
     
     return map_default(process, 'clip', 'apply', param_dict)
 

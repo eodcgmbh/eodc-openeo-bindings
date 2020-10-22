@@ -9,25 +9,26 @@ from numbers import Number
 from eodc_openeo_bindings.map_cubes_processes import map_apply, map_reduce_dimension
 
 
-def map_default(process, process_name, mapping, param_dict):
+def map_default(process, process_name, mapping, param_dict=None):
     """
     Maps all processes which have only data input and ignore_nodata option.
     """
-    
+
     f_input = {}
     f_input['f_name'] = process_name
-    
-    parameters = get_process_params(process['arguments'], param_dict)
-    for item in parameters:
-        f_input[item] = parameters[item]
-        
-    process['f_input'] = f_input        
-        
+
+    if param_dict:
+        parameters = get_process_params(process['arguments'], param_dict)
+        for item in parameters:
+            f_input[item] = parameters[item]
+
+    process['f_input'] = f_input
+
     if mapping == 'apply':
         return map_apply(process)
     elif mapping == 'reduce':
         return map_reduce_dimension(process)
-    
+
 
 def get_process_params(process_args, param_dict):
     """
@@ -49,6 +50,12 @@ def get_process_params(process_args, param_dict):
                 # Mapping for openeo processes which havs f(x, y) input rather than f(data)
                 # NB this is used in eodatareaders/pixel_functions/geo_process
                 process_params[param] = 'set;str'
+            elif isinstance(param_dict[param], list):
+                # NOTE some python processes have different param names compared to the openEO process
+                # see e.g. "clip"
+                # https://github.com/Open-EO/openeo-processes-python/blob/master/src/openeo_processes/math.py
+                # https://processes.openeo.org/#clip
+                process_params[param_dict[param][0]] = str(process_args[param]) + ';' + param_dict[param][1]
             else:
                 process_params[param] = str(process_args[param]) + ';' + param_dict[param]
         elif param == 'extra_values':
