@@ -30,3 +30,16 @@ def map_array_element(process):
     process_params['return_nodata'] = 'bool'
 
     return map_default(process, 'array_element', 'reduce', process_params)
+
+
+def map_mask(process):
+    """
+
+    """
+
+    param_dict = {
+        'mask': 'float',
+        'replacement': 'float'
+    }
+
+    return map_default(process, 'mask', 'reduce', param_dict)
