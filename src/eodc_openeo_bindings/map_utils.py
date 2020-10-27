@@ -49,7 +49,7 @@ def get_process_params(process_args, param_dict):
             if param in ('y', 'mask') and isinstance(process_args[param], dict) and 'from_node' in process_args[param]:
                 # Mapping for openeo processes which havs f(x, y) input rather than f(data)
                 # NB this is used in eodatareaders/pixel_functions/geo_process
-                process_params[param] = 'set;str'
+                process_params[param] = 'set' + param_dict[param] + ';str'
             elif isinstance(param_dict[param], list):
                 # NOTE some python processes have different param names compared to the openEO process
                 # see e.g. "clip"

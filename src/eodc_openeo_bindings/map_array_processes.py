@@ -38,7 +38,7 @@ def map_mask(process):
     """
 
     param_dict = {
-        'mask': 'float',
+        'mask': 'int',
         'replacement': 'float'
     }
 

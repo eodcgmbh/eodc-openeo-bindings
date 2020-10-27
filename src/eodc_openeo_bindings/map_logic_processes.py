@@ -9,32 +9,40 @@ def map_and(process):
     """
 
     """
+    
+    param_dict = {'y': 'bool'}
 
-    return map_default(process, 'and_', 'reduce')
+    return map_default(process, 'and_', 'reduce', param_dict)
 
 
 def map_or(process):
     """
 
     """
+    
+    param_dict = {'y': 'bool'}
 
-    return map_default(process, 'or_', 'reduce')
+    return map_default(process, 'or_', 'reduce', param_dict)
 
 
 def map_xor(process):
     """
 
     """
+    
+    param_dict = {'y': 'bool'}
 
-    return map_default(process, 'xor_', 'reduce')
+    return map_default(process, 'xor_', 'reduce', param_dict)
 
 
 def map_not(process):
     """
 
     """
+    
+    param_dict = {'y': 'bool'}
 
-    return map_default(process, 'not_', 'apply')
+    return map_default(process, 'not_', 'apply', param_dict)
 
 
 def map_if(process):
