@@ -52,7 +52,7 @@ blue_4 = PythonOperator(task_id='blue_4',
 sub_5 = PythonOperator(task_id='sub_5',
                         dag=dag,
                         python_callable=EODataProcessor,
-                        op_kwargs={'filepaths': None, 'dc_filepaths': ['./openeo_job/nir_2/nir_2.dc', './openeo_job/red_3/red_3.dc'], 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/sub_5/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'subtract', 'y': 'set;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/sub_5/sub_5.dc;str'}]},
+                        op_kwargs={'filepaths': None, 'dc_filepaths': ['./openeo_job/nir_2/nir_2.dc', './openeo_job/red_3/red_3.dc'], 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/sub_5/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'subtract', 'y': 'setfloat;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/sub_5/sub_5.dc;str'}]},
                         queue='process'
                         )
 
@@ -80,7 +80,7 @@ sum_8 = PythonOperator(task_id='sum_8',
 div_9 = PythonOperator(task_id='div_9',
                         dag=dag,
                         python_callable=EODataProcessor,
-                        op_kwargs={'filepaths': None, 'dc_filepaths': ['./openeo_job/sub_5/sub_5.dc', './openeo_job/sum_8/sum_8.dc'], 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/div_9/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'divide', 'y': 'set;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/div_9/div_9.dc;str'}]},
+                        op_kwargs={'filepaths': None, 'dc_filepaths': ['./openeo_job/sub_5/sub_5.dc', './openeo_job/sum_8/sum_8.dc'], 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/div_9/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'divide', 'y': 'setfloat;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/div_9/div_9.dc;str'}]},
                         queue='process'
                         )
 
