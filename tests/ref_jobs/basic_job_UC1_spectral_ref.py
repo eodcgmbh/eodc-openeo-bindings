@@ -68,7 +68,7 @@ filepaths = None
 dc_filepaths = ['./basic_job/VH_5/VH_5.dc', './basic_job/VV_4/VV_4.dc']
 
 # node input parameters
-params = [{'name': 'set_output_folder', 'out_dirpath': './basic_job/sub_6/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'subtract', 'y': 'set;str'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}, {'name': 'to_pickle', 'filepath': './basic_job/sub_6/sub_6.dc;str'}]
+params = [{'name': 'set_output_folder', 'out_dirpath': './basic_job/sub_6/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'subtract', 'y': 'setfloat;str'}}, {'name': 'save_raster', 'in_place': 'True;bool', 'format_type': 'Gtiff'}, {'name': 'to_pickle', 'filepath': './basic_job/sub_6/sub_6.dc;str'}]
 
 # evaluate node
 sub_6 = EODataProcessor(filepaths=filepaths, dc_filepaths=dc_filepaths, user_params=params)

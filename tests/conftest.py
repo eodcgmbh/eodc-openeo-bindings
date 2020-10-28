@@ -10,8 +10,7 @@
 import os
 import json
 import shutil
-from collections import namedtuple
-
+import subprocess
 import pytest
 
 
@@ -182,3 +181,32 @@ def wekeo_filepaths():
     }
 
     return wekeo_dict
+
+
+@pytest.fixture()
+def eodatareaders_params(request):
+    job_folder = '/tmp/output_folder/'
+    params = [
+        {'name': 'set_output_folder', 'out_dirpath': job_folder},
+        {'name': 'filter_bands', 'bands': ['B04']},
+        {'name': 'crop', 'extent': (11.28, 46.52, 11.41, 46.46), 'crs': 'EPSG:4326'}
+    ]
+    
+    def fin():
+        shutil.rmtree(job_folder)
+
+    request.addfinalizer(fin)
+
+    return params
+
+
+@pytest.fixture()
+def eodatareaders_file():
+    filename = "S2A_MSIL1C_20180608T101021_N0206_R022_T32TPS_20180608T135059.zip"
+    test_file = f"/tmp/{filename}"
+    if not os.path.isfile(test_file):
+        subprocess.call(["wget", f"https://openeo.eodc.eu/test-files/{filename}"])
+        os.rename(filename, test_file)
+    os.environ["GDAL_VRT_ENABLE_PYTHON"] = 'TRUSTED_MODULES'
+    os.environ["GDAL_VRT_PYTHON_TRUSTED_MODULES"] = 'eodatareaders.pixel_functions.pixel_functions'
+    return test_file

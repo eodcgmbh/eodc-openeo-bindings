@@ -92,7 +92,7 @@ filepaths = None
 dc_filepaths = ['./basic_job/nir_2/nir_2.dc', './basic_job/red_3/red_3.dc']
 
 # node input parameters
-params = [{'name': 'set_output_folder', 'out_dirpath': './basic_job/sub_5/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'subtract', 'y': 'set;str'}}, {'name': 'to_pickle', 'filepath': './basic_job/sub_5/sub_5.dc;str'}]
+params = [{'name': 'set_output_folder', 'out_dirpath': './basic_job/sub_5/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'subtract', 'y': 'setfloat;str'}}, {'name': 'to_pickle', 'filepath': './basic_job/sub_5/sub_5.dc;str'}]
 
 # evaluate node
 sub_5 = EODataProcessor(filepaths=filepaths, dc_filepaths=dc_filepaths, user_params=params)
@@ -104,7 +104,7 @@ filepaths = None
 dc_filepaths = ['./basic_job/sub_5/sub_5.dc', './basic_job/sum_8/sum_8.dc']
 
 # node input parameters
-params = [{'name': 'set_output_folder', 'out_dirpath': './basic_job/div_9/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'divide', 'y': 'set;str'}}, {'name': 'to_pickle', 'filepath': './basic_job/div_9/div_9.dc;str'}]
+params = [{'name': 'set_output_folder', 'out_dirpath': './basic_job/div_9/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'divide', 'y': 'setfloat;str'}}, {'name': 'to_pickle', 'filepath': './basic_job/div_9/div_9.dc;str'}]
 
 # evaluate node
 div_9 = EODataProcessor(filepaths=filepaths, dc_filepaths=dc_filepaths, user_params=params)

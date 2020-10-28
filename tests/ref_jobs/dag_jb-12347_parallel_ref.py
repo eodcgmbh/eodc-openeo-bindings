@@ -50,49 +50,49 @@ blue_4 = PythonOperator(task_id='blue_4',
 sub_5_1 = PythonOperator(task_id='sub_5_1',
                         dag=dag,
                         python_callable=EODataProcessor,
-                        op_kwargs={'filepaths': ['./openeo_job/nir_2/00000_035270a9d0cf_20180616T102019_20180616T102019_7_arrayelement.vrt', './openeo_job/red_3/00000_1c53babb87c6_20180613T101019_20180613T101019_6_arrayelement.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/sub_5/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'subtract', 'y': 'set;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/sub_5/sub_5.dc;str'}]},
+                        op_kwargs={'filepaths': ['./openeo_job/nir_2/00000_035270a9d0cf_20180616T102019_20180616T102019_7_arrayelement.vrt', './openeo_job/red_3/00000_1c53babb87c6_20180613T101019_20180613T101019_6_arrayelement.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/sub_5/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'subtract', 'y': 'setfloat;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/sub_5/sub_5.dc;str'}]},
                         queue='process'
                         )
 
 sub_5_2 = PythonOperator(task_id='sub_5_2',
                         dag=dag,
                         python_callable=EODataProcessor,
-                        op_kwargs={'filepaths': ['./openeo_job/nir_2/00000_03643af8aa8e_20180613T101019_20180613T101019_6_arrayelement.vrt', './openeo_job/red_3/00000_363b6b0ec1cb_20180616T102019_20180616T102019_7_arrayelement.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/sub_5/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'subtract', 'y': 'set;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/sub_5/sub_5.dc;str'}]},
+                        op_kwargs={'filepaths': ['./openeo_job/nir_2/00000_03643af8aa8e_20180613T101019_20180613T101019_6_arrayelement.vrt', './openeo_job/red_3/00000_363b6b0ec1cb_20180616T102019_20180616T102019_7_arrayelement.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/sub_5/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'subtract', 'y': 'setfloat;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/sub_5/sub_5.dc;str'}]},
                         queue='process'
                         )
 
 sub_5_3 = PythonOperator(task_id='sub_5_3',
                         dag=dag,
                         python_callable=EODataProcessor,
-                        op_kwargs={'filepaths': ['./openeo_job/nir_2/00000_496cc5cd9779_20180611T102021_20180611T102021_2_arrayelement.vrt', './openeo_job/red_3/00000_3d1e1d50a2ee_20180608T101021_20180608T101021_1_arrayelement.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/sub_5/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'subtract', 'y': 'set;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/sub_5/sub_5.dc;str'}]},
+                        op_kwargs={'filepaths': ['./openeo_job/nir_2/00000_496cc5cd9779_20180611T102021_20180611T102021_2_arrayelement.vrt', './openeo_job/red_3/00000_3d1e1d50a2ee_20180608T101021_20180608T101021_1_arrayelement.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/sub_5/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'subtract', 'y': 'setfloat;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/sub_5/sub_5.dc;str'}]},
                         queue='process'
                         )
 
 sub_5_4 = PythonOperator(task_id='sub_5_4',
                         dag=dag,
                         python_callable=EODataProcessor,
-                        op_kwargs={'filepaths': ['./openeo_job/nir_2/00000_523c56a4de6a_20180621T102021_20180621T102021_4_arrayelement.vrt', './openeo_job/red_3/00000_3dc5fbebbd63_20180611T102021_20180611T102021_2_arrayelement.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/sub_5/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'subtract', 'y': 'set;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/sub_5/sub_5.dc;str'}]},
+                        op_kwargs={'filepaths': ['./openeo_job/nir_2/00000_523c56a4de6a_20180621T102021_20180621T102021_4_arrayelement.vrt', './openeo_job/red_3/00000_3dc5fbebbd63_20180611T102021_20180611T102021_2_arrayelement.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/sub_5/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'subtract', 'y': 'setfloat;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/sub_5/sub_5.dc;str'}]},
                         queue='process'
                         )
 
 sub_5_5 = PythonOperator(task_id='sub_5_5',
                         dag=dag,
                         python_callable=EODataProcessor,
-                        op_kwargs={'filepaths': ['./openeo_job/nir_2/00000_7c73c9895e00_20180608T101021_20180608T101021_1_arrayelement.vrt', './openeo_job/red_3/00000_98bd75c9088e_20180618T101021_20180618T101021_3_arrayelement.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/sub_5/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'subtract', 'y': 'set;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/sub_5/sub_5.dc;str'}]},
+                        op_kwargs={'filepaths': ['./openeo_job/nir_2/00000_7c73c9895e00_20180608T101021_20180608T101021_1_arrayelement.vrt', './openeo_job/red_3/00000_98bd75c9088e_20180618T101021_20180618T101021_3_arrayelement.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/sub_5/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'subtract', 'y': 'setfloat;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/sub_5/sub_5.dc;str'}]},
                         queue='process'
                         )
 
 sub_5_6 = PythonOperator(task_id='sub_5_6',
                         dag=dag,
                         python_callable=EODataProcessor,
-                        op_kwargs={'filepaths': ['./openeo_job/nir_2/00000_a6738d234104_20180618T101021_20180618T101021_3_arrayelement.vrt', './openeo_job/red_3/00000_ec78f4613c4e_20180606T102019_20180606T102019_5_arrayelement.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/sub_5/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'subtract', 'y': 'set;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/sub_5/sub_5.dc;str'}]},
+                        op_kwargs={'filepaths': ['./openeo_job/nir_2/00000_a6738d234104_20180618T101021_20180618T101021_3_arrayelement.vrt', './openeo_job/red_3/00000_ec78f4613c4e_20180606T102019_20180606T102019_5_arrayelement.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/sub_5/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'subtract', 'y': 'setfloat;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/sub_5/sub_5.dc;str'}]},
                         queue='process'
                         )
 
 sub_5_7 = PythonOperator(task_id='sub_5_7',
                         dag=dag,
                         python_callable=EODataProcessor,
-                        op_kwargs={'filepaths': ['./openeo_job/nir_2/00000_b7ad0a7312af_20180606T102019_20180606T102019_5_arrayelement.vrt', './openeo_job/red_3/00000_f5dc7de8aa79_20180621T102021_20180621T102021_4_arrayelement.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/sub_5/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'subtract', 'y': 'set;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/sub_5/sub_5.dc;str'}]},
+                        op_kwargs={'filepaths': ['./openeo_job/nir_2/00000_b7ad0a7312af_20180606T102019_20180606T102019_5_arrayelement.vrt', './openeo_job/red_3/00000_f5dc7de8aa79_20180621T102021_20180621T102021_4_arrayelement.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/sub_5/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'subtract', 'y': 'setfloat;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/sub_5/sub_5.dc;str'}]},
                         queue='process'
                         )
 
@@ -246,49 +246,49 @@ sum_8_7 = PythonOperator(task_id='sum_8_7',
 div_9_1 = PythonOperator(task_id='div_9_1',
                         dag=dag,
                         python_callable=EODataProcessor,
-                        op_kwargs={'filepaths': ['./openeo_job/sub_5/00000_04ae61a7e121_20180606T102019_20180606T102019_5_subtractarrayelement.vrt', './openeo_job/sum_8/00000_15c6cc47f3f1_20180611T102021_20180611T102021_2_sum.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/div_9/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'divide', 'y': 'set;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/div_9/div_9.dc;str'}]},
+                        op_kwargs={'filepaths': ['./openeo_job/sub_5/00000_04ae61a7e121_20180606T102019_20180606T102019_5_subtractarrayelement.vrt', './openeo_job/sum_8/00000_15c6cc47f3f1_20180611T102021_20180611T102021_2_sum.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/div_9/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'divide', 'y': 'setfloat;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/div_9/div_9.dc;str'}]},
                         queue='process'
                         )
 
 div_9_2 = PythonOperator(task_id='div_9_2',
                         dag=dag,
                         python_callable=EODataProcessor,
-                        op_kwargs={'filepaths': ['./openeo_job/sub_5/00000_2a4d9504ab87_20180618T101021_20180618T101021_3_subtractarrayelement.vrt', './openeo_job/sum_8/00000_2c5b9546a0ea_20180608T101021_20180608T101021_1_sum.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/div_9/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'divide', 'y': 'set;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/div_9/div_9.dc;str'}]},
+                        op_kwargs={'filepaths': ['./openeo_job/sub_5/00000_2a4d9504ab87_20180618T101021_20180618T101021_3_subtractarrayelement.vrt', './openeo_job/sum_8/00000_2c5b9546a0ea_20180608T101021_20180608T101021_1_sum.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/div_9/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'divide', 'y': 'setfloat;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/div_9/div_9.dc;str'}]},
                         queue='process'
                         )
 
 div_9_3 = PythonOperator(task_id='div_9_3',
                         dag=dag,
                         python_callable=EODataProcessor,
-                        op_kwargs={'filepaths': ['./openeo_job/sub_5/00000_59ad59b97ba9_20180608T101021_20180608T101021_1_subtractarrayelement.vrt', './openeo_job/sum_8/00000_2cf69366884d_20180606T102019_20180606T102019_5_sum.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/div_9/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'divide', 'y': 'set;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/div_9/div_9.dc;str'}]},
+                        op_kwargs={'filepaths': ['./openeo_job/sub_5/00000_59ad59b97ba9_20180608T101021_20180608T101021_1_subtractarrayelement.vrt', './openeo_job/sum_8/00000_2cf69366884d_20180606T102019_20180606T102019_5_sum.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/div_9/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'divide', 'y': 'setfloat;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/div_9/div_9.dc;str'}]},
                         queue='process'
                         )
 
 div_9_4 = PythonOperator(task_id='div_9_4',
                         dag=dag,
                         python_callable=EODataProcessor,
-                        op_kwargs={'filepaths': ['./openeo_job/sub_5/00000_7aa8667bd393_20180621T102021_20180621T102021_4_subtractarrayelement.vrt', './openeo_job/sum_8/00000_5ed842fc9884_20180621T102021_20180621T102021_4_sum.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/div_9/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'divide', 'y': 'set;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/div_9/div_9.dc;str'}]},
+                        op_kwargs={'filepaths': ['./openeo_job/sub_5/00000_7aa8667bd393_20180621T102021_20180621T102021_4_subtractarrayelement.vrt', './openeo_job/sum_8/00000_5ed842fc9884_20180621T102021_20180621T102021_4_sum.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/div_9/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'divide', 'y': 'setfloat;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/div_9/div_9.dc;str'}]},
                         queue='process'
                         )
 
 div_9_5 = PythonOperator(task_id='div_9_5',
                         dag=dag,
                         python_callable=EODataProcessor,
-                        op_kwargs={'filepaths': ['./openeo_job/sub_5/00000_84a103b35221_20180613T101019_20180613T101019_6_subtractarrayelement.vrt', './openeo_job/sum_8/00000_82dc6e872937_20180616T102019_20180616T102019_7_sum.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/div_9/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'divide', 'y': 'set;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/div_9/div_9.dc;str'}]},
+                        op_kwargs={'filepaths': ['./openeo_job/sub_5/00000_84a103b35221_20180613T101019_20180613T101019_6_subtractarrayelement.vrt', './openeo_job/sum_8/00000_82dc6e872937_20180616T102019_20180616T102019_7_sum.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/div_9/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'divide', 'y': 'setfloat;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/div_9/div_9.dc;str'}]},
                         queue='process'
                         )
 
 div_9_6 = PythonOperator(task_id='div_9_6',
                         dag=dag,
                         python_callable=EODataProcessor,
-                        op_kwargs={'filepaths': ['./openeo_job/sub_5/00000_88aec033b4cf_20180611T102021_20180611T102021_2_subtractarrayelement.vrt', './openeo_job/sum_8/00000_a517711a5dab_20180618T101021_20180618T101021_3_sum.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/div_9/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'divide', 'y': 'set;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/div_9/div_9.dc;str'}]},
+                        op_kwargs={'filepaths': ['./openeo_job/sub_5/00000_88aec033b4cf_20180611T102021_20180611T102021_2_subtractarrayelement.vrt', './openeo_job/sum_8/00000_a517711a5dab_20180618T101021_20180618T101021_3_sum.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/div_9/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'divide', 'y': 'setfloat;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/div_9/div_9.dc;str'}]},
                         queue='process'
                         )
 
 div_9_7 = PythonOperator(task_id='div_9_7',
                         dag=dag,
                         python_callable=EODataProcessor,
-                        op_kwargs={'filepaths': ['./openeo_job/sub_5/00000_98ba4098d264_20180616T102019_20180616T102019_7_subtractarrayelement.vrt', './openeo_job/sum_8/00000_c589879978fc_20180613T101019_20180613T101019_6_sum.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/div_9/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'divide', 'y': 'set;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/div_9/div_9.dc;str'}]},
+                        op_kwargs={'filepaths': ['./openeo_job/sub_5/00000_98ba4098d264_20180616T102019_20180616T102019_7_subtractarrayelement.vrt', './openeo_job/sum_8/00000_c589879978fc_20180613T101019_20180613T101019_6_sum.vrt'], 'dc_filepaths': None, 'user_params': [{'name': 'set_output_folder', 'out_dirpath': './openeo_job/div_9/'}, {'name': 'reduce', 'dimension': 'band', 'f_input': {'f_name': 'divide', 'y': 'setfloat;str'}}, {'name': 'to_pickle', 'filepath': './openeo_job/div_9/div_9.dc;str'}]},
                         queue='process'
                         )
 
